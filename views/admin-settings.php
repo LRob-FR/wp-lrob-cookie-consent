@@ -52,18 +52,6 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Consent log cleared.', 'lrob-cookie-consent'); ?></p></div>
     <?php endif; ?>
 
-    <?php if (!$configured) : ?>
-        <div class="lrob-cc-welcome">
-            <div>
-                <h2><?php esc_html_e('Set up cookie consent in a minute', 'lrob-cookie-consent'); ?></h2>
-                <p><?php esc_html_e('Answer a few quick questions and the wizard configures the banner look, blocking rules and proof of consent for you. You can fine-tune everything in the tabs afterwards.', 'lrob-cookie-consent'); ?></p>
-            </div>
-            <button type="button" class="button button-primary button-hero lrob-cc-wizard-open"><?php esc_html_e('Run setup wizard', 'lrob-cookie-consent'); ?></button>
-        </div>
-    <?php else : ?>
-        <p class="lrob-cc-welcome-mini"><button type="button" class="button lrob-cc-wizard-open"><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Setup wizard', 'lrob-cookie-consent'); ?></button></p>
-    <?php endif; ?>
-
     <h2 class="nav-tab-wrapper lrob-cc-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
         <a href="#banner" class="nav-tab" data-tab="banner"><?php esc_html_e('Banner', 'lrob-cookie-consent'); ?></a>
@@ -76,6 +64,18 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
         <!-- GENERAL -->
         <section class="lrob-cc-panel" data-panel="general">
+            <?php if (!$configured) : ?>
+                <div class="lrob-cc-welcome">
+                    <div>
+                        <h2><?php esc_html_e('Set up cookie consent in a minute', 'lrob-cookie-consent'); ?></h2>
+                        <p><?php esc_html_e('Answer a few quick questions and the wizard configures the banner look, blocking rules and proof of consent for you. You can fine-tune everything in the tabs afterwards.', 'lrob-cookie-consent'); ?></p>
+                    </div>
+                    <button type="button" class="button button-primary button-hero lrob-cc-wizard-open"><?php esc_html_e('Run setup wizard', 'lrob-cookie-consent'); ?></button>
+                </div>
+            <?php else : ?>
+                <p class="lrob-cc-welcome-mini"><button type="button" class="button lrob-cc-wizard-open"><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Re-run setup wizard', 'lrob-cookie-consent'); ?></button></p>
+            <?php endif; ?>
+
             <table class="form-table" role="presentation">
                 <tr><th><?php esc_html_e('Cookie consent', 'lrob-cookie-consent'); ?></th>
                     <td><label><input type="checkbox" name="<?php echo $name('enabled'); ?>" value="1" <?php echo $checked('enabled'); ?> /> <?php esc_html_e('Show the consent banner and block configured scripts/iframes until the visitor agrees', 'lrob-cookie-consent'); ?></label>
@@ -99,7 +99,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             <h3><?php esc_html_e('Proof of consent', 'lrob-cookie-consent'); ?></h3>
             <table class="form-table" role="presentation">
                 <tr><th><?php esc_html_e('Store proof of consent', 'lrob-cookie-consent'); ?></th>
-                    <td><label><input type="checkbox" name="<?php echo $name('log_consent'); ?>" value="1" <?php echo $checked('log_consent'); ?> /> <?php esc_html_e('Record each consent decision in the database (advised for GDPR accountability)', 'lrob-cookie-consent'); ?></label></td></tr>
+                    <td><label><input type="checkbox" data-field="log_consent" name="<?php echo $name('log_consent'); ?>" value="1" <?php echo $checked('log_consent'); ?> /> <?php esc_html_e('Record each consent decision in the database (advised for GDPR accountability)', 'lrob-cookie-consent'); ?></label></td></tr>
 
                 <tr><th><?php esc_html_e('IP address', 'lrob-cookie-consent'); ?></th>
                     <td>

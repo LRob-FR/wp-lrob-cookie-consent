@@ -116,7 +116,6 @@ final class SettingsPage
             'texts'      => Presets::text(),
             'services'   => Services::common(),
             'wizard'     => Services::wizard(),
-            'firstRun'   => trim((string) Options::get('block_rules')) === '',
             'wizardSettings' => [
                 'tone' => [
                     'question' => __('Pick a tone for your banner text', 'lrob-cookie-consent'),

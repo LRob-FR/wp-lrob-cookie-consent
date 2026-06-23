@@ -20,9 +20,9 @@
 		return els[0].value;
 	}
 
-	// --- Tabs (remembered across the Settings-API save redirect) --------
-	var TAB_KEY = 'lrobCcActiveTab';
-
+	// --- Tabs: state lives in the URL hash. Survives the Settings-API save
+	// by appending the hash to _wp_http_referer (WP keeps URL fragments through
+	// the redirect). Naturally resets to General when you navigate elsewhere.
 	function activateTab(tab) {
 		if (!tab || !document.querySelector('.lrob-cc-panel[data-panel="' + tab + '"]')) { tab = 'general'; }
 		$('.lrob-cc-tabs .nav-tab').removeClass('nav-tab-active');
@@ -34,8 +34,15 @@
 	$('.lrob-cc-tabs .nav-tab').on('click', function (e) {
 		e.preventDefault();
 		var tab = this.getAttribute('data-tab');
-		try { window.localStorage.setItem(TAB_KEY, tab); } catch (err) {}
+		if (history.replaceState) { history.replaceState(null, '', '#' + tab); } else { window.location.hash = tab; }
 		activateTab(tab);
+	});
+
+	$('form[action="options.php"]').on('submit', function () {
+		var hash = window.location.hash;
+		if (!hash) { return; }
+		var ref = this.querySelector('input[name="_wp_http_referer"]');
+		if (ref) { ref.value = ref.value.split('#')[0] + hash; }
 	});
 
 	// --- Segmented controls: reflect active state ------------------------
@@ -438,6 +445,12 @@
 		var hasExisting = rulesRows && rulesRows.querySelectorAll('.lrob-cc-rule-row').length > 0;
 		var screens = [];
 
+		// Patterns already in the rules — used to pre-check service questions.
+		var existingPatterns = {};
+		if (rulesTextarea) {
+			rulesTextarea.value.split('\n').forEach(function (l) { var p = l.split('|')[0].trim(); if (p) { existingPatterns[p] = true; } });
+		}
+
 		// 1. Existing-rules choice.
 		if (hasExisting) {
 			screens.push({
@@ -450,9 +463,9 @@
 			});
 		}
 
-		// 2. Tone (text preset).
+		// 2. Tone (text preset). No "keep current": pick none → text is untouched.
 		if (WS.tone && (A.texts || []).length) {
-			var toneChoices = [{ v: '', l: A.i18n.wizKeepCurrent || 'Keep current' }].concat((A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }));
+			var toneChoices = (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; });
 			var tone = { choice: '' };
 			screens.push({
 				title: WS.tone.question, hint: WS.tone.hint,
@@ -466,9 +479,9 @@
 			});
 		}
 
-		// 3. Look (colors + position).
+		// 3. Look (colors + position) — pre-selected to the current settings.
 		if (WS.look) {
-			var look = { theme: '', position: '' };
+			var look = { theme: val('theme'), position: val('position') };
 			screens.push({
 				title: WS.look.question,
 				render: function (b) {
@@ -486,22 +499,22 @@
 			});
 		}
 
-		// 4. Logging.
+		// 4. Logging — pre-selected to the current setting.
 		if (WS.logging) {
-			var log = { choice: '' };
+			var log = { choice: val('log_consent') ? '1' : '0' };
 			screens.push({
 				title: WS.logging.question, hint: WS.logging.hint,
 				render: function (b) { b.innerHTML = radioGroup('log', [
-					{ v: '', l: A.i18n.wizKeepCurrent || 'Keep current' },
 					{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
 					{ v: '0', l: A.i18n.wizNoKeep || 'No' }
 				], log.choice); bindRadio(b, 'log', function (v) { log.choice = v; }); },
-				apply: function () { if (log.choice === '1') { setField('log_consent', true); } else if (log.choice === '0') { setField('log_consent', false); } }
+				apply: function () { setField('log_consent', log.choice === '1'); }
 			});
 		}
 
-		// 5. Service questions (blocking).
+		// 5. Service questions (blocking) — pre-checked for rules you already have.
 		(A.wizard || []).forEach(function (step) {
+			(step.services || []).forEach(function (svc) { if (existingPatterns[svc.pattern]) { serviceSel[svc.pattern] = svc; } });
 			screens.push({
 				title: step.question, hint: step.hint,
 				render: function (b) {
@@ -532,7 +545,6 @@
 		document.body.appendChild(overlay);
 		var body = overlay.querySelector('.lrob-cc-modal-body');
 		var foot = overlay.querySelector('.lrob-cc-modal-foot');
-		try { window.localStorage.setItem('lrobCcWizardSeen', '1'); } catch (e) {}
 
 		function bindRadio(container, field, cb) {
 			container.querySelectorAll('input[name="wiz-' + field + '"]').forEach(function (r) {
@@ -575,9 +587,17 @@
 				if (rulesTextarea) { rulesTextarea.value = ''; }
 			}
 			screens.forEach(function (s) { if (s.apply) { s.apply(); } });
+
+			// Add picked services, skipping patterns already present (no dupes).
+			var present = {};
+			if (rulesRows) {
+				rulesRows.querySelectorAll('.lrob-cc-rule-pattern').forEach(function (inp) { var v = inp.value.trim(); if (v) { present[v] = true; } });
+			}
 			Object.keys(serviceSel).forEach(function (p) {
+				if (present[p]) { return; }
 				var s = serviceSel[p];
 				addRuleRow(s.pattern, s.category, s.service);
+				present[p] = true;
 			});
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');
@@ -587,14 +607,6 @@
 
 		render();
 	}
-
-	// Auto-open on a fresh install (no rules yet), once.
-	(function () {
-		if (!A.firstRun) { return; }
-		var seen = false;
-		try { seen = window.localStorage.getItem('lrobCcWizardSeen') === '1'; } catch (e) {}
-		if (!seen) { openWizard(); }
-	})();
 
 	// --- Inline-script repeater -----------------------------------------
 	var wrap = document.getElementById('lrob-cc-inline-scripts');
@@ -647,12 +659,8 @@
 		});
 	});
 
-	// --- Restore tab: #hash → last saved → general -----------------------
-	var initialTab = window.location.hash ? window.location.hash.replace('#', '') : '';
-	if (!initialTab) {
-		try { initialTab = window.localStorage.getItem(TAB_KEY) || ''; } catch (e) {}
-	}
-	if (initialTab) { activateTab(initialTab); }
+	// --- Restore tab from the URL hash (defaults to General) -------------
+	if (window.location.hash) { activateTab(window.location.hash.replace('#', '')); }
 
 	update();
 })(jQuery);

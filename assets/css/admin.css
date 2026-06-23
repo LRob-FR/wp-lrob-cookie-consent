@@ -166,29 +166,75 @@
 	background: #d6f0d6;
 }
 
-.lrob-cc-wizard {
-	margin: 12px 0 16px;
+/* Logo media field. */
+.lrob-cc-logo-field {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-.lrob-cc-wizard summary {
-	cursor: pointer;
-	font-weight: 600;
-}
-
-.lrob-cc-wizard-body {
-	padding: 12px 0;
-}
-
-.lrob-cc-wizard-group {
+#lrob-cc-logo-preview {
+	max-height: 40px;
+	width: auto;
 	border: 1px solid #dcdcde;
-	border-radius: 6px;
-	padding: 8px 12px;
-	margin-bottom: 10px;
+	border-radius: 4px;
 }
 
-.lrob-cc-wizard-group legend {
-	font-weight: 600;
-	padding: 0 4px;
+#lrob-cc-logo-preview[hidden] {
+	display: none;
+}
+
+.lrob-cc-logo-remove[hidden] {
+	display: none;
+}
+
+/* Wizard modal. */
+.lrob-cc-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+}
+
+.lrob-cc-modal {
+	background: #fff;
+	border-radius: 8px;
+	width: 480px;
+	max-width: calc(100vw - 32px);
+	box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
+}
+
+.lrob-cc-modal-body {
+	padding: 24px;
+}
+
+.lrob-cc-modal-body h2 {
+	margin: 4px 0 8px;
+}
+
+.lrob-cc-wiz-step {
+	margin: 0;
+	color: #646970;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.lrob-cc-wiz-options {
+	margin-top: 14px;
+}
+
+.lrob-cc-modal-foot {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	padding: 14px 24px;
+	background: #f6f7f7;
+	border-top: 1px solid #dcdcde;
 }
 
 .lrob-cc-inline {

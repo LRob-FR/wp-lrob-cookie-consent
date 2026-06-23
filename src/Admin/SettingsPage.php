@@ -73,6 +73,7 @@ final class SettingsPage
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_style('lrob-cc-admin', LROB_CC_URL . 'assets/css/admin.css', [], LROB_CC_VERSION);
         wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], LROB_CC_VERSION);
+        wp_enqueue_media();
 
         wp_enqueue_script(
             'lrob-cc-admin',
@@ -89,6 +90,7 @@ final class SettingsPage
             'colorPresets' => Presets::styles()['colors'] ?? [],
             'texts'      => Presets::text(),
             'services'   => Services::common(),
+            'wizard'     => Services::wizard(),
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'scanNonce'  => wp_create_nonce('lrob_cc_scan'),
             'i18n'       => [
@@ -96,6 +98,18 @@ final class SettingsPage
                 'confirm'      => __('Confirm', 'lrob-cookie-consent'),
                 'cancel'       => __('Cancel', 'lrob-cookie-consent'),
                 'removeRow'    => __('Remove', 'lrob-cookie-consent'),
+                'selectLogo'   => __('Select logo', 'lrob-cookie-consent'),
+                'wizExisting'  => __('You already have block rules. How do you want to run the wizard?', 'lrob-cookie-consent'),
+                'wizAddTo'     => __('Add to my current rules', 'lrob-cookie-consent'),
+                'wizFresh'     => __('Clear them and start fresh', 'lrob-cookie-consent'),
+                'wizYes'       => __('Yes', 'lrob-cookie-consent'),
+                'wizNo'        => __('No / skip', 'lrob-cookie-consent'),
+                'wizBack'      => __('Back', 'lrob-cookie-consent'),
+                'wizNext'      => __('Next', 'lrob-cookie-consent'),
+                'wizFinish'    => __('Finish & add rules', 'lrob-cookie-consent'),
+                'wizClose'     => __('Close', 'lrob-cookie-consent'),
+                /* translators: %1$d: current step number, %2$d: total steps. */
+                'wizStep'      => __('Step %1$d of %2$d', 'lrob-cookie-consent'),
                 'scanning'     => __('Scanning…', 'lrob-cookie-consent'),
                 'scanAgain'    => __('Scan again', 'lrob-cookie-consent'),
                 'scanError'    => __('Scan failed. Try again.', 'lrob-cookie-consent'),

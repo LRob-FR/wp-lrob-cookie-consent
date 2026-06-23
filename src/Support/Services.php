@@ -29,4 +29,53 @@ final class Services
         ];
         return apply_filters('lrob_cc_common_services', $services);
     }
+
+    /**
+     * Question-driven quick-setup steps. Each step asks one yes/no-style question
+     * and offers the services relevant to it.
+     *
+     * @return list<array{question:string,hint:string,services:list<array{label:string,pattern:string,category:string,service:string}>}>
+     */
+    public static function wizard(): array
+    {
+        $by = [];
+        foreach (self::common() as $svc) {
+            $by[$svc['pattern']] = $svc;
+        }
+        $pick = static function (string ...$patterns) use ($by): array {
+            $out = [];
+            foreach ($patterns as $p) {
+                if (isset($by[$p])) {
+                    $out[] = $by[$p];
+                }
+            }
+            return $out;
+        };
+
+        $steps = [
+            [
+                'question' => __('Do you measure visitor statistics or analytics?', 'lrob-cookie-consent'),
+                'hint'     => __('Tools that count visits and analyse behaviour.', 'lrob-cookie-consent'),
+                'services' => $pick('google-analytics.com', 'googletagmanager.com', 'matomo.js', 'hotjar.com'),
+            ],
+            [
+                'question' => __('Do you embed videos?', 'lrob-cookie-consent'),
+                'hint'     => __('Embedded players can set tracking cookies before consent.', 'lrob-cookie-consent'),
+                'services' => $pick('youtube.com/embed', 'player.vimeo.com'),
+            ],
+            [
+                'question' => __('Do you run ads or marketing / conversion pixels?', 'lrob-cookie-consent'),
+                'hint'     => __('Advertising and retargeting trackers.', 'lrob-cookie-consent'),
+                'services' => $pick('googleadservices.com', 'connect.facebook.net', 'snap.licdn.com'),
+            ],
+            [
+                'question' => __('Do you embed maps?', 'lrob-cookie-consent'),
+                'hint'     => __('Map embeds may load third-party scripts.', 'lrob-cookie-consent'),
+                'services' => $pick('maps.google.com'),
+            ],
+        ];
+
+        return apply_filters('lrob_cc_wizard_steps', $steps);
+    }
 }
+

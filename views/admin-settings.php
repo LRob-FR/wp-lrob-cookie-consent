@@ -119,8 +119,15 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
                             <td><input type="text" data-field="text_deny" name="<?php echo $name('text_deny'); ?>" value="<?php echo esc_attr((string) $o['text_deny']); ?>" placeholder="<?php echo esc_attr($texts['deny']); ?>" /></td></tr>
                         <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?></th>
                             <td><input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($texts['save']); ?>" /></td></tr>
-                        <tr><th><?php esc_html_e('Logo URL', 'lrob-cookie-consent'); ?></th>
-                            <td><input type="url" class="regular-text" data-field="logo" name="<?php echo $name('logo'); ?>" value="<?php echo esc_attr((string) $o['logo']); ?>" /></td></tr>
+                        <tr><th><?php esc_html_e('Logo', 'lrob-cookie-consent'); ?></th>
+                            <td>
+                                <div class="lrob-cc-logo-field">
+                                    <input type="hidden" id="lrob-cc-logo-input" data-field="logo" name="<?php echo $name('logo'); ?>" value="<?php echo esc_attr((string) $o['logo']); ?>" />
+                                    <img id="lrob-cc-logo-preview" src="<?php echo esc_url((string) $o['logo']); ?>" alt="" <?php echo $o['logo'] === '' ? 'hidden' : ''; ?> />
+                                    <button type="button" class="button" id="lrob-cc-logo-select"><?php esc_html_e('Select logo', 'lrob-cookie-consent'); ?></button>
+                                    <button type="button" class="button-link lrob-cc-logo-remove" id="lrob-cc-logo-remove" <?php echo $o['logo'] === '' ? 'hidden' : ''; ?>><?php esc_html_e('Remove', 'lrob-cookie-consent'); ?></button>
+                                </div>
+                            </td></tr>
                     </table>
 
                     <h3><?php esc_html_e('Buttons & layout', 'lrob-cookie-consent'); ?></h3>
@@ -231,31 +238,10 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
                 <div id="lrob-cc-scan-results"></div>
             </div>
 
-            <details class="lrob-cc-wizard">
-                <summary><?php esc_html_e('Guided setup — which services does your site use?', 'lrob-cookie-consent'); ?></summary>
-                <div class="lrob-cc-wizard-body">
-                    <?php
-                    $grouped = [];
-                    foreach ($services as $svc) {
-                        $grouped[$svc['category']][] = $svc;
-                    }
-                    foreach ($optional as $cat) :
-                        if (empty($grouped[$cat])) {
-                            continue;
-                        } ?>
-                        <fieldset class="lrob-cc-wizard-group">
-                            <legend><?php echo esc_html($labels[$cat]['title']); ?></legend>
-                            <?php foreach ($grouped[$cat] as $svc) : ?>
-                                <label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wizard-svc"
-                                    data-pattern="<?php echo esc_attr($svc['pattern']); ?>"
-                                    data-category="<?php echo esc_attr($svc['category']); ?>"
-                                    data-service="<?php echo esc_attr($svc['service']); ?>" /> <?php echo esc_html($svc['label']); ?></label>
-                            <?php endforeach; ?>
-                        </fieldset>
-                    <?php endforeach; ?>
-                    <button type="button" class="button" id="lrob-cc-wizard-apply"><?php esc_html_e('Add selected as rules', 'lrob-cookie-consent'); ?></button>
-                </div>
-            </details>
+            <p>
+                <button type="button" class="button" id="lrob-cc-wizard-open"><?php esc_html_e('Guided setup wizard', 'lrob-cookie-consent'); ?></button>
+                <span class="description"><?php esc_html_e('Answer a few quick questions to generate rules.', 'lrob-cookie-consent'); ?></span>
+            </p>
 
             <p class="lrob-cc-field-label"><?php esc_html_e('Editor mode', 'lrob-cookie-consent'); ?></p>
             <?php $seg('rules_mode', ['structured' => __('Guided', 'lrob-cookie-consent'), 'raw' => __('Raw text', 'lrob-cookie-consent')]); ?>

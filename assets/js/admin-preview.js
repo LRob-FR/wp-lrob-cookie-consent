@@ -315,15 +315,132 @@
 		});
 	}
 
-	// --- Guided wizard ---------------------------------------------------
-	$('#lrob-cc-wizard-apply').on('click', function () {
-		document.querySelectorAll('.lrob-cc-wizard-svc:checked').forEach(function (cb) {
-			addRuleRow(cb.getAttribute('data-pattern'), cb.getAttribute('data-category'), cb.getAttribute('data-service'));
-			cb.checked = false;
+	// --- Logo: WordPress media library ----------------------------------
+	var logoFrame;
+	var logoInput = document.getElementById('lrob-cc-logo-input');
+	var logoPreview = document.getElementById('lrob-cc-logo-preview');
+	var logoRemove = document.getElementById('lrob-cc-logo-remove');
+
+	$('#lrob-cc-logo-select').on('click', function (e) {
+		e.preventDefault();
+		if (!window.wp || !wp.media) { return; }
+		if (logoFrame) { logoFrame.open(); return; }
+		logoFrame = wp.media({
+			title: A.i18n.selectLogo || 'Select logo',
+			button: { text: A.i18n.selectLogo || 'Select' },
+			library: { type: 'image' },
+			multiple: false
 		});
-		serializeRules();
-		toStructuredMode();
+		logoFrame.on('select', function () {
+			var att = logoFrame.state().get('selection').first().toJSON();
+			var url = (att.sizes && att.sizes.medium) ? att.sizes.medium.url : att.url;
+			if (logoInput) { logoInput.value = url; }
+			if (logoPreview) { logoPreview.src = url; logoPreview.hidden = false; }
+			if (logoRemove) { logoRemove.hidden = false; }
+		});
+		logoFrame.open();
 	});
+
+	$(logoRemove).on('click', function () {
+		if (logoInput) { logoInput.value = ''; }
+		if (logoPreview) { logoPreview.src = ''; logoPreview.hidden = true; }
+		this.hidden = true;
+	});
+
+	// --- Guided wizard (question flow) ----------------------------------
+	$('#lrob-cc-wizard-open').on('click', openWizard);
+
+	function openWizard() {
+		var steps = A.wizard || [];
+		if (!steps.length) { return; }
+		var hasExisting = rulesRows && rulesRows.querySelectorAll('.lrob-cc-rule-row').length > 0;
+		var mode = 'add';
+		var selected = {};
+		var stepIndex = hasExisting ? -1 : 0;
+
+		var overlay = document.createElement('div');
+		overlay.className = 'lrob-cc-modal-overlay';
+		overlay.innerHTML = '<div class="lrob-cc-modal" role="dialog" aria-modal="true"><div class="lrob-cc-modal-body"></div><div class="lrob-cc-modal-foot"></div></div>';
+		document.body.appendChild(overlay);
+		var body = overlay.querySelector('.lrob-cc-modal-body');
+		var foot = overlay.querySelector('.lrob-cc-modal-foot');
+
+		function close() { if (overlay.parentNode) { document.body.removeChild(overlay); } }
+		function btn(label, cls) {
+			var b = document.createElement('button');
+			b.type = 'button';
+			b.className = 'button ' + (cls || '');
+			b.textContent = label;
+			return b;
+		}
+
+		function renderIntro() {
+			body.innerHTML = '<p>' + escapeHtml(A.i18n.wizExisting || '') + '</p>';
+			foot.innerHTML = '';
+			var fresh = btn(A.i18n.wizFresh || 'Start fresh');
+			fresh.onclick = function () { mode = 'fresh'; stepIndex = 0; render(); };
+			var add = btn(A.i18n.wizAddTo || 'Add to current', 'button-primary');
+			add.onclick = function () { mode = 'add'; stepIndex = 0; render(); };
+			foot.appendChild(fresh);
+			foot.appendChild(add);
+		}
+
+		function renderStep() {
+			var step = steps[stepIndex];
+			var label = (A.i18n.wizStep || 'Step %1$d of %2$d').replace('%1$d', stepIndex + 1).replace('%2$d', steps.length);
+			var html = '<p class="lrob-cc-wiz-step">' + escapeHtml(label) + '</p><h2>' + escapeHtml(step.question) + '</h2>';
+			if (step.hint) { html += '<p class="description">' + escapeHtml(step.hint) + '</p>'; }
+			html += '<div class="lrob-cc-wiz-options">';
+			(step.services || []).forEach(function (svc) {
+				html += '<label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wiz-svc" data-pattern="' +
+					escapeHtml(svc.pattern) + '"' + (selected[svc.pattern] ? ' checked' : '') + '/> ' + escapeHtml(svc.label) + '</label>';
+			});
+			html += '</div>';
+			body.innerHTML = html;
+
+			body.querySelectorAll('.lrob-cc-wiz-svc').forEach(function (cb) {
+				cb.addEventListener('change', function () {
+					var p = cb.getAttribute('data-pattern');
+					var svc = (step.services || []).filter(function (s) { return s.pattern === p; })[0];
+					if (cb.checked) { selected[p] = svc; } else { delete selected[p]; }
+				});
+			});
+
+			foot.innerHTML = '';
+			var cancel = btn(A.i18n.wizClose || 'Close');
+			cancel.onclick = close;
+			var back = btn(A.i18n.wizBack || 'Back');
+			back.disabled = (stepIndex === 0 && !hasExisting);
+			back.onclick = function () {
+				if (stepIndex === 0 && hasExisting) { stepIndex = -1; } else if (stepIndex > 0) { stepIndex--; }
+				render();
+			};
+			var isLast = stepIndex === steps.length - 1;
+			var next = btn(isLast ? (A.i18n.wizFinish || 'Finish') : (A.i18n.wizNext || 'Next'), 'button-primary');
+			next.onclick = function () { if (isLast) { finish(); } else { stepIndex++; render(); } };
+			foot.appendChild(cancel);
+			foot.appendChild(back);
+			foot.appendChild(next);
+		}
+
+		function render() { if (stepIndex < 0) { renderIntro(); } else { renderStep(); } }
+
+		function finish() {
+			if (mode === 'fresh' && rulesRows) {
+				rulesRows.innerHTML = '';
+				if (rulesTextarea) { rulesTextarea.value = ''; }
+			}
+			Object.keys(selected).forEach(function (p) {
+				var s = selected[p];
+				addRuleRow(s.pattern, s.category, s.service);
+			});
+			serializeRules();
+			toStructuredMode();
+			close();
+		}
+
+		render();
+	}
 
 	// --- Inline-script repeater -----------------------------------------
 	var wrap = document.getElementById('lrob-cc-inline-scripts');

@@ -1,0 +1,9 @@
+{
+	"id": "minimal",
+	"label": "Minimal",
+	"header": "Cookies",
+	"message": "We use cookies. Choose what you allow.",
+	"accept": "Accept",
+	"deny": "Deny",
+	"save": "Save"
+}

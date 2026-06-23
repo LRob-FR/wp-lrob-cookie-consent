@@ -1,0 +1,356 @@
+/**
+ * LRob Cookie Consent — front banner + admin preview share the .lrob-cc-banner
+ * class. Every color resolves: admin value (--lrob-cc-*) → theme/FSE token →
+ * literal. No hardcoded color is applied directly; literals are last-resort only.
+ * Fixed positioning lives on #lrob-cc-banner so the inline admin preview
+ * (#lrob-cc-preview) is not pinned to the viewport.
+ */
+
+.lrob-cc-banner {
+	--_bg: var(--lrob-cc-bg, var(--wp--preset--color--base, #ffffff));
+	--_text: var(--lrob-cc-text, var(--wp--preset--color--contrast, #1a1a1a));
+	--_title: var(--lrob-cc-title, var(--wp--preset--color--contrast, #111111));
+	--_border: var(--lrob-cc-border, rgba(0, 0, 0, 0.12));
+	--_btn-bg: var(--lrob-cc-btn-bg, var(--wp--preset--color--contrast, #1a1a1a));
+	--_btn-text: var(--lrob-cc-btn-text, var(--wp--preset--color--base, #ffffff));
+	--_btn-deny-bg: var(--lrob-cc-btn-deny-bg, rgba(0, 0, 0, 0.06));
+	--_btn-deny-text: var(--lrob-cc-btn-deny-text, var(--wp--preset--color--contrast, #1a1a1a));
+	--_radius: var(--lrob-cc-radius, 10px);
+	--_blur: var(--lrob-cc-blur, 0px);
+	--_pad: var(--lrob-cc-pad, 18px);
+	--_gap: var(--lrob-cc-gap, 12px);
+	--_width: var(--lrob-cc-width, 340px);
+	--_font: var(--lrob-cc-font-size, 0.92rem);
+	--_title-size: var(--lrob-cc-title-size, 1.15rem);
+
+	box-sizing: border-box;
+	color: var(--_text);
+	font-size: var(--_font);
+	line-height: 1.5;
+}
+
+.lrob-cc-banner * {
+	box-sizing: border-box;
+}
+
+/* Front banner only: fixed positioning + visibility. */
+#lrob-cc-banner {
+	position: fixed;
+	z-index: 99999;
+}
+
+#lrob-cc-banner[hidden] {
+	display: none;
+}
+
+.lrob-cc-backdrop {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+#lrob-cc-banner.lrob-cc-pos-bottom {
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+}
+
+#lrob-cc-banner.lrob-cc-pos-bottom .lrob-cc-inner {
+	margin: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-bottom-left {
+	left: 16px;
+	bottom: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-bottom-right {
+	right: 16px;
+	bottom: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-center {
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-center .lrob-cc-backdrop {
+	display: block;
+	backdrop-filter: blur(var(--_blur));
+}
+
+#lrob-cc-banner.lrob-cc-pos-center .lrob-cc-inner {
+	z-index: 1;
+}
+
+/* Shared inner box. */
+.lrob-cc-inner {
+	position: relative;
+	background: var(--_bg);
+	border: 1px solid var(--_border);
+	border-radius: var(--_radius);
+	padding: var(--_pad);
+	box-shadow: 0 6px 30px rgba(0, 0, 0, 0.18);
+	width: 100%;
+	max-width: var(--_width);
+}
+
+.lrob-cc-header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: var(--_gap);
+}
+
+.lrob-cc-logo {
+	max-height: 32px;
+	width: auto;
+}
+
+.lrob-cc-title {
+	margin: 0;
+	font-size: var(--_title-size);
+	color: var(--_title);
+	flex: 1;
+}
+
+.lrob-cc-close {
+	background: none;
+	border: 0;
+	font-size: 1.5rem;
+	line-height: 1;
+	cursor: pointer;
+	color: var(--_text);
+	padding: 4px;
+}
+
+.lrob-cc-message {
+	margin-bottom: var(--_gap);
+}
+
+.lrob-cc-message p {
+	margin: 0 0 8px;
+}
+
+.lrob-cc-categories[hidden] {
+	display: none;
+}
+
+.lrob-cc-categories {
+	display: flex;
+	flex-direction: column;
+	gap: var(--_gap);
+	margin-bottom: var(--_gap);
+}
+
+.lrob-cc-cat-head {
+	cursor: default;
+}
+
+.lrob-cc-cat {
+	border-top: 1px solid var(--_border);
+	padding-top: 8px;
+}
+
+.lrob-cc-cat-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.lrob-cc-cat-title {
+	font-weight: 600;
+	color: var(--_title);
+	flex: 1;
+}
+
+.lrob-cc-cat-always {
+	font-size: 0.8em;
+	opacity: 0.7;
+}
+
+.lrob-cc-cat-desc {
+	margin-top: 6px;
+	font-size: 0.9em;
+	opacity: 0.85;
+}
+
+.lrob-cc-switch {
+	position: relative;
+	display: inline-flex;
+	cursor: pointer;
+}
+
+.lrob-cc-switch input {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	cursor: pointer;
+}
+
+.lrob-cc-switch-ui {
+	width: 40px;
+	height: 22px;
+	border-radius: 22px;
+	background: var(--_border);
+	transition: background 0.15s ease;
+	position: relative;
+	flex: none;
+}
+
+.lrob-cc-switch-ui::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	transition: transform 0.15s ease;
+}
+
+.lrob-cc-switch input:checked ~ .lrob-cc-switch-ui {
+	background: var(--_btn-bg);
+}
+
+.lrob-cc-switch input:checked ~ .lrob-cc-switch-ui::after {
+	transform: translateX(18px);
+}
+
+.lrob-cc-switch input:focus-visible ~ .lrob-cc-switch-ui {
+	outline: 2px solid var(--_btn-bg);
+	outline-offset: 2px;
+}
+
+.lrob-cc-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.lrob-cc-btn {
+	font: inherit;
+	font-weight: 600;
+	border: 1px solid transparent;
+	border-radius: var(--_radius);
+	padding: 10px 18px;
+	cursor: pointer;
+}
+
+.lrob-cc-btn-accept {
+	background: var(--_btn-bg);
+	color: var(--_btn-text);
+}
+
+.lrob-cc-btn-save,
+.lrob-cc-btn-deny,
+.lrob-cc-btn-customize {
+	background: var(--_btn-deny-bg);
+	color: var(--_btn-deny-text);
+}
+
+.lrob-cc-btn[hidden] {
+	display: none;
+}
+
+.lrob-cc-btn:focus-visible {
+	outline: 2px solid var(--_btn-bg);
+	outline-offset: 2px;
+}
+
+/* Floating revisit button — lives on <body>, so it can't read the banner's
+   scoped --_* vars; resolve straight off theme tokens with literal fallbacks. */
+.lrob-cc-revisit {
+	position: fixed;
+	left: 16px;
+	bottom: 16px;
+	z-index: 99998;
+	font-weight: 600;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	border-radius: 8px;
+	padding: 8px 14px;
+	cursor: pointer;
+	background: var(--wp--preset--color--base, #ffffff);
+	color: var(--wp--preset--color--contrast, #1a1a1a);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+.lrob-cc-revisit[hidden] {
+	display: none;
+}
+
+body.lrob-cc-banner-open #lrob-cc-banner.lrob-cc-pos-center {
+	overflow: hidden;
+}
+
+/* Blocked embeds. */
+iframe.lrob-cc-blocked {
+	display: none !important;
+}
+
+.lrob-cc-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-height: 180px;
+	padding: 20px;
+	text-align: center;
+	background: var(--lrob-cc-bg, rgba(0, 0, 0, 0.04));
+	border: 1px dashed var(--lrob-cc-border, rgba(0, 0, 0, 0.2));
+	border-radius: 8px;
+	cursor: pointer;
+	color: inherit;
+}
+
+.lrob-cc-placeholder-btn {
+	font: inherit;
+	font-weight: 600;
+	border: 0;
+	border-radius: 6px;
+	padding: 8px 16px;
+	cursor: pointer;
+	background: var(--lrob-cc-btn-bg, #1a1a1a);
+	color: var(--lrob-cc-btn-text, #fff);
+}
+
+/* Auto theme on non-FSE themes: flip the last-resort literals dark. */
+@media (prefers-color-scheme: dark) {
+	.lrob-cc-banner {
+		--_bg: var(--lrob-cc-bg, var(--wp--preset--color--base, #1c1c1e));
+		--_text: var(--lrob-cc-text, var(--wp--preset--color--contrast, #e8e8e8));
+		--_title: var(--lrob-cc-title, var(--wp--preset--color--contrast, #ffffff));
+		--_border: var(--lrob-cc-border, rgba(255, 255, 255, 0.18));
+		--_btn-bg: var(--lrob-cc-btn-bg, var(--wp--preset--color--contrast, #ffffff));
+		--_btn-text: var(--lrob-cc-btn-text, var(--wp--preset--color--base, #111111));
+		--_btn-deny-bg: var(--lrob-cc-btn-deny-bg, rgba(255, 255, 255, 0.12));
+		--_btn-deny-text: var(--lrob-cc-btn-deny-text, var(--wp--preset--color--contrast, #e8e8e8));
+	}
+}
+
+@media (max-width: 520px) {
+	#lrob-cc-banner.lrob-cc-pos-bottom-left,
+	#lrob-cc-banner.lrob-cc-pos-bottom-right {
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.lrob-cc-inner {
+		max-width: none;
+	}
+
+	.lrob-cc-btn {
+		flex: 1 1 auto;
+	}
+}

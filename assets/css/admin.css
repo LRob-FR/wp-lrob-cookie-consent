@@ -1,0 +1,247 @@
+/* LRob Cookie Consent — settings page layout. */
+
+.lrob-cc-admin .lrob-cc-panel {
+	margin-top: 16px;
+}
+
+.lrob-cc-banner-layout {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 32px;
+	align-items: flex-start;
+}
+
+.lrob-cc-banner-fields {
+	flex: 1 1 460px;
+	min-width: 320px;
+}
+
+.lrob-cc-banner-preview {
+	flex: 1 1 360px;
+	position: sticky;
+	top: 40px;
+}
+
+.lrob-cc-preview-label,
+.lrob-cc-preset-label {
+	font-weight: 600;
+	margin: 0 0 8px;
+}
+
+.lrob-cc-preview-stage {
+	background: repeating-conic-gradient(#f0f0f0 0% 25%, #fafafa 0% 50%) 0 / 24px 24px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 24px;
+	display: flex;
+	justify-content: center;
+}
+
+.lrob-cc-preview-stage .lrob-cc-banner {
+	position: static;
+	width: 100%;
+}
+
+.lrob-cc-preview-stage .lrob-cc-inner {
+	margin: 0 auto;
+}
+
+.lrob-cc-preset-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 14px;
+}
+
+.lrob-cc-field-label {
+	font-weight: 600;
+	margin: 16px 0 6px;
+}
+
+.lrob-cc-check {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.lrob-cc-radio-line {
+	display: block;
+	margin-bottom: 4px;
+}
+
+/* Segmented (button) control backed by radios. */
+.lrob-cc-segmented {
+	display: inline-flex;
+	flex-wrap: wrap;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	overflow: hidden;
+	margin-bottom: 6px;
+}
+
+.lrob-cc-seg {
+	position: relative;
+	margin: 0;
+}
+
+.lrob-cc-seg input {
+	position: absolute;
+	opacity: 0;
+	inset: 0;
+	cursor: pointer;
+}
+
+.lrob-cc-seg span {
+	display: block;
+	padding: 6px 14px;
+	background: #fff;
+	border-left: 1px solid #e0e0e0;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.lrob-cc-seg:first-child span {
+	border-left: 0;
+}
+
+.lrob-cc-seg.is-active span {
+	background: #2271b1;
+	color: #fff;
+}
+
+.lrob-cc-seg input:focus-visible + span {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
+}
+
+.lrob-cc-services {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 12px;
+}
+
+.lrob-cc-rule-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.lrob-cc-rule-pattern {
+	flex: 2 1 220px;
+}
+
+.lrob-cc-rule-service {
+	flex: 1 1 160px;
+}
+
+.lrob-cc-rule-category {
+	flex: none;
+}
+
+.lrob-cc-rule-remove {
+	flex: none;
+}
+
+/* Scan + wizard. */
+.lrob-cc-scan {
+	margin-bottom: 16px;
+}
+
+.lrob-cc-scan-table {
+	margin: 10px 0;
+	max-width: 820px;
+}
+
+.lrob-cc-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 10px;
+	background: #e0e0e0;
+	font-size: 11px;
+	text-transform: uppercase;
+}
+
+.lrob-cc-badge.is-known {
+	background: #d6f0d6;
+}
+
+.lrob-cc-wizard {
+	margin: 12px 0 16px;
+}
+
+.lrob-cc-wizard summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.lrob-cc-wizard-body {
+	padding: 12px 0;
+}
+
+.lrob-cc-wizard-group {
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 8px 12px;
+	margin-bottom: 10px;
+}
+
+.lrob-cc-wizard-group legend {
+	font-weight: 600;
+	padding: 0 4px;
+}
+
+.lrob-cc-inline {
+	margin-left: 14px;
+}
+
+.lrob-cc-custom-colors[data-theme-only] {
+	display: none;
+}
+
+.lrob-cc-inline-row {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-bottom: 10px;
+}
+
+.lrob-cc-inline-row select {
+	flex: none;
+}
+
+.lrob-cc-inline-row textarea {
+	flex: 1;
+}
+
+.lrob-cc-log-actions {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+/* Confirm dialog. */
+.lrob-cc-confirm-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+}
+
+.lrob-cc-confirm-box {
+	background: #fff;
+	border-radius: 6px;
+	padding: 24px;
+	max-width: 420px;
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.lrob-cc-confirm-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: flex-end;
+	margin-top: 16px;
+}

@@ -1,0 +1,221 @@
+<?php
+
+declare(strict_types=1);
+
+namespace LRob\CookieConsent\Admin;
+
+use LRob\CookieConsent\Consent\LogRepository;
+use LRob\CookieConsent\Frontend\Appearance;
+use LRob\CookieConsent\Frontend\Banner;
+use LRob\CookieConsent\Support\Categories;
+use LRob\CookieConsent\Support\Options;
+use LRob\CookieConsent\Support\Presets;
+use LRob\CookieConsent\Scanning\Scanner;
+use LRob\CookieConsent\Support\Rules;
+use LRob\CookieConsent\Support\Services;
+
+final class SettingsPage
+{
+    private const GROUP = 'lrob_cc_group';
+    private const SLUG = 'lrob-cookie-consent';
+
+    private string $hook_suffix = '';
+
+    public function __construct(private LogRepository $log)
+    {
+    }
+
+    public function register(): void
+    {
+        add_action('admin_menu', [$this, 'add_menu']);
+        add_action('admin_init', [$this, 'register_setting']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue']);
+        add_action('admin_post_lrob_cc_export_log', [$this, 'handle_export']);
+        add_action('admin_post_lrob_cc_purge_log', [$this, 'handle_purge']);
+        add_action('wp_ajax_lrob_cc_scan', [$this, 'handle_scan']);
+    }
+
+    public function handle_scan(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_send_json_error(['message' => __('Not allowed.', 'lrob-cookie-consent')], 403);
+        }
+        check_ajax_referer('lrob_cc_scan', 'nonce');
+        $provider = isset($_POST['provider']) ? sanitize_key(wp_unslash((string) $_POST['provider'])) : 'local';
+        wp_send_json_success(Scanner::run($provider));
+    }
+
+    public function add_menu(): void
+    {
+        $this->hook_suffix = (string) add_options_page(
+            __('LRob Cookie Consent', 'lrob-cookie-consent'),
+            __('Cookie Consent', 'lrob-cookie-consent'),
+            LROB_CC_CAPABILITY,
+            self::SLUG,
+            [$this, 'render']
+        );
+    }
+
+    public function register_setting(): void
+    {
+        register_setting(self::GROUP, Options::OPTION_KEY, [
+            'type'              => 'array',
+            'sanitize_callback' => [$this, 'sanitize'],
+        ]);
+    }
+
+    public function enqueue(string $hook): void
+    {
+        if ($hook !== $this->hook_suffix) {
+            return;
+        }
+
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_style('lrob-cc-admin', LROB_CC_URL . 'assets/css/admin.css', [], LROB_CC_VERSION);
+        wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], LROB_CC_VERSION);
+
+        wp_enqueue_script(
+            'lrob-cc-admin',
+            LROB_CC_URL . 'assets/js/admin-preview.js',
+            ['wp-color-picker', 'jquery'],
+            LROB_CC_VERSION,
+            true
+        );
+        wp_localize_script('lrob-cc-admin', 'lrobCcAdmin', [
+            'optionName' => Options::OPTION_KEY,
+            'optional'   => Categories::OPTIONAL,
+            'palettes'   => Appearance::palettes(),
+            'scales'     => Appearance::scales(),
+            'colorPresets' => Presets::styles()['colors'] ?? [],
+            'texts'      => Presets::text(),
+            'services'   => Services::common(),
+            'ajaxUrl'    => admin_url('admin-ajax.php'),
+            'scanNonce'  => wp_create_nonce('lrob_cc_scan'),
+            'i18n'       => [
+                'confirmPurge' => __('Delete all consent log entries? This cannot be undone.', 'lrob-cookie-consent'),
+                'confirm'      => __('Confirm', 'lrob-cookie-consent'),
+                'cancel'       => __('Cancel', 'lrob-cookie-consent'),
+                'removeRow'    => __('Remove', 'lrob-cookie-consent'),
+                'scanning'     => __('Scanning…', 'lrob-cookie-consent'),
+                'scanAgain'    => __('Scan again', 'lrob-cookie-consent'),
+                'scanError'    => __('Scan failed. Try again.', 'lrob-cookie-consent'),
+                'noneFound'    => __('No third-party resources found on the scanned pages.', 'lrob-cookie-consent'),
+                'addSelected'  => __('Add selected as rules', 'lrob-cookie-consent'),
+                'known'        => __('known', 'lrob-cookie-consent'),
+                'unknown'      => __('review', 'lrob-cookie-consent'),
+                'cookiesSeen'  => __('Cookies set on scanned pages:', 'lrob-cookie-consent'),
+                'scannedUrls'  => __('Scanned:', 'lrob-cookie-consent'),
+            ],
+        ]);
+    }
+
+    public function render(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_die(esc_html__('You are not allowed to access this page.', 'lrob-cookie-consent'));
+        }
+
+        $o = Options::all();
+        $texts = Banner::texts();
+        $labels = Banner::category_labels();
+        $optional = Categories::OPTIONAL;
+        $text_presets = Presets::text();
+        $color_presets = Presets::styles()['colors'] ?? [];
+        $services = Services::common();
+        $log = $this->log;
+        $option = Options::OPTION_KEY;
+
+        include LROB_CC_PATH . 'views/admin-settings.php';
+    }
+
+    /**
+     * @param mixed $input
+     * @return array<string,mixed>
+     */
+    public function sanitize($input): array
+    {
+        $in = is_array($input) ? $input : [];
+        $d = Options::defaults();
+        $out = $d;
+
+        $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
+            'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'show_deny',
+            'show_save', 'categories_collapsed', 'revisit_button'];
+        foreach ($bool as $key) {
+            $out[$key] = empty($in[$key]) ? 0 : 1;
+        }
+
+        $out['consent_type'] = 'optin';
+        $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['anonymized', 'full', 'none'], true) ? $in['ip_storage'] : 'anonymized';
+        $out['cookie_days'] = max(1, (int) ($in['cookie_days'] ?? $d['cookie_days']));
+        $out['log_retention_days'] = max(0, (int) ($in['log_retention_days'] ?? $d['log_retention_days']));
+        $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';
+        $out['rules_mode'] = in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';
+        $out['block_rules'] = sanitize_textarea_field((string) ($in['block_rules'] ?? ''));
+
+        $out['inline_scripts'] = [];
+        if (isset($in['inline_scripts']) && is_array($in['inline_scripts'])) {
+            foreach ($in['inline_scripts'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $code = trim((string) ($row['code'] ?? ''));
+                $category = sanitize_key((string) ($row['category'] ?? ''));
+                if ($code === '' || !Categories::is_valid($category) || $category === Categories::FUNCTIONAL) {
+                    continue;
+                }
+                // Trusted (manage_lrob_cc) input, injected as inert text/plain until consent.
+                $out['inline_scripts'][] = ['code' => $code, 'category' => $category];
+            }
+        }
+
+        $out['position'] = in_array($in['position'] ?? '', ['bottom', 'center', 'bottom-left', 'bottom-right'], true) ? $in['position'] : 'bottom';
+        $out['theme'] = in_array($in['theme'] ?? '', ['auto', 'light', 'dark', 'custom'], true) ? $in['theme'] : 'auto';
+        $out['popup_size'] = in_array($in['popup_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['popup_size'] : 'small';
+        $out['density'] = in_array($in['density'] ?? '', ['compact', 'cozy', 'comfortable'], true) ? $in['density'] : 'cozy';
+        $out['font_size'] = in_array($in['font_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['font_size'] : 'medium';
+        $out['shape'] = in_array($in['shape'] ?? '', ['square', 'rounded', 'pill'], true) ? $in['shape'] : 'rounded';
+        $out['backdrop_blur'] = min(30, max(0, (int) ($in['backdrop_blur'] ?? $d['backdrop_blur'])));
+        $out['logo'] = esc_url_raw((string) ($in['logo'] ?? ''));
+
+        foreach (['color_bg', 'color_text', 'color_title', 'color_border', 'color_btn_bg',
+            'color_btn_text', 'color_btn_deny_bg', 'color_btn_deny_text'] as $key) {
+            $color = sanitize_hex_color((string) ($in[$key] ?? ''));
+            $out[$key] = $color ?: $d[$key];
+        }
+
+        $out['text_header'] = sanitize_text_field((string) ($in['text_header'] ?? ''));
+        $out['text_accept'] = sanitize_text_field((string) ($in['text_accept'] ?? ''));
+        $out['text_deny'] = sanitize_text_field((string) ($in['text_deny'] ?? ''));
+        $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
+        $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
+
+        // Rule/category changes alter what's blocked → drop the compiled cache.
+        Rules::flush();
+
+        return $out;
+    }
+
+    public function handle_export(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_die(esc_html__('You are not allowed to do this.', 'lrob-cookie-consent'));
+        }
+        check_admin_referer('lrob_cc_export_log');
+        $this->log->stream_csv();
+    }
+
+    public function handle_purge(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_die(esc_html__('You are not allowed to do this.', 'lrob-cookie-consent'));
+        }
+        check_admin_referer('lrob_cc_purge_log');
+        $this->log->purge_all();
+        wp_safe_redirect(add_query_arg(
+            ['page' => self::SLUG, 'tab' => 'log', 'purged' => '1'],
+            admin_url('options-general.php')
+        ));
+        exit;
+    }
+}

@@ -26,6 +26,11 @@ final class Services
             ['label' => 'Vimeo embeds', 'pattern' => 'player.vimeo.com', 'category' => 'marketing', 'service' => 'Vimeo'],
             ['label' => 'Google Maps', 'pattern' => 'maps.google.com', 'category' => 'preferences', 'service' => 'Google Maps'],
             ['label' => 'LinkedIn Insight', 'pattern' => 'snap.licdn.com', 'category' => 'marketing', 'service' => 'LinkedIn'],
+            // CAPTCHAs. Turnstile/hCaptcha are privacy-friendly (often cookieless);
+            // reCAPTCHA loads Google. Blocking a CAPTCHA can break protected forms.
+            ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'preferences', 'service' => 'Cloudflare Turnstile'],
+            ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'preferences', 'service' => 'hCaptcha'],
+            ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'marketing', 'service' => 'Google reCAPTCHA'],
         ];
         return apply_filters('lrob_cc_common_services', $services);
     }
@@ -55,7 +60,7 @@ final class Services
         $steps = [
             [
                 'question' => __('Do you measure visitor statistics or analytics?', 'lrob-cookie-consent'),
-                'hint'     => __('Tools that count visits and analyse behaviour.', 'lrob-cookie-consent'),
+                'hint'     => __('Tools that count visits and analyse behaviour. Note: Matomo can run in a cookieless mode — if yours does, you may not need to block it.', 'lrob-cookie-consent'),
                 'services' => $pick('google-analytics.com', 'googletagmanager.com', 'matomo.js', 'hotjar.com'),
             ],
             [
@@ -72,6 +77,11 @@ final class Services
                 'question' => __('Do you embed maps?', 'lrob-cookie-consent'),
                 'hint'     => __('Map embeds may load third-party scripts.', 'lrob-cookie-consent'),
                 'services' => $pick('maps.google.com'),
+            ],
+            [
+                'question' => __('Do you use a CAPTCHA?', 'lrob-cookie-consent'),
+                'hint'     => __('Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads Google.', 'lrob-cookie-consent'),
+                'services' => $pick('challenges.cloudflare.com', 'hcaptcha.com', 'recaptcha'),
             ],
         ];
 

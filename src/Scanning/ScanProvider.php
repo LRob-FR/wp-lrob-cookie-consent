@@ -19,7 +19,7 @@ interface ScanProvider
 
     /**
      * @param list<string> $urls
-     * @return array{resources: list<array<string,mixed>>, cookies: list<string>}
+     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string}
      */
     public function scan(array $urls): array;
 }

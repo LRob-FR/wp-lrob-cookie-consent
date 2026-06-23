@@ -19,14 +19,14 @@ final class Scanner
     }
 
     /**
-     * @return array{provider:string,urls:list<string>,resources:list<array<string,mixed>>,cookies:list<string>}
+     * @return array{provider:string,urls:list<string>,resources:list<array<string,mixed>>,cookies:list<string>,error:string}
      */
-    public static function run(string $provider_id = 'local'): array
+    public static function run(string $provider_id = 'local', string $mode = 'simple'): array
     {
         $providers = self::providers();
         $provider = $providers[$provider_id] ?? $providers['local'] ?? new LocalScanner();
 
-        $urls = self::sample_urls();
+        $urls = self::targets($mode);
         $result = $provider->scan($urls);
 
         return [
@@ -34,20 +34,22 @@ final class Scanner
             'urls'      => $urls,
             'resources' => $result['resources'] ?? [],
             'cookies'   => $result['cookies'] ?? [],
+            'error'     => $result['error'] ?? '',
         ];
     }
 
     /**
-     * Home + a few recent published posts/pages. Kept small (≤4 × short timeout)
-     * so the whole scan finishes well inside PHP's max_execution_time.
+     * URLs to scan. simple = home + a few recent posts/pages (~4); deep = more
+     * pages (capped). The client scans these one at a time with a progress bar.
      *
      * @return list<string>
      */
-    private static function sample_urls(): array
+    public static function targets(string $mode = 'simple'): array
     {
+        $deep = ($mode === 'deep');
         $urls = [home_url('/')];
         $posts = get_posts([
-            'numberposts' => 3,
+            'numberposts' => $deep ? 30 : 3,
             'post_type'   => ['post', 'page'],
             'post_status' => 'publish',
             'orderby'     => 'modified',
@@ -59,6 +61,6 @@ final class Scanner
                 $urls[] = $link;
             }
         }
-        return array_values(array_slice(array_unique($urls), 0, 4));
+        return array_values(array_slice(array_unique($urls), 0, $deep ? 30 : 4));
     }
 }

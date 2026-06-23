@@ -26,48 +26,70 @@ final class LocalScanner implements ScanProvider
 
     /**
      * @param list<string> $urls
-     * @return array{resources: list<array<string,mixed>>, cookies: list<string>}
+     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string}
      */
     public function scan(array $urls): array
     {
+        $resources = [];
+        $cookies = [];
+        $error = '';
+        foreach ($urls as $url) {
+            $one = $this->scan_url($url);
+            if ($one['error'] !== '' && $error === '') {
+                $error = $one['error'];
+            }
+            foreach ($one['resources'] as $r) {
+                $resources[$r['pattern']] = $r;
+            }
+            foreach ($one['cookies'] as $c) {
+                if (!in_array($c, $cookies, true)) {
+                    $cookies[] = $c;
+                }
+            }
+        }
+        return ['resources' => array_values($resources), 'cookies' => $cookies, 'error' => $error];
+    }
+
+    /**
+     * Scan a single URL. error = '' on success, 'ssl' on a certificate failure,
+     * or the raw transport error message otherwise.
+     *
+     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string}
+     */
+    public function scan_url(string $url, bool $insecure = false): array
+    {
+        $response = wp_remote_get($url, [
+            'timeout'     => 8,
+            'redirection' => 3,
+            'sslverify'   => !$insecure,
+            'cookies'     => [],
+            'user-agent'  => 'LRobCookieConsent-Scan/1.0 (+' . home_url() . ')',
+        ]);
+        if (is_wp_error($response)) {
+            $msg = $response->get_error_message();
+            $is_ssl = stripos($msg, 'ssl') !== false || stripos($msg, 'certificate') !== false;
+            return ['resources' => [], 'cookies' => [], 'error' => $is_ssl ? 'ssl' : $msg];
+        }
+
         $site_host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
         $services = Services::common();
         $resources = [];
         $cookies = [];
 
-        foreach ($urls as $url) {
-            $response = wp_remote_get($url, [
-                'timeout'     => 5,
-                'redirection' => 3,
-                'sslverify'   => false,
-                'cookies'     => [],
-                'user-agent'  => 'LRobCookieConsent-Scan/1.0 (+' . home_url() . ')',
-            ]);
-            if (is_wp_error($response)) {
+        $set_cookie = wp_remote_retrieve_header($response, 'set-cookie');
+        foreach ((is_array($set_cookie) ? $set_cookie : [$set_cookie]) as $cookie_header) {
+            if (!is_string($cookie_header) || $cookie_header === '') {
                 continue;
             }
-
-            $set_cookie = wp_remote_retrieve_header($response, 'set-cookie');
-            foreach ((is_array($set_cookie) ? $set_cookie : [$set_cookie]) as $cookie_header) {
-                if (!is_string($cookie_header) || $cookie_header === '') {
-                    continue;
-                }
-                $parts = explode('=', $cookie_header, 2);
-                $cookie_name = trim($parts[0]);
-                if ($cookie_name !== '' && !in_array($cookie_name, $cookies, true)) {
-                    $cookies[] = $cookie_name;
-                }
+            $parts = explode('=', $cookie_header, 2);
+            $cookie_name = trim($parts[0]);
+            if ($cookie_name !== '' && !in_array($cookie_name, $cookies, true)) {
+                $cookies[] = $cookie_name;
             }
+        }
 
-            $body = wp_remote_retrieve_body($response);
-            if ($body === '') {
-                continue;
-            }
-
-            if (!preg_match_all('/<(script|iframe|img)\b[^>]*\b(?:src)\s*=\s*["\']([^"\']+)["\']/i', $body, $matches, PREG_SET_ORDER)) {
-                continue;
-            }
-
+        $body = wp_remote_retrieve_body($response);
+        if ($body !== '' && preg_match_all('/<(script|iframe|img)\b[^>]*\b(?:src)\s*=\s*["\']([^"\']+)["\']/i', $body, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $m) {
                 $type = strtolower($m[1]);
                 $src = html_entity_decode($m[2]);
@@ -75,7 +97,6 @@ final class LocalScanner implements ScanProvider
                 if ($host === '' || $host === $site_host) {
                     continue; // first-party / relative — not a third-party tracker
                 }
-
                 $key = $this->match_service($src, $services);
                 $pattern = $key['pattern'] ?? $host;
                 if (isset($resources[$pattern])) {
@@ -93,7 +114,7 @@ final class LocalScanner implements ScanProvider
             }
         }
 
-        return ['resources' => array_values($resources), 'cookies' => $cookies];
+        return ['resources' => array_values($resources), 'cookies' => $cookies, 'error' => ''];
     }
 
     /**

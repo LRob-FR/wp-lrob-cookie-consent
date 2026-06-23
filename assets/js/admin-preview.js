@@ -299,35 +299,90 @@
 		}
 	}
 
+	var scanProgress = document.getElementById('lrob-cc-scan-progress');
+	var scanBar = document.getElementById('lrob-cc-scan-bar');
+	var scanProgressText = document.getElementById('lrob-cc-scan-progress-text');
+	var scanDeepWarn = document.getElementById('lrob-cc-scan-deep-warn');
+
+	$(document).on('change', 'input[name="lrob-cc-scan-mode"]', function () {
+		if (scanDeepWarn) { scanDeepWarn.hidden = this.value !== 'deep'; }
+	});
+
+	function scanAjax(action, params) {
+		var body = 'action=' + action + '&nonce=' + encodeURIComponent(A.scanNonce || '');
+		Object.keys(params || {}).forEach(function (k) { body += '&' + k + '=' + encodeURIComponent(params[k]); });
+		return fetch(A.ajaxUrl, {
+			method: 'POST', credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body
+		}).then(function (r) { return r.text(); }).then(function (t) {
+			try { return JSON.parse(t); } catch (e) { return { success: false, data: { message: t.slice(0, 300) } }; }
+		});
+	}
+
+	function scanEnd() {
+		scanBtn.disabled = false;
+		scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
+		if (scanProgress) { scanProgress.hidden = true; }
+	}
+
+	function scanUrls(urls, insecure) {
+		var agg = {}, cookies = [], sslErrors = 0, i = 0;
+		if (scanBar) { scanBar.max = urls.length; scanBar.value = 0; }
+		function next() {
+			if (i >= urls.length) {
+				scanEnd();
+				renderScan({ urls: urls, resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: cookies });
+				if (sslErrors > 0 && !insecure) {
+					var note = document.createElement('p');
+					note.className = 'lrob-cc-hint lrob-cc-hint-warning';
+					note.textContent = (A.i18n.sslFailed || 'Some pages had an SSL error.') + ' ';
+					var retry = document.createElement('button');
+					retry.type = 'button';
+					retry.className = 'button';
+					retry.textContent = A.i18n.sslRetry || 'Retry ignoring SSL';
+					retry.addEventListener('click', function () {
+						scanResults.innerHTML = '';
+						scanBtn.disabled = true;
+						if (scanProgress) { scanProgress.hidden = false; }
+						scanUrls(urls, true);
+					});
+					note.appendChild(retry);
+					scanResults.appendChild(note);
+				}
+				return;
+			}
+			if (scanProgressText) {
+				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
+					.replace('%1$d', i + 1).replace('%2$d', urls.length);
+			}
+			scanAjax('lrob_cc_scan_url', { url: urls[i], insecure: insecure ? 1 : 0 }).then(function (json) {
+				if (json.success && json.data) {
+					if (json.data.error === 'ssl') { sslErrors++; }
+					(json.data.resources || []).forEach(function (r) { agg[r.pattern] = r; });
+					(json.data.cookies || []).forEach(function (c) { if (cookies.indexOf(c) === -1) { cookies.push(c); } });
+				}
+				i++;
+				if (scanBar) { scanBar.value = i; }
+				next();
+			});
+		}
+		next();
+	}
+
 	if (scanBtn) {
 		scanBtn.addEventListener('click', function () {
+			var mode = (document.querySelector('input[name="lrob-cc-scan-mode"]:checked') || {}).value || 'simple';
 			scanBtn.disabled = true;
 			scanBtn.textContent = A.i18n.scanning || 'Scanning…';
 			scanResults.innerHTML = '';
-			var body = 'action=lrob_cc_scan&provider=local&nonce=' + encodeURIComponent(A.scanNonce || '');
-			fetch(A.ajaxUrl, {
-				method: 'POST',
-				credentials: 'same-origin',
-				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				body: body
-			}).then(function (r) { return r.text(); }).then(function (text) {
-				scanBtn.disabled = false;
-				scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
-				var json;
-				try { json = JSON.parse(text); } catch (e) {
-					scanResults.textContent = (A.i18n.scanError || 'Scan failed.') + ' ' + text.slice(0, 300);
+			if (scanProgress) { scanProgress.hidden = false; }
+			scanAjax('lrob_cc_scan_targets', { mode: mode }).then(function (json) {
+				if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
+					scanEnd();
+					scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
 					return;
 				}
-				if (!json || !json.success) {
-					var msg = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
-					scanResults.textContent = msg;
-					return;
-				}
-				renderScan(json.data);
-			}).catch(function (err) {
-				scanBtn.disabled = false;
-				scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
-				scanResults.textContent = (A.i18n.scanError || 'Scan failed.') + ' ' + (err && err.message ? err.message : '');
+				scanUrls(json.data.urls, false);
 			});
 		});
 	}

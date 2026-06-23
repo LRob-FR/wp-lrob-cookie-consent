@@ -32,21 +32,42 @@ final class SettingsPage
         add_action('admin_enqueue_scripts', [$this, 'enqueue']);
         add_action('admin_post_lrob_cc_export_log', [$this, 'handle_export']);
         add_action('admin_post_lrob_cc_purge_log', [$this, 'handle_purge']);
-        add_action('wp_ajax_lrob_cc_scan', [$this, 'handle_scan']);
+        add_action('wp_ajax_lrob_cc_scan_targets', [$this, 'handle_scan_targets']);
+        add_action('wp_ajax_lrob_cc_scan_url', [$this, 'handle_scan_url']);
     }
 
-    public function handle_scan(): void
+    public function handle_scan_targets(): void
+    {
+        $this->require_scan_access();
+        $mode = isset($_POST['mode']) && sanitize_key(wp_unslash((string) $_POST['mode'])) === 'deep' ? 'deep' : 'simple';
+        wp_send_json_success(['urls' => Scanner::targets($mode)]);
+    }
+
+    public function handle_scan_url(): void
+    {
+        $this->require_scan_access();
+        $url = isset($_POST['url']) ? esc_url_raw(wp_unslash((string) $_POST['url'])) : '';
+        $insecure = !empty($_POST['insecure']);
+
+        // SSRF guard: only ever scan this site's own URLs.
+        $site_host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+        if ($url === '' || wp_parse_url($url, PHP_URL_HOST) !== $site_host) {
+            wp_send_json_error(['message' => __('Only this site\'s own pages can be scanned.', 'lrob-cookie-consent')], 400);
+        }
+
+        try {
+            wp_send_json_success((new \LRob\CookieConsent\Scanning\LocalScanner())->scan_url($url, $insecure));
+        } catch (\Throwable $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    private function require_scan_access(): void
     {
         if (!current_user_can(LROB_CC_CAPABILITY)) {
             wp_send_json_error(['message' => __('Not allowed.', 'lrob-cookie-consent')], 403);
         }
         check_ajax_referer('lrob_cc_scan', 'nonce');
-        $provider = isset($_POST['provider']) ? sanitize_key(wp_unslash((string) $_POST['provider'])) : 'local';
-        try {
-            wp_send_json_success(Scanner::run($provider));
-        } catch (\Throwable $e) {
-            wp_send_json_error(['message' => $e->getMessage()], 500);
-        }
     }
 
     public function add_menu(): void
@@ -153,6 +174,10 @@ final class SettingsPage
                 'unknown'      => __('review', 'lrob-cookie-consent'),
                 'cookiesSeen'  => __('Cookies set on scanned pages:', 'lrob-cookie-consent'),
                 'scannedUrls'  => __('Scanned:', 'lrob-cookie-consent'),
+                /* translators: %1$d: current page, %2$d: total pages. */
+                'scanProgress' => __('Scanning page %1$d of %2$d…', 'lrob-cookie-consent'),
+                'sslFailed'    => __('Some pages could not be reached due to an SSL certificate error.', 'lrob-cookie-consent'),
+                'sslRetry'     => __('Retry ignoring SSL', 'lrob-cookie-consent'),
             ],
         ]);
     }

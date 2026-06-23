@@ -37,6 +37,13 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
     }
     echo '</div>';
 };
+
+// Reusable hint/callout box.
+$hint = static function (string $text, string $kind = 'info'): void {
+    printf('<p class="lrob-cc-hint lrob-cc-hint-%s">%s</p>', esc_attr($kind), esc_html($text));
+};
+
+$configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_scripts']) && $o['inline_scripts'] !== []);
 ?>
 <div class="wrap lrob-cc-admin">
     <h1><?php esc_html_e('LRob Cookie Consent', 'lrob-cookie-consent'); ?></h1>
@@ -45,13 +52,17 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Consent log cleared.', 'lrob-cookie-consent'); ?></p></div>
     <?php endif; ?>
 
-    <div class="lrob-cc-welcome">
-        <div>
-            <h2><?php esc_html_e('Set up cookie consent in a minute', 'lrob-cookie-consent'); ?></h2>
-            <p><?php esc_html_e('Answer a few quick questions and the wizard configures the banner look, blocking rules and proof of consent for you. You can fine-tune everything in the tabs afterwards.', 'lrob-cookie-consent'); ?></p>
+    <?php if (!$configured) : ?>
+        <div class="lrob-cc-welcome">
+            <div>
+                <h2><?php esc_html_e('Set up cookie consent in a minute', 'lrob-cookie-consent'); ?></h2>
+                <p><?php esc_html_e('Answer a few quick questions and the wizard configures the banner look, blocking rules and proof of consent for you. You can fine-tune everything in the tabs afterwards.', 'lrob-cookie-consent'); ?></p>
+            </div>
+            <button type="button" class="button button-primary button-hero lrob-cc-wizard-open"><?php esc_html_e('Run setup wizard', 'lrob-cookie-consent'); ?></button>
         </div>
-        <button type="button" class="button button-primary button-hero lrob-cc-wizard-open"><?php esc_html_e('Run setup wizard', 'lrob-cookie-consent'); ?></button>
-    </div>
+    <?php else : ?>
+        <p class="lrob-cc-welcome-mini"><button type="button" class="button lrob-cc-wizard-open"><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Setup wizard', 'lrob-cookie-consent'); ?></button></p>
+    <?php endif; ?>
 
     <h2 class="nav-tab-wrapper lrob-cc-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
@@ -252,10 +263,17 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
             <h3><?php esc_html_e('What to block', 'lrob-cookie-consent'); ?></h3>
 
             <div class="lrob-cc-scan">
-                <p class="description"><?php esc_html_e('Scan your public pages for third-party scripts and embeds, then add the ones you want to block. The scan runs as an anonymous visitor, so admin/member-only cookies are never touched. It cannot see trackers injected later by JavaScript (e.g. via Tag Manager) — add those manually or via the deep scan.', 'lrob-cookie-consent'); ?></p>
-                <p>
-                    <button type="button" class="button button-secondary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
-                </p>
+                <?php $hint(__('Scanning requests your own public pages, one at a time, to find third-party scripts and embeds. It runs as an anonymous visitor (admin/member-only cookies are never touched) and cannot see trackers injected later by JavaScript, e.g. via Tag Manager.', 'lrob-cookie-consent')); ?>
+
+                <p class="lrob-cc-field-label"><?php esc_html_e('Scan depth', 'lrob-cookie-consent'); ?></p>
+                <div class="lrob-cc-segmented" role="radiogroup">
+                    <label class="lrob-cc-seg is-active"><input type="radio" name="lrob-cc-scan-mode" value="simple" checked /><span><?php esc_html_e('Simple — home + a few pages', 'lrob-cookie-consent'); ?></span></label>
+                    <label class="lrob-cc-seg"><input type="radio" name="lrob-cc-scan-mode" value="deep" /><span><?php esc_html_e('Deep — more pages', 'lrob-cookie-consent'); ?></span></label>
+                </div>
+                <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-deep-warn" hidden><?php esc_html_e('Deep scan requests many pages from your own server, one after another. On a heavy or poorly-optimised site this adds load — use it sparingly.', 'lrob-cookie-consent'); ?></p>
+
+                <p><button type="button" class="button button-secondary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button></p>
+                <div id="lrob-cc-scan-progress" hidden><progress id="lrob-cc-scan-bar" max="100" value="0"></progress> <span id="lrob-cc-scan-progress-text"></span></div>
                 <div id="lrob-cc-scan-results"></div>
             </div>
 
@@ -322,6 +340,8 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
                 <textarea rows="6" class="large-text code" id="lrob-cc-block-rules" name="<?php echo $name('block_rules'); ?>"><?php echo esc_textarea((string) $o['block_rules']); ?></textarea>
                 <p class="description"><?php esc_html_e('One rule per line: pattern | category | service name. Category is one of: preferences, statistics, marketing.', 'lrob-cookie-consent'); ?></p>
             </div>
+
+            <?php $hint(__('Tip: some tools have a privacy-friendly mode and may not need blocking — Matomo can run cookieless, and Cloudflare Turnstile / hCaptcha are usually cookieless. Blocking a CAPTCHA can break protected forms, so test after adding one.', 'lrob-cookie-consent')); ?>
 
             <h3><?php esc_html_e('Inline scripts', 'lrob-cookie-consent'); ?></h3>
             <p class="description"><?php esc_html_e('Paste a tracking snippet (e.g. GA4, Matomo) and pick a category. It is injected inert and only runs after consent — no theme editing.', 'lrob-cookie-consent'); ?></p>

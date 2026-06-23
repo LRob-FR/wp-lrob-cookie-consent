@@ -37,6 +37,46 @@
 	margin-top: 12px;
 }
 
+.lrob-cc-welcome-mini {
+	margin: 12px 0;
+}
+
+.lrob-cc-welcome-mini .dashicons {
+	vertical-align: text-bottom;
+}
+
+/* Hint / callout boxes. */
+.lrob-cc-hint {
+	border-left: 4px solid #72aee6;
+	background: #f0f6fc;
+	padding: 10px 14px;
+	margin: 10px 0;
+	border-radius: 0 4px 4px 0;
+	max-width: 820px;
+}
+
+.lrob-cc-hint-warning {
+	border-left-color: #dba617;
+	background: #fcf9e8;
+}
+
+.lrob-cc-hint[hidden] {
+	display: none;
+}
+
+/* Scan progress. */
+#lrob-cc-scan-progress {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 8px 0;
+}
+
+#lrob-cc-scan-bar {
+	width: 240px;
+	height: 16px;
+}
+
 .lrob-cc-banner-layout {
 	display: flex;
 	flex-wrap: wrap;

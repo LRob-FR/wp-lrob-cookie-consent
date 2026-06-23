@@ -42,7 +42,11 @@ final class SettingsPage
         }
         check_ajax_referer('lrob_cc_scan', 'nonce');
         $provider = isset($_POST['provider']) ? sanitize_key(wp_unslash((string) $_POST['provider'])) : 'local';
-        wp_send_json_success(Scanner::run($provider));
+        try {
+            wp_send_json_success(Scanner::run($provider));
+        } catch (\Throwable $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function add_menu(): void
@@ -91,6 +95,33 @@ final class SettingsPage
             'texts'      => Presets::text(),
             'services'   => Services::common(),
             'wizard'     => Services::wizard(),
+            'firstRun'   => trim((string) Options::get('block_rules')) === '',
+            'wizardSettings' => [
+                'tone' => [
+                    'question' => __('Pick a tone for your banner text', 'lrob-cookie-consent'),
+                    'hint'     => __('You can fine-tune the wording afterwards.', 'lrob-cookie-consent'),
+                ],
+                'look' => [
+                    'question'  => __('Choose how the banner looks', 'lrob-cookie-consent'),
+                    'colors'    => [
+                        ['v' => 'auto', 'l' => __('Auto (follow theme)', 'lrob-cookie-consent')],
+                        ['v' => 'light', 'l' => __('Light', 'lrob-cookie-consent')],
+                        ['v' => 'dark', 'l' => __('Dark', 'lrob-cookie-consent')],
+                    ],
+                    'positions' => [
+                        ['v' => 'bottom', 'l' => __('Bottom', 'lrob-cookie-consent')],
+                        ['v' => 'bottom-right', 'l' => __('Bottom right', 'lrob-cookie-consent')],
+                        ['v' => 'bottom-left', 'l' => __('Bottom left', 'lrob-cookie-consent')],
+                        ['v' => 'center', 'l' => __('Center', 'lrob-cookie-consent')],
+                    ],
+                    'colorsLabel'   => __('Colors', 'lrob-cookie-consent'),
+                    'positionLabel' => __('Position', 'lrob-cookie-consent'),
+                ],
+                'logging' => [
+                    'question' => __('Keep a record of consent decisions?', 'lrob-cookie-consent'),
+                    'hint'     => __('Recommended for GDPR accountability. Stored locally, IP anonymised.', 'lrob-cookie-consent'),
+                ],
+            ],
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'scanNonce'  => wp_create_nonce('lrob_cc_scan'),
             'i18n'       => [
@@ -106,8 +137,11 @@ final class SettingsPage
                 'wizNo'        => __('No / skip', 'lrob-cookie-consent'),
                 'wizBack'      => __('Back', 'lrob-cookie-consent'),
                 'wizNext'      => __('Next', 'lrob-cookie-consent'),
-                'wizFinish'    => __('Finish & add rules', 'lrob-cookie-consent'),
+                'wizFinish'    => __('Finish & save', 'lrob-cookie-consent'),
                 'wizClose'     => __('Close', 'lrob-cookie-consent'),
+                'wizYesKeep'   => __('Yes, keep proof', 'lrob-cookie-consent'),
+                'wizNoKeep'    => __('No', 'lrob-cookie-consent'),
+                'wizKeepCurrent' => __('Keep current', 'lrob-cookie-consent'),
                 /* translators: %1$d: current step number, %2$d: total steps. */
                 'wizStep'      => __('Step %1$d of %2$d', 'lrob-cookie-consent'),
                 'scanning'     => __('Scanning…', 'lrob-cookie-consent'),
@@ -183,7 +217,8 @@ final class SettingsPage
             }
         }
 
-        $out['position'] = in_array($in['position'] ?? '', ['bottom', 'center', 'bottom-left', 'bottom-right'], true) ? $in['position'] : 'bottom';
+        $positions = ['top-left', 'top', 'top-right', 'center', 'bottom-left', 'bottom', 'bottom-right'];
+        $out['position'] = in_array($in['position'] ?? '', $positions, true) ? $in['position'] : 'bottom';
         $out['theme'] = in_array($in['theme'] ?? '', ['auto', 'light', 'dark', 'custom'], true) ? $in['theme'] : 'auto';
         $out['popup_size'] = in_array($in['popup_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['popup_size'] : 'small';
         $out['density'] = in_array($in['density'] ?? '', ['compact', 'cozy', 'comfortable'], true) ? $in['density'] : 'cozy';
@@ -203,6 +238,7 @@ final class SettingsPage
         $out['text_deny'] = sanitize_text_field((string) ($in['text_deny'] ?? ''));
         $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
         $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
+        $out['revisit_text'] = sanitize_text_field((string) ($in['revisit_text'] ?? ''));
 
         // Rule/category changes alter what's blocked → drop the compiled cache.
         Rules::flush();

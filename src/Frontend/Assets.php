@@ -68,6 +68,8 @@ final class Assets
             'respectDnt'    => (int) Options::get('respect_dnt') === 1,
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,
             'revisitButton' => (int) Options::get('revisit_button') === 1,
+            'revisitText'   => (string) Options::get('revisit_text'),
+            'position'      => (string) Options::get('position'),
             'rest'          => [
                 'url'        => esc_url_raw(rest_url('lrob-cc/v1/log')),
                 'nonce'      => wp_create_nonce('wp_rest'),

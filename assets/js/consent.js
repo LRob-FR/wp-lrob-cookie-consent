@@ -227,13 +227,22 @@
 		if (save) { save.hidden = false; }
 	}
 
+	function revisitCorner() {
+		var pos = D.position || 'bottom';
+		var v = pos.indexOf('top') === 0 ? 'top' : 'bottom';
+		var h = pos.indexOf('left') !== -1 ? 'left' : 'right';
+		return v + '-' + h;
+	}
+
 	function ensureRevisitButton() {
-		if (!D.revisitButton || document.getElementById('lrob-cc-revisit')) { return; }
+		if (!D.revisitButton) { return; }
+		var existing = document.getElementById('lrob-cc-revisit');
+		if (existing) { existing.hidden = false; return; } // unhide (was hidden while banner open)
 		var b = document.createElement('button');
 		b.id = 'lrob-cc-revisit';
 		b.type = 'button';
-		b.className = 'lrob-cc-revisit';
-		b.textContent = (D.i18n && D.i18n.manageCookies) || 'Manage cookies';
+		b.className = 'lrob-cc-revisit lrob-cc-revisit-' + revisitCorner();
+		b.textContent = D.revisitText || (D.i18n && D.i18n.manageCookies) || 'Manage cookies';
 		b.addEventListener('click', function () { showBanner(); });
 		document.body.appendChild(b);
 	}

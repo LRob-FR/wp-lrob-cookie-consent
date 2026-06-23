@@ -4,6 +4,39 @@
 	margin-top: 16px;
 }
 
+/* Home-screen get-started card. */
+.lrob-cc-welcome {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #2271b1;
+	border-radius: 6px;
+	padding: 16px 20px;
+	margin: 16px 0;
+}
+
+.lrob-cc-welcome h2 {
+	margin: 0 0 4px;
+}
+
+.lrob-cc-welcome p {
+	margin: 0;
+	max-width: 64ch;
+}
+
+.lrob-cc-wiz-radios {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.lrob-cc-wiz-screen {
+	margin-top: 12px;
+}
+
 .lrob-cc-banner-layout {
 	display: flex;
 	flex-wrap: wrap;

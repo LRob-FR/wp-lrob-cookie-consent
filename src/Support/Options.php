@@ -54,6 +54,7 @@ final class Options
             'show_save'          => 1,          // Save-preferences button
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
+            'revisit_text'       => '',         // label (empty → translated "Manage cookies")
 
             // Custom-theme colors (applied only when theme = custom)
             'color_bg'             => '#ffffff',

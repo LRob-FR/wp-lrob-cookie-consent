@@ -20,14 +20,22 @@
 		return els[0].value;
 	}
 
-	// --- Tabs ------------------------------------------------------------
+	// --- Tabs (remembered across the Settings-API save redirect) --------
+	var TAB_KEY = 'lrobCcActiveTab';
+
+	function activateTab(tab) {
+		if (!tab || !document.querySelector('.lrob-cc-panel[data-panel="' + tab + '"]')) { tab = 'general'; }
+		$('.lrob-cc-tabs .nav-tab').removeClass('nav-tab-active');
+		$('.lrob-cc-tabs .nav-tab[data-tab="' + tab + '"]').addClass('nav-tab-active');
+		$('.lrob-cc-panel').attr('hidden', true);
+		$('.lrob-cc-panel[data-panel="' + tab + '"]').removeAttr('hidden');
+	}
+
 	$('.lrob-cc-tabs .nav-tab').on('click', function (e) {
 		e.preventDefault();
 		var tab = this.getAttribute('data-tab');
-		$('.lrob-cc-tabs .nav-tab').removeClass('nav-tab-active');
-		$(this).addClass('nav-tab-active');
-		$('.lrob-cc-panel').attr('hidden', true);
-		$('.lrob-cc-panel[data-panel="' + tab + '"]').removeAttr('hidden');
+		try { window.localStorage.setItem(TAB_KEY, tab); } catch (err) {}
+		activateTab(tab);
 	});
 
 	// --- Segmented controls: reflect active state ------------------------
@@ -302,15 +310,24 @@
 				credentials: 'same-origin',
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: body
-			}).then(function (r) { return r.json(); }).then(function (json) {
+			}).then(function (r) { return r.text(); }).then(function (text) {
 				scanBtn.disabled = false;
 				scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
-				if (!json || !json.success) { scanResults.textContent = A.i18n.scanError || 'Scan failed.'; return; }
+				var json;
+				try { json = JSON.parse(text); } catch (e) {
+					scanResults.textContent = (A.i18n.scanError || 'Scan failed.') + ' ' + text.slice(0, 300);
+					return;
+				}
+				if (!json || !json.success) {
+					var msg = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
+					scanResults.textContent = msg;
+					return;
+				}
 				renderScan(json.data);
-			}).catch(function () {
+			}).catch(function (err) {
 				scanBtn.disabled = false;
 				scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
-				scanResults.textContent = A.i18n.scanError || 'Scan failed.';
+				scanResults.textContent = (A.i18n.scanError || 'Scan failed.') + ' ' + (err && err.message ? err.message : '');
 			});
 		});
 	}
@@ -347,24 +364,126 @@
 		this.hidden = true;
 	});
 
-	// --- Guided wizard (question flow) ----------------------------------
-	$('#lrob-cc-wizard-open').on('click', openWizard);
+	// --- Guided setup wizard (multi-section) ----------------------------
+	$(document).on('click', '.lrob-cc-wizard-open', openWizard);
+
+	function radioGroup(field, choices, current) {
+		var html = '<div class="lrob-cc-wiz-radios">';
+		choices.forEach(function (c) {
+			html += '<label class="lrob-cc-check"><input type="radio" name="wiz-' + field + '" value="' +
+				escapeHtml(c.v) + '"' + (c.v === current ? ' checked' : '') + '/> ' + escapeHtml(c.l) + '</label>';
+		});
+		return html + '</div>';
+	}
 
 	function openWizard() {
-		var steps = A.wizard || [];
-		if (!steps.length) { return; }
-		var hasExisting = rulesRows && rulesRows.querySelectorAll('.lrob-cc-rule-row').length > 0;
+		var WS = A.wizardSettings || {};
+		var serviceSel = {};
 		var mode = 'add';
-		var selected = {};
-		var stepIndex = hasExisting ? -1 : 0;
+		var hasExisting = rulesRows && rulesRows.querySelectorAll('.lrob-cc-rule-row').length > 0;
+		var screens = [];
 
+		// 1. Existing-rules choice.
+		if (hasExisting) {
+			screens.push({
+				title: A.i18n.wizExisting || 'You already have rules.',
+				render: function (b) { b.innerHTML = radioGroup('mode', [
+					{ v: 'add', l: A.i18n.wizAddTo || 'Add to current' },
+					{ v: 'fresh', l: A.i18n.wizFresh || 'Clear and start fresh' }
+				], mode); bindRadio(b, 'mode', function (v) { mode = v; }); },
+				apply: function () {}
+			});
+		}
+
+		// 2. Tone (text preset).
+		if (WS.tone && (A.texts || []).length) {
+			var toneChoices = [{ v: '', l: A.i18n.wizKeepCurrent || 'Keep current' }].concat((A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }));
+			var tone = { choice: '' };
+			screens.push({
+				title: WS.tone.question, hint: WS.tone.hint,
+				render: function (b) { b.innerHTML = radioGroup('tone', toneChoices, tone.choice); bindRadio(b, 'tone', function (v) { tone.choice = v; }); },
+				apply: function () {
+					if (!tone.choice) { return; }
+					var p = (A.texts || []).filter(function (x) { return x.id === tone.choice; })[0];
+					if (!p) { return; }
+					['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } });
+				}
+			});
+		}
+
+		// 3. Look (colors + position).
+		if (WS.look) {
+			var look = { theme: '', position: '' };
+			screens.push({
+				title: WS.look.question,
+				render: function (b) {
+					b.innerHTML = '<p class="lrob-cc-field-label">' + escapeHtml(WS.look.colorsLabel || 'Colors') + '</p>' +
+						radioGroup('theme', WS.look.colors || [], look.theme) +
+						'<p class="lrob-cc-field-label">' + escapeHtml(WS.look.positionLabel || 'Position') + '</p>' +
+						radioGroup('position', WS.look.positions || [], look.position);
+					bindRadio(b, 'theme', function (v) { look.theme = v; });
+					bindRadio(b, 'position', function (v) { look.position = v; });
+				},
+				apply: function () {
+					if (look.theme) { setField('theme', look.theme); }
+					if (look.position) { setField('position', look.position); }
+				}
+			});
+		}
+
+		// 4. Logging.
+		if (WS.logging) {
+			var log = { choice: '' };
+			screens.push({
+				title: WS.logging.question, hint: WS.logging.hint,
+				render: function (b) { b.innerHTML = radioGroup('log', [
+					{ v: '', l: A.i18n.wizKeepCurrent || 'Keep current' },
+					{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
+					{ v: '0', l: A.i18n.wizNoKeep || 'No' }
+				], log.choice); bindRadio(b, 'log', function (v) { log.choice = v; }); },
+				apply: function () { if (log.choice === '1') { setField('log_consent', true); } else if (log.choice === '0') { setField('log_consent', false); } }
+			});
+		}
+
+		// 5. Service questions (blocking).
+		(A.wizard || []).forEach(function (step) {
+			screens.push({
+				title: step.question, hint: step.hint,
+				render: function (b) {
+					var html = '<div class="lrob-cc-wiz-options">';
+					(step.services || []).forEach(function (svc) {
+						html += '<label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wiz-svc" data-pattern="' +
+							escapeHtml(svc.pattern) + '"' + (serviceSel[svc.pattern] ? ' checked' : '') + '/> ' + escapeHtml(svc.label) + '</label>';
+					});
+					b.innerHTML = html + '</div>';
+					b.querySelectorAll('.lrob-cc-wiz-svc').forEach(function (cb) {
+						cb.addEventListener('change', function () {
+							var p = cb.getAttribute('data-pattern');
+							var svc = (step.services || []).filter(function (s) { return s.pattern === p; })[0];
+							if (cb.checked) { serviceSel[p] = svc; } else { delete serviceSel[p]; }
+						});
+					});
+				},
+				apply: function () {}
+			});
+		});
+
+		if (!screens.length) { return; }
+
+		var idx = 0;
 		var overlay = document.createElement('div');
 		overlay.className = 'lrob-cc-modal-overlay';
 		overlay.innerHTML = '<div class="lrob-cc-modal" role="dialog" aria-modal="true"><div class="lrob-cc-modal-body"></div><div class="lrob-cc-modal-foot"></div></div>';
 		document.body.appendChild(overlay);
 		var body = overlay.querySelector('.lrob-cc-modal-body');
 		var foot = overlay.querySelector('.lrob-cc-modal-foot');
+		try { window.localStorage.setItem('lrobCcWizardSeen', '1'); } catch (e) {}
 
+		function bindRadio(container, field, cb) {
+			container.querySelectorAll('input[name="wiz-' + field + '"]').forEach(function (r) {
+				r.addEventListener('change', function () { if (r.checked) { cb(r.value); } });
+			});
+		}
 		function close() { if (overlay.parentNode) { document.body.removeChild(overlay); } }
 		function btn(label, cls) {
 			var b = document.createElement('button');
@@ -374,73 +493,53 @@
 			return b;
 		}
 
-		function renderIntro() {
-			body.innerHTML = '<p>' + escapeHtml(A.i18n.wizExisting || '') + '</p>';
-			foot.innerHTML = '';
-			var fresh = btn(A.i18n.wizFresh || 'Start fresh');
-			fresh.onclick = function () { mode = 'fresh'; stepIndex = 0; render(); };
-			var add = btn(A.i18n.wizAddTo || 'Add to current', 'button-primary');
-			add.onclick = function () { mode = 'add'; stepIndex = 0; render(); };
-			foot.appendChild(fresh);
-			foot.appendChild(add);
-		}
-
-		function renderStep() {
-			var step = steps[stepIndex];
-			var label = (A.i18n.wizStep || 'Step %1$d of %2$d').replace('%1$d', stepIndex + 1).replace('%2$d', steps.length);
-			var html = '<p class="lrob-cc-wiz-step">' + escapeHtml(label) + '</p><h2>' + escapeHtml(step.question) + '</h2>';
-			if (step.hint) { html += '<p class="description">' + escapeHtml(step.hint) + '</p>'; }
-			html += '<div class="lrob-cc-wiz-options">';
-			(step.services || []).forEach(function (svc) {
-				html += '<label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wiz-svc" data-pattern="' +
-					escapeHtml(svc.pattern) + '"' + (selected[svc.pattern] ? ' checked' : '') + '/> ' + escapeHtml(svc.label) + '</label>';
-			});
-			html += '</div>';
-			body.innerHTML = html;
-
-			body.querySelectorAll('.lrob-cc-wiz-svc').forEach(function (cb) {
-				cb.addEventListener('change', function () {
-					var p = cb.getAttribute('data-pattern');
-					var svc = (step.services || []).filter(function (s) { return s.pattern === p; })[0];
-					if (cb.checked) { selected[p] = svc; } else { delete selected[p]; }
-				});
-			});
+		function render() {
+			var screen = screens[idx];
+			var label = (A.i18n.wizStep || 'Step %1$d of %2$d').replace('%1$d', idx + 1).replace('%2$d', screens.length);
+			body.innerHTML = '<p class="lrob-cc-wiz-step">' + escapeHtml(label) + '</p><h2>' + escapeHtml(screen.title) + '</h2>' +
+				(screen.hint ? '<p class="description">' + escapeHtml(screen.hint) + '</p>' : '') + '<div class="lrob-cc-wiz-screen"></div>';
+			screen.render(body.querySelector('.lrob-cc-wiz-screen'));
 
 			foot.innerHTML = '';
 			var cancel = btn(A.i18n.wizClose || 'Close');
 			cancel.onclick = close;
 			var back = btn(A.i18n.wizBack || 'Back');
-			back.disabled = (stepIndex === 0 && !hasExisting);
-			back.onclick = function () {
-				if (stepIndex === 0 && hasExisting) { stepIndex = -1; } else if (stepIndex > 0) { stepIndex--; }
-				render();
-			};
-			var isLast = stepIndex === steps.length - 1;
-			var next = btn(isLast ? (A.i18n.wizFinish || 'Finish') : (A.i18n.wizNext || 'Next'), 'button-primary');
-			next.onclick = function () { if (isLast) { finish(); } else { stepIndex++; render(); } };
+			back.disabled = idx === 0;
+			back.onclick = function () { if (idx > 0) { idx--; render(); } };
+			var isLast = idx === screens.length - 1;
+			var next = btn(isLast ? (A.i18n.wizFinish || 'Finish & save') : (A.i18n.wizNext || 'Next'), 'button-primary');
+			next.onclick = function () { if (isLast) { finish(); } else { idx++; render(); } };
 			foot.appendChild(cancel);
 			foot.appendChild(back);
 			foot.appendChild(next);
 		}
-
-		function render() { if (stepIndex < 0) { renderIntro(); } else { renderStep(); } }
 
 		function finish() {
 			if (mode === 'fresh' && rulesRows) {
 				rulesRows.innerHTML = '';
 				if (rulesTextarea) { rulesTextarea.value = ''; }
 			}
-			Object.keys(selected).forEach(function (p) {
-				var s = selected[p];
+			screens.forEach(function (s) { if (s.apply) { s.apply(); } });
+			Object.keys(serviceSel).forEach(function (p) {
+				var s = serviceSel[p];
 				addRuleRow(s.pattern, s.category, s.service);
 			});
 			serializeRules();
-			toStructuredMode();
+			var form = document.querySelector('form[action="options.php"]');
 			close();
+			if (form) { form.submit(); } else { toStructuredMode(); }
 		}
 
 		render();
 	}
+
+	// Auto-open on a fresh install (no rules yet), once.
+	(function () {
+		if (!A.firstRun) { return; }
+		var seen = false;
+		try { seen = window.localStorage.getItem('lrobCcWizardSeen') === '1'; } catch (e) {}
+		if (!seen) { openWizard(); }
+	})();
 
 	// --- Inline-script repeater -----------------------------------------
 	var wrap = document.getElementById('lrob-cc-inline-scripts');
@@ -493,12 +592,12 @@
 		});
 	});
 
-	// --- Deep-link to a tab via #hash ------------------------------------
-	if (window.location.hash) {
-		var tab = window.location.hash.replace('#', '');
-		var link = document.querySelector('.lrob-cc-tabs .nav-tab[data-tab="' + tab + '"]');
-		if (link) { link.click(); }
+	// --- Restore tab: #hash → last saved → general -----------------------
+	var initialTab = window.location.hash ? window.location.hash.replace('#', '') : '';
+	if (!initialTab) {
+		try { initialTab = window.localStorage.getItem(TAB_KEY) || ''; } catch (e) {}
 	}
+	if (initialTab) { activateTab(initialTab); }
 
 	update();
 })(jQuery);

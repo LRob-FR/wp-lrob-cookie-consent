@@ -62,6 +62,18 @@
 	margin: 16px;
 }
 
+#lrob-cc-banner.lrob-cc-pos-top {
+	left: 0;
+	right: 0;
+	top: 0;
+	display: flex;
+	justify-content: center;
+}
+
+#lrob-cc-banner.lrob-cc-pos-top .lrob-cc-inner {
+	margin: 16px;
+}
+
 #lrob-cc-banner.lrob-cc-pos-bottom-left {
 	left: 16px;
 	bottom: 16px;
@@ -70,6 +82,16 @@
 #lrob-cc-banner.lrob-cc-pos-bottom-right {
 	right: 16px;
 	bottom: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-top-left {
+	left: 16px;
+	top: 16px;
+}
+
+#lrob-cc-banner.lrob-cc-pos-top-right {
+	right: 16px;
+	top: 16px;
 }
 
 #lrob-cc-banner.lrob-cc-pos-center {
@@ -271,18 +293,23 @@
    scoped --_* vars; resolve straight off theme tokens with literal fallbacks. */
 .lrob-cc-revisit {
 	position: fixed;
-	left: 16px;
-	bottom: 16px;
 	z-index: 99998;
+	font-size: 12px;
 	font-weight: 600;
+	line-height: 1;
 	border: 1px solid rgba(0, 0, 0, 0.15);
-	border-radius: 8px;
-	padding: 8px 14px;
+	border-radius: 999px;
+	padding: 7px 12px;
 	cursor: pointer;
 	background: var(--wp--preset--color--base, #ffffff);
 	color: var(--wp--preset--color--contrast, #1a1a1a);
-	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
+
+.lrob-cc-revisit-bottom-left { bottom: 14px; left: 14px; }
+.lrob-cc-revisit-bottom-right { bottom: 14px; right: 14px; }
+.lrob-cc-revisit-top-left { top: 14px; left: 14px; }
+.lrob-cc-revisit-top-right { top: 14px; right: 14px; }
 
 .lrob-cc-revisit[hidden] {
 	display: none;

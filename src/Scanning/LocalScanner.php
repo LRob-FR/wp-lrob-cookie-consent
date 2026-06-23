@@ -37,8 +37,9 @@ final class LocalScanner implements ScanProvider
 
         foreach ($urls as $url) {
             $response = wp_remote_get($url, [
-                'timeout'     => 8,
+                'timeout'     => 5,
                 'redirection' => 3,
+                'sslverify'   => false,
                 'cookies'     => [],
                 'user-agent'  => 'LRobCookieConsent-Scan/1.0 (+' . home_url() . ')',
             ]);
@@ -46,9 +47,13 @@ final class LocalScanner implements ScanProvider
                 continue;
             }
 
-            foreach ((array) wp_remote_retrieve_header($response, 'set-cookie') as $cookie_header) {
-                $cookie_header = is_string($cookie_header) ? $cookie_header : '';
-                $cookie_name = trim(strtok($cookie_header, '='));
+            $set_cookie = wp_remote_retrieve_header($response, 'set-cookie');
+            foreach ((is_array($set_cookie) ? $set_cookie : [$set_cookie]) as $cookie_header) {
+                if (!is_string($cookie_header) || $cookie_header === '') {
+                    continue;
+                }
+                $parts = explode('=', $cookie_header, 2);
+                $cookie_name = trim($parts[0]);
                 if ($cookie_name !== '' && !in_array($cookie_name, $cookies, true)) {
                     $cookies[] = $cookie_name;
                 }

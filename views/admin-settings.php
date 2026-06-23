@@ -45,6 +45,14 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Consent log cleared.', 'lrob-cookie-consent'); ?></p></div>
     <?php endif; ?>
 
+    <div class="lrob-cc-welcome">
+        <div>
+            <h2><?php esc_html_e('Set up cookie consent in a minute', 'lrob-cookie-consent'); ?></h2>
+            <p><?php esc_html_e('Answer a few quick questions and the wizard configures the banner look, blocking rules and proof of consent for you. You can fine-tune everything in the tabs afterwards.', 'lrob-cookie-consent'); ?></p>
+        </div>
+        <button type="button" class="button button-primary button-hero lrob-cc-wizard-open"><?php esc_html_e('Run setup wizard', 'lrob-cookie-consent'); ?></button>
+    </div>
+
     <h2 class="nav-tab-wrapper lrob-cc-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
         <a href="#banner" class="nav-tab" data-tab="banner"><?php esc_html_e('Banner', 'lrob-cookie-consent'); ?></a>
@@ -137,9 +145,22 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
                         <label class="lrob-cc-check"><input type="checkbox" data-field="categories_collapsed" name="<?php echo $name('categories_collapsed'); ?>" value="1" <?php echo $checked('categories_collapsed'); ?> /> <?php esc_html_e('Hide category options behind a “Customize” button (simpler banner)', 'lrob-cookie-consent'); ?></label>
                         <label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('revisit_button'); ?>" value="1" <?php echo $checked('revisit_button'); ?> /> <?php esc_html_e('Show a floating “Manage cookies” button after a decision', 'lrob-cookie-consent'); ?></label>
                     </p>
+                    <p>
+                        <label><?php esc_html_e('“Manage cookies” button label', 'lrob-cookie-consent'); ?>
+                            <input type="text" data-field="revisit_text" name="<?php echo $name('revisit_text'); ?>" value="<?php echo esc_attr((string) $o['revisit_text']); ?>" placeholder="<?php esc_attr_e('Manage cookies', 'lrob-cookie-consent'); ?>" />
+                        </label>
+                    </p>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Position', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('position', ['bottom' => __('Bottom', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'bottom-left' => __('Bottom left', 'lrob-cookie-consent'), 'bottom-right' => __('Bottom right', 'lrob-cookie-consent')]); ?>
+                    <?php $seg('position', [
+                        'top-left' => __('Top left', 'lrob-cookie-consent'),
+                        'top' => __('Top', 'lrob-cookie-consent'),
+                        'top-right' => __('Top right', 'lrob-cookie-consent'),
+                        'center' => __('Center', 'lrob-cookie-consent'),
+                        'bottom-left' => __('Bottom left', 'lrob-cookie-consent'),
+                        'bottom' => __('Bottom', 'lrob-cookie-consent'),
+                        'bottom-right' => __('Bottom right', 'lrob-cookie-consent'),
+                    ]); ?>
 
                     <h3><?php esc_html_e('Appearance', 'lrob-cookie-consent'); ?></h3>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Colors', 'lrob-cookie-consent'); ?></p>
@@ -239,7 +260,7 @@ $seg = static function (string $key, array $choices) use ($o, $option, $name): v
             </div>
 
             <p>
-                <button type="button" class="button" id="lrob-cc-wizard-open"><?php esc_html_e('Guided setup wizard', 'lrob-cookie-consent'); ?></button>
+                <button type="button" class="button lrob-cc-wizard-open"><?php esc_html_e('Guided setup wizard', 'lrob-cookie-consent'); ?></button>
                 <span class="description"><?php esc_html_e('Answer a few quick questions to generate rules.', 'lrob-cookie-consent'); ?></span>
             </p>
 

@@ -37,12 +37,17 @@ final class Scanner
         ];
     }
 
-    /** Home + a handful of recent published posts/pages. @return list<string> */
+    /**
+     * Home + a few recent published posts/pages. Kept small (≤4 × short timeout)
+     * so the whole scan finishes well inside PHP's max_execution_time.
+     *
+     * @return list<string>
+     */
     private static function sample_urls(): array
     {
         $urls = [home_url('/')];
         $posts = get_posts([
-            'numberposts' => 5,
+            'numberposts' => 3,
             'post_type'   => ['post', 'page'],
             'post_status' => 'publish',
             'orderby'     => 'modified',
@@ -54,6 +59,6 @@ final class Scanner
                 $urls[] = $link;
             }
         }
-        return array_values(array_slice(array_unique($urls), 0, 6));
+        return array_values(array_slice(array_unique($urls), 0, 4));
     }
 }

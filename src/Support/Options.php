@@ -28,6 +28,7 @@ final class Options
             // Blocking engine
             'block_method'       => 'full',     // 'full' (page scan) | 'enqueued'
             'block_iframes'      => 1,          // off = GDPR risk (warned in UI)
+            'categories'         => [],         // optional category defs [{slug,label,desc}]; empty = built-in defaults
             'block_rules'        => '',         // one per line: pattern | category | service
             'rules_mode'         => 'structured', // structured | raw (admin editor preference)
             'inline_scripts'     => [],         // [ ['code' => '', 'category' => ''], ... ]

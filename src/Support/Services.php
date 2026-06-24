@@ -25,12 +25,14 @@ final class Services
             ['label' => 'YouTube embeds', 'pattern' => 'youtube.com/embed', 'category' => 'marketing', 'service' => 'YouTube'],
             ['label' => 'Vimeo embeds', 'pattern' => 'player.vimeo.com', 'category' => 'marketing', 'service' => 'Vimeo'],
             ['label' => 'Google Maps', 'pattern' => 'maps.google.com', 'category' => 'preferences', 'service' => 'Google Maps'],
+            ['label' => 'Gravatar', 'pattern' => 'gravatar.com', 'category' => 'preferences', 'service' => 'Gravatar'],
             ['label' => 'LinkedIn Insight', 'pattern' => 'snap.licdn.com', 'category' => 'marketing', 'service' => 'LinkedIn'],
-            // CAPTCHAs. Turnstile/hCaptcha are privacy-friendly (often cookieless);
-            // reCAPTCHA loads Google. Blocking a CAPTCHA can break protected forms.
-            ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'preferences', 'service' => 'Cloudflare Turnstile'],
-            ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'preferences', 'service' => 'hCaptcha'],
-            ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'marketing', 'service' => 'Google reCAPTCHA'],
+            // CAPTCHAs / security → the "security" category. Turnstile/hCaptcha are
+            // privacy-friendly (often cookieless); reCAPTCHA loads Google. Blocking a
+            // CAPTCHA can break protected forms.
+            ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'security', 'service' => 'Cloudflare Turnstile'],
+            ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'security', 'service' => 'hCaptcha'],
+            ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'security', 'service' => 'Google reCAPTCHA'],
         ];
         return apply_filters('lrob_cc_common_services', $services);
     }

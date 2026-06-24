@@ -64,7 +64,7 @@ final class Assets
             'cookieDays'    => (int) Options::get('cookie_days'),
             'version'       => Rules::version(),
             'categories'    => Categories::all(),
-            'optional'      => Categories::OPTIONAL,
+            'optional'      => Categories::optional(),
             'respectDnt'    => (int) Options::get('respect_dnt') === 1,
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,
             'revisitButton' => (int) Options::get('revisit_button') === 1,

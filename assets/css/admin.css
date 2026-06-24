@@ -257,6 +257,31 @@
 	flex: none;
 }
 
+/* Category rows. */
+.lrob-cc-cat-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.lrob-cc-cat-row.is-functional {
+	gap: 10px;
+	padding: 6px 0;
+}
+
+.lrob-cc-cat-slug {
+	flex: 0 0 130px;
+}
+
+.lrob-cc-cat-desc {
+	flex: 1 1 280px;
+}
+
+.lrob-cc-cat-remove {
+	flex: none;
+}
+
 /* Scan + wizard. */
 .lrob-cc-scan {
 	margin-bottom: 16px;

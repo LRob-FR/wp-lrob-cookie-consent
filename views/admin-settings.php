@@ -258,6 +258,25 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
         <!-- COOKIES -->
         <section class="lrob-cc-panel" data-panel="cookies" hidden>
+            <h3><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?></h3>
+            <?php $hint(__('Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed — they cannot be blocked without breaking the site. Below are the optional categories visitors can accept or refuse. Leave a label blank to use the built-in default.', 'lrob-cookie-consent')); ?>
+            <div id="lrob-cc-cats" data-name="<?php echo esc_attr($option); ?>">
+                <div class="lrob-cc-cat-row is-functional">
+                    <strong><?php echo esc_html($labels['functional']['title']); ?></strong>
+                    <span class="description"><?php esc_html_e('Always allowed (cannot be disabled)', 'lrob-cookie-consent'); ?></span>
+                </div>
+                <?php foreach ($category_rows as $i => $c) : ?>
+                    <div class="lrob-cc-cat-row">
+                        <input type="text" class="lrob-cc-cat-slug" name="<?php echo esc_attr($option); ?>[categories][<?php echo (int) $i; ?>][slug]" value="<?php echo esc_attr($c['slug']); ?>" placeholder="<?php esc_attr_e('slug', 'lrob-cookie-consent'); ?>" />
+                        <input type="text" name="<?php echo esc_attr($option); ?>[categories][<?php echo (int) $i; ?>][label]" value="<?php echo esc_attr($c['label']); ?>" placeholder="<?php echo esc_attr($c['ph_label']); ?>" />
+                        <input type="text" class="lrob-cc-cat-desc" name="<?php echo esc_attr($option); ?>[categories][<?php echo (int) $i; ?>][desc]" value="<?php echo esc_attr($c['desc']); ?>" placeholder="<?php echo esc_attr($c['ph_desc']); ?>" />
+                        <button type="button" class="button lrob-cc-cat-remove" aria-label="<?php esc_attr_e('Remove', 'lrob-cookie-consent'); ?>">&times;</button>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button type="button" class="button" id="lrob-cc-cat-add"><?php esc_html_e('Add category', 'lrob-cookie-consent'); ?></button>
+
+            <h3><?php esc_html_e('Blocking', 'lrob-cookie-consent'); ?></h3>
             <table class="form-table" role="presentation">
                 <tr><th><?php esc_html_e('Block method', 'lrob-cookie-consent'); ?> <?php $help(__('Full-page scan catches hardcoded scripts and iframes too; enqueued-only is lighter but misses them.', 'lrob-cookie-consent')); ?></th>
                     <td><?php $seg('block_method', ['full' => __('Full-page scan', 'lrob-cookie-consent'), 'enqueued' => __('Enqueued only', 'lrob-cookie-consent')]); ?></td></tr>

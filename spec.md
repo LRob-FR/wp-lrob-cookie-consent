@@ -165,8 +165,8 @@ A settings field to paste an inline script (e.g. GA4, Matomo) + pick a category.
 
 State machine ported from Complianz `complianz.js` but stripped to the core (target < 15 KB vs 83 KB). Port these functions specifically: `cmplz_has_consent`, `cmplz_set_consent`, `cmplz_accepted_categories`, `cmplz_run_script`, `cmplz_enable_category`, `cmplz_set_category_as_body_class`, `cmplz_trap_focus`.
 
-### 4.1 Categories (fixed)
-`functional` (always on, not untoggleable), `preferences`, `statistics`, `marketing`. Order and semantics as Complianz. No custom categories, no consent-per-service in v1.
+### 4.1 Categories (functional fixed; optional admin-managed)
+`functional` is hardcoded, always-on and **force-accepted** (covers WordPress login/cart/CSRF cookies that can't be blocked without breaking the site). The **optional** categories are **admin-managed** (stored in `lrob_cc_options['categories']`), seeded with defaults `preferences`, `statistics`, `marketing`, `security`. Admins can **rename, reorder, remove, or add their own** categories (slug + label + description); default slugs keep translatable labels, custom ones use admin text. No consent-per-service in v1.
 
 ### 4.2 Storage
 - Cookie `lrob_cc_consent` = JSON `{ functional:true, preferences:bool, statistics:bool, marketing:bool, ts, version }`. `SameSite=Lax`, path `/`, duration configurable (default 365 days).
@@ -234,7 +234,7 @@ Expose `apply_filters('lrob_cc_style_presets', $presets)` and `apply_filters('lr
 ## 6. Proof of consent (`class-log.php`)
 
 Minimal, GDPR-clean:
-- On consent save, POST to REST `lrob-cc/v1/log` storing: timestamp, IP, consented categories, config version, user-agent (off by default, opt-in). **IP storage is a single choice** (`ip_storage`): *anonymised* (default — IPv4→/24, IPv6→/48, reuse email-toolkit's approach), *full*, or *none*. No contradictory "anonymise + store full" pair.
+- On consent save, POST to REST `lrob-cc/v1/log` storing: timestamp, IP, logged-in `user_id` (0 for guests; username shown in admin), consented categories, config version, user-agent (off by default, opt-in). **IP storage is a single choice** (`ip_storage`): *hashed* (default — salted SHA-256, irreversible but unique-countable), *full*, or *none*. No partial /24 and no contradictory "anonymise + store full" pair.
 - **Logging is ON by default** (advised for GDPR accountability); admins can switch it off.
 - Storage: custom table `{prefix}lrob_cc_consent_log` via `dbDelta` (idempotent install). Use the **UTC-epoch bucket pattern** from email-toolkit's `LogRepository::counts_by_bucket()` for any time-grouped queries (avoid `UNIX_TIMESTAMP()` / server-tz drift).
 - Skip logging for bots/speedbots (port Complianz patterns).
@@ -245,7 +245,7 @@ Minimal, GDPR-clean:
 Single page under Settings (no multi-step wizard). WP Settings API. Single `lrob_cc_options` array (age-gate style). Tabs:
 1. **General** — enable/disable, consent type (opt-in only v1), cookie duration, log retention, anonymize-IP toggle, respect Do-Not-Track.
 2. **Banner** — texts (header, message, buttons, category descriptions) + appearance (theme/colors/position/radius/blur/logo) + style & text **presets** (§5.6) + **live preview**. FSE-first: defaults inherit theme tokens so no customization is needed out of the box.
-3. **Blocking** — block rules textarea (§3.4) + admin-declared inline scripts (§3.5).
+3. **Cookies** (formerly "Blocking") — manage categories (§4.1), guided rule editor / raw mode (§3.4), site scan + quick-add, admin-declared inline scripts (§3.5).
 4. **Log** — consent table + CSV export + purge.
 
 Security throughout: nonces on every admin action + AJAX (`check_ajax_referer` + `manage_lrob_cc`), sanitize on input, escape on output (match age-gate's stated security model).

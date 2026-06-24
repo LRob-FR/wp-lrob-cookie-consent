@@ -46,32 +46,14 @@ final class Banner
     /** @return array<string,array{title:string,desc:string}> */
     public static function category_labels(): array
     {
-        $labels = [
-            'functional' => [
-                'title' => __('Functional', 'lrob-cookie-consent'),
-                'desc'  => __('Required for the site to work. Always on.', 'lrob-cookie-consent'),
-            ],
-            'preferences' => [
-                'title' => __('Preferences', 'lrob-cookie-consent'),
-                'desc'  => __('Remembers choices you make (language, region, layout).', 'lrob-cookie-consent'),
-            ],
-            'statistics' => [
-                'title' => __('Statistics', 'lrob-cookie-consent'),
-                'desc'  => __('Anonymous measurement of how the site is used.', 'lrob-cookie-consent'),
-            ],
-            'marketing' => [
-                'title' => __('Marketing', 'lrob-cookie-consent'),
-                'desc'  => __('Used to track visitors for advertising.', 'lrob-cookie-consent'),
-            ],
-        ];
-        return apply_filters('lrob_cc_category_labels', $labels);
+        return Categories::labels();
     }
 
     public static function render(): string
     {
         $texts = self::texts();
         $labels = self::category_labels();
-        $optional = Categories::OPTIONAL;
+        $optional = Categories::optional();
         $position = (string) Options::get('position');
         $show_deny = (int) Options::get('show_deny') === 1;
         $show_save = (int) Options::get('show_save') === 1;

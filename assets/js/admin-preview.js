@@ -269,7 +269,8 @@
 			none.textContent = A.i18n.noneFound || 'Nothing found.';
 			scanResults.appendChild(none);
 		} else {
-			var optionsHtml = (A.optional || []).map(function (c) { return '<option value="' + c + '">' + c + '</option>'; }).join('');
+			var catList = A.catList || (A.optional || []).map(function (s) { return { slug: s, label: s }; });
+			var optionsHtml = catList.map(function (c) { return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.label) + '</option>'; }).join('');
 			var rowsHtml = '';
 			res.forEach(function (r, idx) {
 				rowsHtml += '<tr>' +
@@ -600,6 +601,25 @@
 
 		render();
 	}
+
+	// --- Categories repeater --------------------------------------------
+	var catsWrap = document.getElementById('lrob-cc-cats');
+	$('#lrob-cc-cat-add').on('click', function () {
+		if (!catsWrap) { return; }
+		var name = catsWrap.getAttribute('data-name');
+		var i = Date.now();
+		var row = document.createElement('div');
+		row.className = 'lrob-cc-cat-row';
+		row.innerHTML =
+			'<input type="text" class="lrob-cc-cat-slug" name="' + name + '[categories][' + i + '][slug]" placeholder="' + (A.i18n.catSlug || 'slug') + '" />' +
+			'<input type="text" name="' + name + '[categories][' + i + '][label]" placeholder="' + (A.i18n.catLabel || 'Label') + '" />' +
+			'<input type="text" class="lrob-cc-cat-desc" name="' + name + '[categories][' + i + '][desc]" placeholder="' + (A.i18n.catDesc || 'Description') + '" />' +
+			'<button type="button" class="button lrob-cc-cat-remove" aria-label="' + (A.i18n.removeRow || 'Remove') + '">&times;</button>';
+		catsWrap.appendChild(row);
+	});
+	$(document).on('click', '.lrob-cc-cat-remove', function () {
+		$(this).closest('.lrob-cc-cat-row').remove();
+	});
 
 	// --- Inline-script repeater -----------------------------------------
 	var wrap = document.getElementById('lrob-cc-inline-scripts');

@@ -109,7 +109,8 @@ final class SettingsPage
         );
         wp_localize_script('lrob-cc-admin', 'lrobCcAdmin', [
             'optionName' => Options::OPTION_KEY,
-            'optional'   => Categories::OPTIONAL,
+            'optional'   => Categories::optional(),
+            'catList'    => array_map(static fn (string $s): array => ['slug' => $s, 'label' => Categories::labels()[$s]['title'] ?? $s], Categories::optional()),
             'palettes'   => Appearance::palettes(),
             'scales'     => Appearance::scales(),
             'colorPresets' => Presets::styles()['colors'] ?? [],
@@ -149,6 +150,9 @@ final class SettingsPage
                 'confirm'      => __('Confirm', 'lrob-cookie-consent'),
                 'cancel'       => __('Cancel', 'lrob-cookie-consent'),
                 'removeRow'    => __('Remove', 'lrob-cookie-consent'),
+                'catSlug'      => __('slug', 'lrob-cookie-consent'),
+                'catLabel'     => __('Label', 'lrob-cookie-consent'),
+                'catDesc'      => __('Description', 'lrob-cookie-consent'),
                 'selectLogo'   => __('Select logo', 'lrob-cookie-consent'),
                 'wizExisting'  => __('You already have block rules. How do you want to run the wizard?', 'lrob-cookie-consent'),
                 'wizAddTo'     => __('Add to my current rules', 'lrob-cookie-consent'),
@@ -190,7 +194,10 @@ final class SettingsPage
         $o = Options::all();
         $texts = Banner::texts();
         $labels = Banner::category_labels();
-        $optional = Categories::OPTIONAL;
+        $optional = Categories::optional();
+        $category_rows = array_map(static function (array $c): array {
+            return $c + ['ph_label' => Categories::default_label($c['slug']), 'ph_desc' => Categories::default_desc($c['slug'])];
+        }, Categories::stored());
         $text_presets = Presets::text();
         $color_presets = Presets::styles()['colors'] ?? [];
         $services = Services::common();
@@ -223,6 +230,26 @@ final class SettingsPage
         $out['log_retention_days'] = max(0, (int) ($in['log_retention_days'] ?? $d['log_retention_days']));
         $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';
         $out['rules_mode'] = in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';
+
+        $out['categories'] = [];
+        if (isset($in['categories']) && is_array($in['categories'])) {
+            $seen = [];
+            foreach ($in['categories'] as $c) {
+                if (!is_array($c)) {
+                    continue;
+                }
+                $slug = sanitize_key((string) ($c['slug'] ?? ''));
+                if ($slug === '' || $slug === 'functional' || isset($seen[$slug])) {
+                    continue;
+                }
+                $seen[$slug] = true;
+                $out['categories'][] = [
+                    'slug'  => $slug,
+                    'label' => sanitize_text_field((string) ($c['label'] ?? '')),
+                    'desc'  => sanitize_text_field((string) ($c['desc'] ?? '')),
+                ];
+            }
+        }
         $out['block_rules'] = sanitize_textarea_field((string) ($in['block_rules'] ?? ''));
 
         $out['inline_scripts'] = [];

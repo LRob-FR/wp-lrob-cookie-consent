@@ -56,8 +56,17 @@ final class RestController
             $ua = substr(sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])), 0, 255);
         }
 
+        $user_id = (int) Options::get('store_wp_user') === 1 ? get_current_user_id() : 0;
+
+        $optional = Categories::optional();
+        $accepted = array_values(array_intersect($optional, $categories));
+        $decision = (count($optional) > 0 && count($accepted) === count($optional))
+            ? 'accept_all'
+            : (count($accepted) === 0 ? 'deny_all' : 'custom');
+
         $this->log->insert([
-            'user_id'        => get_current_user_id(),
+            'user_id'        => $user_id,
+            'decision'       => $decision,
             'ip_anon'        => (string) $stored_ip,
             'categories'     => implode(',', $categories),
             'config_version' => substr($version, 0, 32),

@@ -23,7 +23,21 @@ final class Appearance
             'bg' => '#1c1c1e', 'text' => '#e8e8e8', 'title' => '#ffffff', 'border' => '#3a3a3c',
             'btn-bg' => '#ffffff', 'btn-text' => '#111111', 'btn-deny-bg' => '#2c2c2e', 'btn-deny-text' => '#e8e8e8',
         ],
+        'midnight' => [
+            'bg' => '#0f172a', 'text' => '#cbd5e1', 'title' => '#f8fafc', 'border' => '#334155',
+            'btn-bg' => '#38bdf8', 'btn-text' => '#0f172a', 'btn-deny-bg' => '#1e293b', 'btn-deny-text' => '#cbd5e1',
+        ],
+        'ocean' => [
+            'bg' => '#f0f9ff', 'text' => '#0c4a6e', 'title' => '#075985', 'border' => '#bae6fd',
+            'btn-bg' => '#0284c7', 'btn-text' => '#ffffff', 'btn-deny-bg' => '#e0f2fe', 'btn-deny-text' => '#075985',
+        ],
+        'sand' => [
+            'bg' => '#fdf6ec', 'text' => '#52452f', 'title' => '#3f3522', 'border' => '#e7d9c0',
+            'btn-bg' => '#b45309', 'btn-text' => '#ffffff', 'btn-deny-bg' => '#f1e6d3', 'btn-deny-text' => '#52452f',
+        ],
     ];
+
+    private const ALIGN_FLEX = ['left' => 'flex-start', 'center' => 'center', 'right' => 'flex-end'];
 
     private const WIDTH = ['small' => '340px', 'medium' => '420px', 'large' => '540px'];
     private const DENSITY = [
@@ -55,7 +69,7 @@ final class Appearance
         $vars = [];
 
         $theme = (string) Options::get('theme');
-        if ($theme === 'light' || $theme === 'dark') {
+        if (isset(self::PALETTES[$theme])) {
             foreach (self::PALETTES[$theme] as $key => $value) {
                 $vars['--lrob-cc-' . $key] = $value;
             }
@@ -83,11 +97,20 @@ final class Appearance
         $vars['--lrob-cc-radius'] = self::RADIUS[(string) Options::get('shape')] ?? self::RADIUS['rounded'];
         $vars['--lrob-cc-blur'] = max(0, (int) Options::get('backdrop_blur')) . 'px';
 
+        $vars['--lrob-cc-align-title'] = self::align((string) Options::get('align_title'));
+        $vars['--lrob-cc-align-text'] = self::align((string) Options::get('align_text'));
+        $vars['--lrob-cc-align-buttons'] = self::ALIGN_FLEX[(string) Options::get('align_buttons')] ?? 'flex-start';
+
         $decl = '';
         foreach ($vars as $name => $value) {
             $decl .= $name . ':' . $value . ';';
         }
 
         return '#lrob-cc-banner{' . $decl . '}';
+    }
+
+    private static function align(string $value): string
+    {
+        return in_array($value, ['left', 'center', 'right'], true) ? $value : 'left';
     }
 }

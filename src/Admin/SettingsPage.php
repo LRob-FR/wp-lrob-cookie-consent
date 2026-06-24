@@ -128,6 +128,9 @@ final class SettingsPage
                         ['v' => 'auto', 'l' => __('Auto (follow theme)', 'lrob-cookie-consent')],
                         ['v' => 'light', 'l' => __('Light', 'lrob-cookie-consent')],
                         ['v' => 'dark', 'l' => __('Dark', 'lrob-cookie-consent')],
+                        ['v' => 'midnight', 'l' => __('Midnight', 'lrob-cookie-consent')],
+                        ['v' => 'ocean', 'l' => __('Ocean', 'lrob-cookie-consent')],
+                        ['v' => 'sand', 'l' => __('Sand', 'lrob-cookie-consent')],
                     ],
                     'positions' => [
                         ['v' => 'bottom', 'l' => __('Bottom', 'lrob-cookie-consent')],
@@ -218,14 +221,14 @@ final class SettingsPage
         $out = $d;
 
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
-            'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'show_deny',
+            'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_deny',
             'show_save', 'categories_collapsed', 'revisit_button'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }
 
         $out['consent_type'] = 'optin';
-        $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['hashed', 'full', 'none'], true) ? $in['ip_storage'] : 'hashed';
+        $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['hashed', 'full', 'none'], true) ? $in['ip_storage'] : 'none';
         $out['cookie_days'] = max(1, (int) ($in['cookie_days'] ?? $d['cookie_days']));
         $out['log_retention_days'] = max(0, (int) ($in['log_retention_days'] ?? $d['log_retention_days']));
         $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';
@@ -269,7 +272,23 @@ final class SettingsPage
         }
 
         $positions = ['top-left', 'top', 'top-right', 'center', 'bottom-left', 'bottom', 'bottom-right'];
-        $out['position'] = in_array($in['position'] ?? '', $positions, true) ? $in['position'] : 'bottom';
+        $out['position'] = in_array($in['position'] ?? '', $positions, true) ? $in['position'] : 'bottom-right';
+        foreach (['align_title', 'align_text', 'align_buttons'] as $key) {
+            $out[$key] = in_array($in[$key] ?? '', ['left', 'center', 'right'], true) ? $in[$key] : 'left';
+        }
+        $out['footer_links'] = [];
+        if (isset($in['footer_links']) && is_array($in['footer_links'])) {
+            foreach ($in['footer_links'] as $link) {
+                if (!is_array($link)) {
+                    continue;
+                }
+                $label = sanitize_text_field((string) ($link['label'] ?? ''));
+                $url = esc_url_raw((string) ($link['url'] ?? ''));
+                if ($label !== '' && $url !== '') {
+                    $out['footer_links'][] = ['label' => $label, 'url' => $url];
+                }
+            }
+        }
         $out['theme'] = in_array($in['theme'] ?? '', ['auto', 'light', 'dark', 'custom'], true) ? $in['theme'] : 'auto';
         $out['popup_size'] = in_array($in['popup_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['popup_size'] : 'small';
         $out['density'] = in_array($in['density'] ?? '', ['compact', 'cozy', 'comfortable'], true) ? $in['density'] : 'cozy';
@@ -290,6 +309,7 @@ final class SettingsPage
         $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
         $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
         $out['revisit_text'] = sanitize_text_field((string) ($in['revisit_text'] ?? ''));
+        $out['text_preset'] = sanitize_text_field((string) ($in['text_preset'] ?? ''));
 
         // Rule/category changes alter what's blocked → drop the compiled cache.
         Rules::flush();

@@ -6,7 +6,7 @@ namespace LRob\CookieConsent\Consent;
 
 final class Schema
 {
-    public const DB_VERSION = 2;
+    public const DB_VERSION = 3;
     public const DB_VERSION_OPTION = 'lrob_cc_db_version';
 
     public static function table_name(): string
@@ -28,6 +28,7 @@ final class Schema
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             created_at datetime NOT NULL,
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            decision varchar(16) NOT NULL DEFAULT '',
             ip_anon varchar(64) NOT NULL DEFAULT '',
             categories varchar(191) NOT NULL DEFAULT '',
             config_version varchar(32) NOT NULL DEFAULT '',

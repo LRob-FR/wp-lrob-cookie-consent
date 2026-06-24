@@ -64,13 +64,17 @@
 	display: none;
 }
 
-/* Inline clickable "?" help. */
-.lrob-cc-help {
+/* "?" tooltip — hover / focus / tap. */
+.lrob-cc-tip {
+	position: relative;
 	display: inline-block;
 	vertical-align: middle;
+	margin-left: 4px;
+	cursor: help;
+	outline: none;
 }
 
-.lrob-cc-help summary {
+.lrob-cc-tip-i {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -81,24 +85,32 @@
 	color: #1d2327;
 	font-size: 11px;
 	font-weight: 700;
-	cursor: pointer;
-	list-style: none;
+	line-height: 1;
 }
 
-.lrob-cc-help summary::-webkit-details-marker {
+.lrob-cc-tip-bubble {
+	position: absolute;
+	left: 0;
+	top: calc(100% + 6px);
+	z-index: 10;
 	display: none;
-}
-
-.lrob-cc-help-body {
-	display: block;
-	margin-top: 6px;
-	max-width: 360px;
+	width: max-content;
+	max-width: 280px;
 	font-weight: 400;
 	font-size: 12px;
-	color: #50575e;
-	background: #f6f7f7;
+	line-height: 1.45;
+	color: #fff;
+	background: #1d2327;
 	padding: 8px 10px;
 	border-radius: 4px;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+	white-space: normal;
+}
+
+.lrob-cc-tip:hover .lrob-cc-tip-bubble,
+.lrob-cc-tip:focus .lrob-cc-tip-bubble,
+.lrob-cc-tip:focus-within .lrob-cc-tip-bubble {
+	display: block;
 }
 
 /* Scan progress. */
@@ -403,6 +415,41 @@
 	display: flex;
 	gap: 10px;
 	align-items: center;
+}
+
+.lrob-cc-link-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 8px;
+	max-width: 640px;
+}
+
+.lrob-cc-link-row input[type="text"] {
+	flex: 1 1 180px;
+}
+
+.lrob-cc-link-row input[type="url"] {
+	flex: 2 1 260px;
+}
+
+.lrob-cc-stats {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin: 10px 0 18px;
+}
+
+.lrob-cc-stat {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 8px 14px;
+}
+
+.lrob-cc-stat strong {
+	font-size: 1.2em;
+	margin-right: 4px;
 }
 
 /* Confirm dialog. */

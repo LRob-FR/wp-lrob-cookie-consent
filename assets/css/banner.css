@@ -140,6 +140,7 @@
 	font-size: var(--_title-size);
 	color: var(--_title);
 	flex: 1;
+	text-align: var(--lrob-cc-align-title, left);
 }
 
 .lrob-cc-close {
@@ -154,6 +155,7 @@
 
 .lrob-cc-message {
 	margin-bottom: var(--_gap);
+	text-align: var(--lrob-cc-align-text, left);
 }
 
 .lrob-cc-message p {
@@ -257,6 +259,18 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	justify-content: var(--lrob-cc-align-buttons, flex-start);
+}
+
+.lrob-cc-footer {
+	margin-top: var(--_gap);
+	font-size: 0.85em;
+	text-align: var(--lrob-cc-align-text, left);
+}
+
+.lrob-cc-footer a {
+	color: inherit;
+	margin-right: 12px;
 }
 
 .lrob-cc-btn {

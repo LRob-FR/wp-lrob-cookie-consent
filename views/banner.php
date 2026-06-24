@@ -78,5 +78,13 @@ if (!defined('ABSPATH')) {
                 <?php echo esc_html($texts['save']); ?>
             </button>
         </div>
+
+        <?php if (!empty($footer_links)) : ?>
+            <div class="lrob-cc-footer">
+                <?php foreach ($footer_links as $link) : ?>
+                    <a href="<?php echo esc_url((string) $link['url']); ?>"><?php echo esc_html((string) $link['label']); ?></a>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

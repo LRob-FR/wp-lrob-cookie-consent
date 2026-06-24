@@ -147,8 +147,14 @@
 		});
 	}
 
+	function sameDecision(a, b) {
+		if (!a || !b || a.version !== b.version) { return false; }
+		return OPTIONAL.every(function (cat) { return !!a[cat] === !!b[cat]; });
+	}
+
 	// --- Persisting a decision ------------------------------------------
 	function persist(consent) {
+		var prior = stored(); // before we overwrite the cookie
 		consent.functional = true;
 		consent.ts = Math.floor(Date.now() / 1000);
 		consent.version = VERSION;
@@ -163,7 +169,8 @@
 		document.dispatchEvent(new CustomEvent('lrob_cc_status_change', {
 			detail: { categories: acceptedCategories(), consent: consent }
 		}));
-		logConsent(consent);
+		// Don't re-log an unchanged decision.
+		if (!sameDecision(prior, consent)) { logConsent(consent); }
 	}
 
 	function logConsent(consent) {

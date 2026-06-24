@@ -19,7 +19,7 @@ final class LogRepository
     }
 
     /**
-     * @param array{user_id:int,ip_anon:string,categories:string,config_version:string,user_agent:string} $row
+     * @param array{user_id:int,decision:string,ip_anon:string,categories:string,config_version:string,user_agent:string} $row
      */
     public function insert(array $row): void
     {
@@ -29,12 +29,13 @@ final class LogRepository
             [
                 'created_at'     => gmdate('Y-m-d H:i:s'),
                 'user_id'        => $row['user_id'],
+                'decision'       => $row['decision'],
                 'ip_anon'        => $row['ip_anon'],
                 'categories'     => $row['categories'],
                 'config_version' => $row['config_version'],
                 'user_agent'     => $row['user_agent'],
             ],
-            ['%s', '%d', '%s', '%s', '%s', '%s']
+            ['%s', '%d', '%s', '%s', '%s', '%s', '%s']
         );
     }
 
@@ -42,6 +43,21 @@ final class LogRepository
     {
         global $wpdb;
         return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Schema::table_name());
+    }
+
+    /** @return array{accept_all:int,deny_all:int,custom:int} */
+    public function decision_counts(): array
+    {
+        global $wpdb;
+        $rows = $wpdb->get_results('SELECT decision, COUNT(*) AS n FROM ' . Schema::table_name() . ' GROUP BY decision', ARRAY_A);
+        $out = ['accept_all' => 0, 'deny_all' => 0, 'custom' => 0];
+        foreach ((array) $rows as $r) {
+            $d = (string) ($r['decision'] ?? '');
+            if (isset($out[$d])) {
+                $out[$d] = (int) $r['n'];
+            }
+        }
+        return $out;
     }
 
     /** @return list<array<string,mixed>> */
@@ -87,7 +103,7 @@ final class LogRepository
         header('Content-Disposition: attachment; filename=lrob-cc-consent-log.csv');
 
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['id', 'created_at_utc', 'user_id', 'username', 'ip', 'categories', 'config_version', 'user_agent']);
+        fputcsv($out, ['id', 'created_at_utc', 'user_id', 'username', 'decision', 'ip', 'categories', 'config_version', 'user_agent']);
 
         $batch = 1000;
         $offset = 0;
@@ -104,7 +120,7 @@ final class LogRepository
                 $user = (int) ($r['user_id'] ?? 0);
                 $username = $user > 0 ? (string) (get_userdata($user)->user_login ?? '') : '';
                 fputcsv($out, [
-                    $r['id'], $r['created_at'], $user, $username, $r['ip_anon'],
+                    $r['id'], $r['created_at'], $user, $username, $r['decision'] ?? '', $r['ip_anon'],
                     $r['categories'], $r['config_version'], $r['user_agent'],
                 ]);
             }

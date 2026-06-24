@@ -59,6 +59,7 @@ final class Banner
         $show_save = (int) Options::get('show_save') === 1;
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
+        $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];
 
         ob_start();
         include LROB_CC_PATH . 'views/banner.php';

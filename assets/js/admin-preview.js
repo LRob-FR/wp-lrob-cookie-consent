@@ -110,6 +110,11 @@
 		if (font) { preview.style.setProperty('--lrob-cc-font-size', font.font); preview.style.setProperty('--lrob-cc-title-size', font.title); }
 		if (s.radius) { preview.style.setProperty('--lrob-cc-radius', s.radius[val('shape')] || s.radius.rounded); }
 
+		preview.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
+		preview.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
+		var bmap = { left: 'flex-start', center: 'center', right: 'flex-end' };
+		preview.style.setProperty('--lrob-cc-align-buttons', bmap[val('align_buttons')] || 'flex-start');
+
 		$('[data-theme-only="custom"]').toggle(val('theme') === 'custom');
 	}
 
@@ -153,7 +158,14 @@
 		['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) {
 			if (preset[k] !== undefined) { setField('text_' + k, preset[k]); }
 		});
+		setField('text_preset', id);
 		update();
+	});
+
+	// Manually editing any banner text marks the preset as "custom".
+	$(document).on('input', '[data-field="text_header"],[data-field="text_message"],[data-field="text_accept"],[data-field="text_deny"],[data-field="text_save"]', function () {
+		var el = document.getElementById('lrob-cc-text-preset');
+		if (el) { el.value = 'custom'; }
 	});
 
 	$('.lrob-cc-preset-row[data-preset-group="colors"] .lrob-cc-preset').on('click', function () {
@@ -464,18 +476,23 @@
 		var allServices = [];
 		(A.wizard || []).forEach(function (step) { (step.services || []).forEach(function (s) { allServices.push(s); }); });
 
-		// 2. Tone (text preset). No "keep current": pick none → text is untouched.
+		// 2. Tone (text preset) — remembers the last chosen preset; "Keep current"
+		// is pre-selected when the texts were customised or already match.
 		if (WS.tone && (A.texts || []).length) {
-			var toneChoices = (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; });
-			var tone = { choice: '' };
+			var presetIds = (A.texts || []).map(function (p) { return p.id; });
+			var current = val('text_preset');
+			var toneChoices = [{ v: '__keep', l: A.i18n.wizKeepCurrent || 'Keep current' }]
+				.concat((A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }));
+			var tone = { choice: presetIds.indexOf(current) !== -1 ? current : '__keep' };
 			screens.push({
 				title: WS.tone.question, hint: WS.tone.hint,
 				render: function (b) { b.innerHTML = radioGroup('tone', toneChoices, tone.choice); bindRadio(b, 'tone', function (v) { tone.choice = v; }); },
 				apply: function () {
-					if (!tone.choice) { return; }
+					if (tone.choice === '__keep') { return; }
 					var p = (A.texts || []).filter(function (x) { return x.id === tone.choice; })[0];
 					if (!p) { return; }
 					['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } });
+					setField('text_preset', tone.choice);
 				}
 			});
 		}
@@ -619,6 +636,24 @@
 	});
 	$(document).on('click', '.lrob-cc-cat-remove', function () {
 		$(this).closest('.lrob-cc-cat-row').remove();
+	});
+
+	// --- Footer-links repeater ------------------------------------------
+	var linksWrap = document.getElementById('lrob-cc-links');
+	$('#lrob-cc-link-add').on('click', function () {
+		if (!linksWrap) { return; }
+		var name = linksWrap.getAttribute('data-name');
+		var i = Date.now();
+		var row = document.createElement('div');
+		row.className = 'lrob-cc-link-row';
+		row.innerHTML =
+			'<input type="text" name="' + name + '[footer_links][' + i + '][label]" placeholder="' + (A.i18n.catLabel || 'Label') + '" />' +
+			'<input type="url" name="' + name + '[footer_links][' + i + '][url]" placeholder="https://…" />' +
+			'<button type="button" class="button lrob-cc-link-remove" aria-label="' + (A.i18n.removeRow || 'Remove') + '">&times;</button>';
+		linksWrap.appendChild(row);
+	});
+	$(document).on('click', '.lrob-cc-link-remove', function () {
+		$(this).closest('.lrob-cc-link-row').remove();
 	});
 
 	// --- Inline-script repeater -----------------------------------------

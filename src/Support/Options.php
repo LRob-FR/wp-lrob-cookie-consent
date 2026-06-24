@@ -36,19 +36,24 @@ final class Options
 
             // Proof of consent
             'log_consent'        => 1,          // on by default (advised for GDPR accountability)
-            'ip_storage'         => 'hashed',   // hashed | full | none
+            'ip_storage'         => 'none',     // none (default) | hashed | full
             'store_user_agent'   => 0,
+            'store_wp_user'      => 1,          // record the logged-in WP user id
             'log_retention_days' => 365,
 
             // Appearance
-            'position'           => 'bottom',   // bottom|center|bottom-left|bottom-right
-            'theme'              => 'auto',     // auto|light|dark|custom
+            'position'           => 'bottom-right', // top-left|top|top-right|center|bottom-left|bottom|bottom-right
+            'theme'              => 'auto',     // auto|light|dark|custom|...palettes
             'popup_size'         => 'small',    // small|medium|large (width)
             'density'            => 'cozy',     // compact|cozy|comfortable (spacing)
             'font_size'          => 'medium',   // small|medium|large
             'shape'              => 'rounded',  // square|rounded|pill (corner radius)
             'backdrop_blur'      => 0,
             'logo'               => '',
+            'align_title'        => 'left',     // left|center|right
+            'align_text'         => 'left',
+            'align_buttons'      => 'left',
+            'footer_links'       => [],         // [ ['label'=>'', 'url'=>''], ... ]
 
             // Buttons + disclosure
             'show_deny'          => 1,          // symmetric Deny visible by default
@@ -73,6 +78,7 @@ final class Options
             'text_accept'        => '',
             'text_deny'          => '',
             'text_save'          => '',
+            'text_preset'        => '',         // remembered preset id, or 'custom'
         ];
     }
 

@@ -1,0 +1,1068 @@
+# Copyright (C) 2026 LRob
+# This file is distributed under the same license as the LRob - Cookie Consent plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
+"consent\n"
+"POT-Creation-Date: 2026-06-24T12:51:59+00:00\n"
+"PO-Revision-Date: 2026-06-24 14:30+0000\n"
+"Last-Translator: LRob <git@lrob.fr>\n"
+"Language-Team: French <git@lrob.fr>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: lrob-cookie-consent\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#. Plugin Name of the plugin
+msgid "LRob - Cookie Consent"
+msgstr "LRob - Cookie Consent"
+
+#. Plugin URI of the plugin
+msgid "https://www.lrob.fr/wordpress/plugins/lrob-cookie-consent/"
+msgstr "https://www.lrob.fr/wordpress/plugins/lrob-cookie-consent/"
+
+#. Description of the plugin
+msgid ""
+"Lean, opinionated GDPR / ePrivacy cookie consent — opt-in banner, script & "
+"iframe blocking engine, proof of consent. No scanner, no bloat."
+msgstr ""
+"Consentement aux cookies RGPD / ePrivacy léger et bien pensé — bannière opt-"
+"in, moteur de blocage des scripts et iframes, preuve de consentement. Sans "
+"scanner, sans surcharge."
+
+#. Author of the plugin
+msgid "LRob"
+msgstr "LRob"
+
+#. Author URI of the plugin
+msgid "https://www.lrob.fr"
+msgstr "https://www.lrob.fr"
+
+#: src/Admin/SettingsPage.php:55
+msgid "Only this site's own pages can be scanned."
+msgstr "Seules les pages de ce site peuvent être analysées."
+
+#: src/Admin/SettingsPage.php:68
+msgid "Not allowed."
+msgstr "Non autorisé."
+
+#: src/Admin/SettingsPage.php:76 views/admin-settings.php:59
+msgid "LRob Cookie Consent"
+msgstr "LRob Cookie Consent"
+
+#: src/Admin/SettingsPage.php:77
+msgid "Cookie Consent"
+msgstr "Consentement aux cookies"
+
+#: src/Admin/SettingsPage.php:122
+msgid "Pick a tone for your banner text"
+msgstr "Choisissez un ton pour le texte de votre bannière"
+
+#: src/Admin/SettingsPage.php:123
+msgid "You can fine-tune the wording afterwards."
+msgstr "Vous pourrez peaufiner la formulation par la suite."
+
+#: src/Admin/SettingsPage.php:126
+msgid "Choose how the banner looks"
+msgstr "Choisissez l’apparence de la bannière"
+
+#: src/Admin/SettingsPage.php:128
+msgid "Auto (follow theme)"
+msgstr "Auto (suivre le thème)"
+
+#: src/Admin/SettingsPage.php:129 views/admin-settings.php:205
+msgid "Light"
+msgstr "Clair"
+
+#: src/Admin/SettingsPage.php:130 views/admin-settings.php:206
+msgid "Dark"
+msgstr "Sombre"
+
+#: src/Admin/SettingsPage.php:131 views/admin-settings.php:207
+msgid "Midnight"
+msgstr "Minuit"
+
+#: src/Admin/SettingsPage.php:132 views/admin-settings.php:208
+msgid "Ocean"
+msgstr "Océan"
+
+#: src/Admin/SettingsPage.php:133 views/admin-settings.php:209
+msgid "Sand"
+msgstr "Sable"
+
+#: src/Admin/SettingsPage.php:136 views/admin-settings.php:197
+msgid "Bottom"
+msgstr "En bas"
+
+#: src/Admin/SettingsPage.php:137 views/admin-settings.php:198
+msgid "Bottom right"
+msgstr "En bas à droite"
+
+#: src/Admin/SettingsPage.php:138 views/admin-settings.php:196
+msgid "Bottom left"
+msgstr "En bas à gauche"
+
+#: src/Admin/SettingsPage.php:139 views/admin-settings.php:195
+#: views/admin-settings.php:256
+msgid "Center"
+msgstr "Centre"
+
+#: src/Admin/SettingsPage.php:141 views/admin-settings.php:202
+msgid "Colors"
+msgstr "Couleurs"
+
+#: src/Admin/SettingsPage.php:142 views/admin-settings.php:190
+msgid "Position"
+msgstr "Position"
+
+#: src/Admin/SettingsPage.php:145
+msgid "Keep a record of consent decisions?"
+msgstr "Conserver un enregistrement des décisions de consentement ?"
+
+#: src/Admin/SettingsPage.php:146
+msgid "Recommended for GDPR accountability. Stored locally, IP anonymised."
+msgstr ""
+"Recommandé pour la responsabilité RGPD. Stocké localement, IP anonymisée."
+
+#: src/Admin/SettingsPage.php:152
+msgid "Delete all consent log entries? This cannot be undone."
+msgstr ""
+"Supprimer toutes les entrées du journal de consentement ? Cette action est "
+"irréversible."
+
+#: src/Admin/SettingsPage.php:153
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: src/Admin/SettingsPage.php:154
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/Admin/SettingsPage.php:155 views/admin-settings.php:160
+#: views/admin-settings.php:184 views/admin-settings.php:306
+#: views/admin-settings.php:377 views/admin-settings.php:387
+#: views/admin-settings.php:409
+msgid "Remove"
+msgstr "Supprimer"
+
+#: src/Admin/SettingsPage.php:156 views/admin-settings.php:303
+msgid "slug"
+msgstr "slug"
+
+#: src/Admin/SettingsPage.php:157 views/admin-settings.php:182
+msgid "Label"
+msgstr "Libellé"
+
+#: src/Admin/SettingsPage.php:158
+msgid "Description"
+msgstr "Description"
+
+#: src/Admin/SettingsPage.php:159 views/admin-settings.php:159
+msgid "Select logo"
+msgstr "Sélectionner un logo"
+
+#: src/Admin/SettingsPage.php:160
+msgid "You already have block rules. How do you want to run the wizard?"
+msgstr ""
+"Vous avez déjà des règles de blocage. Comment souhaitez-vous lancer "
+"l’assistant ?"
+
+#: src/Admin/SettingsPage.php:161
+msgid "Add to my current rules"
+msgstr "Ajouter à mes règles actuelles"
+
+#: src/Admin/SettingsPage.php:162
+msgid "Clear them and start fresh"
+msgstr "Les effacer et repartir de zéro"
+
+#: src/Admin/SettingsPage.php:163
+msgid "Yes"
+msgstr "Oui"
+
+#: src/Admin/SettingsPage.php:164
+msgid "No / skip"
+msgstr "Non / ignorer"
+
+#: src/Admin/SettingsPage.php:165
+msgid "Back"
+msgstr "Précédent"
+
+#: src/Admin/SettingsPage.php:166
+msgid "Next"
+msgstr "Suivant"
+
+#: src/Admin/SettingsPage.php:167
+msgid "Finish & save"
+msgstr "Terminer et enregistrer"
+
+#: src/Admin/SettingsPage.php:168 src/Frontend/Banner.php:40
+msgid "Close"
+msgstr "Fermer"
+
+#: src/Admin/SettingsPage.php:169
+msgid "Yes, keep proof"
+msgstr "Oui, conserver la preuve"
+
+#: src/Admin/SettingsPage.php:170
+msgid "No"
+msgstr "Non"
+
+#: src/Admin/SettingsPage.php:171
+msgid "Keep current"
+msgstr "Conserver l’existant"
+
+#. translators: %1$d: current step number, %2$d: total steps.
+#: src/Admin/SettingsPage.php:173
+msgid "Step %1$d of %2$d"
+msgstr "Étape %1$d sur %2$d"
+
+#: src/Admin/SettingsPage.php:174
+msgid "Scanning…"
+msgstr "Analyse en cours…"
+
+#: src/Admin/SettingsPage.php:175
+msgid "Scan again"
+msgstr "Analyser à nouveau"
+
+#: src/Admin/SettingsPage.php:176
+msgid "Scan failed. Try again."
+msgstr "Échec de l’analyse. Veuillez réessayer."
+
+#: src/Admin/SettingsPage.php:177
+msgid "No third-party resources found on the scanned pages."
+msgstr "Aucune ressource tierce trouvée sur les pages analysées."
+
+#: src/Admin/SettingsPage.php:178
+msgid "Add selected as rules"
+msgstr "Ajouter la sélection comme règles"
+
+#: src/Admin/SettingsPage.php:179
+msgid "known"
+msgstr "connu"
+
+#: src/Admin/SettingsPage.php:180
+msgid "review"
+msgstr "à vérifier"
+
+#: src/Admin/SettingsPage.php:181
+msgid "Cookies set on scanned pages:"
+msgstr "Cookies déposés sur les pages analysées :"
+
+#: src/Admin/SettingsPage.php:182
+msgid "Scanned:"
+msgstr "Analysé :"
+
+#. translators: %1$d: current page, %2$d: total pages.
+#: src/Admin/SettingsPage.php:184
+msgid "Scanning page %1$d of %2$d…"
+msgstr "Analyse de la page %1$d sur %2$d…"
+
+#: src/Admin/SettingsPage.php:185
+msgid "Some pages could not be reached due to an SSL certificate error."
+msgstr ""
+"Certaines pages n’ont pas pu être atteintes en raison d’une erreur de "
+"certificat SSL."
+
+#: src/Admin/SettingsPage.php:186
+msgid "Retry ignoring SSL"
+msgstr "Réessayer en ignorant le SSL"
+
+#: src/Admin/SettingsPage.php:194
+msgid "You are not allowed to access this page."
+msgstr "Vous n’êtes pas autorisé à accéder à cette page."
+
+#: src/Admin/SettingsPage.php:323 src/Admin/SettingsPage.php:332
+msgid "You are not allowed to do this."
+msgstr "Vous n’êtes pas autorisé à effectuer cette action."
+
+#: src/AutoUpdate/Updater.php:104
+msgid ""
+"Lean, opinionated GDPR / ePrivacy cookie consent — opt-in banner, script & "
+"iframe blocking, proof of consent."
+msgstr ""
+"Consentement aux cookies RGPD / ePrivacy léger et bien pensé — bannière opt-"
+"in, blocage des scripts et iframes, preuve de consentement."
+
+#. translators: %s: name of the blocked service (e.g. YouTube).
+#: src/Frontend/Assets.php:80
+msgid "This content is blocked. Click to accept %s and load it."
+msgstr "Ce contenu est bloqué. Cliquez pour accepter %s et le charger."
+
+#: src/Frontend/Assets.php:81
+msgid "Accept & load"
+msgstr "Accepter et charger"
+
+#: src/Frontend/Assets.php:82 views/admin-settings.php:174
+msgid "Manage cookies"
+msgstr "Gérer les cookies"
+
+#: src/Frontend/Banner.php:20
+msgid "Manage cookie preferences"
+msgstr "Gérer les préférences de cookies"
+
+#: src/Frontend/Banner.php:35
+msgid "We value your privacy"
+msgstr "Nous respectons votre vie privée"
+
+#: src/Frontend/Banner.php:36
+msgid ""
+"We use cookies to improve your experience. Choose which categories you allow."
+msgstr ""
+"Nous utilisons des cookies pour améliorer votre expérience. Choisissez les "
+"catégories que vous autorisez."
+
+#: src/Frontend/Banner.php:37
+msgid "Accept all"
+msgstr "Tout accepter"
+
+#: src/Frontend/Banner.php:38
+msgid "Deny"
+msgstr "Tout refuser"
+
+#: src/Frontend/Banner.php:39
+msgid "Save preferences"
+msgstr "Enregistrer les préférences"
+
+#: src/Frontend/Banner.php:41
+msgid "Always active"
+msgstr "Toujours actif"
+
+#: src/Frontend/Banner.php:42
+msgid "Customize"
+msgstr "Personnaliser"
+
+#: src/Scanning/LocalScanner.php:24
+msgid "Local crawl"
+msgstr "Exploration locale"
+
+#: src/Support/Categories.php:21
+msgid "Functional"
+msgstr "Fonctionnel"
+
+#: src/Support/Categories.php:22
+msgid "Preferences"
+msgstr "Préférences"
+
+#: src/Support/Categories.php:23
+msgid "Statistics"
+msgstr "Statistiques"
+
+#: src/Support/Categories.php:24
+msgid "Marketing"
+msgstr "Marketing"
+
+#: src/Support/Categories.php:25
+msgid "Security"
+msgstr "Sécurité"
+
+#: src/Support/Categories.php:33
+msgid "Required for the site to work. Always allowed."
+msgstr "Nécessaires au fonctionnement du site. Toujours autorisés."
+
+#: src/Support/Categories.php:34
+msgid "Remembers choices you make (language, region, layout)."
+msgstr "Mémorisent les choix que vous faites (langue, région, mise en page)."
+
+#: src/Support/Categories.php:35
+msgid "Anonymous measurement of how the site is used."
+msgstr "Mesure anonyme de l’utilisation du site."
+
+#: src/Support/Categories.php:36
+msgid "Used to track visitors for advertising."
+msgstr "Utilisés pour suivre les visiteurs à des fins publicitaires."
+
+#: src/Support/Categories.php:37
+msgid "Spam protection, CAPTCHAs and firewalls."
+msgstr "Protection anti-spam, CAPTCHA et pare-feu."
+
+#: src/Support/Services.php:64
+msgid "Do you measure visitor statistics or analytics?"
+msgstr ""
+"Mesurez-vous des statistiques de visiteurs ou des analyses d’audience ?"
+
+#: src/Support/Services.php:65
+msgid ""
+"Tools that count visits and analyse behaviour. Note: Matomo can run in a "
+"cookieless mode — if yours does, you may not need to block it."
+msgstr ""
+"Des outils qui comptent les visites et analysent les comportements. "
+"Remarque : Matomo peut fonctionner en mode sans cookie — si c’est le cas du "
+"vôtre, vous n’aurez peut-être pas besoin de le bloquer."
+
+#: src/Support/Services.php:69
+msgid "Do you embed videos?"
+msgstr "Intégrez-vous des vidéos ?"
+
+#: src/Support/Services.php:70
+msgid "Embedded players can set tracking cookies before consent."
+msgstr ""
+"Les lecteurs intégrés peuvent déposer des cookies de suivi avant le "
+"consentement."
+
+#: src/Support/Services.php:74
+msgid "Do you run ads or marketing / conversion pixels?"
+msgstr "Diffusez-vous des publicités ou des pixels marketing / de conversion ?"
+
+#: src/Support/Services.php:75
+msgid "Advertising and retargeting trackers."
+msgstr "Traceurs publicitaires et de reciblage."
+
+#: src/Support/Services.php:79
+msgid "Do you embed maps?"
+msgstr "Intégrez-vous des cartes ?"
+
+#: src/Support/Services.php:80
+msgid "Map embeds may load third-party scripts."
+msgstr "Les cartes intégrées peuvent charger des scripts tiers."
+
+#: src/Support/Services.php:84
+msgid "Do you use a CAPTCHA?"
+msgstr "Utilisez-vous un CAPTCHA ?"
+
+#: src/Support/Services.php:85
+msgid ""
+"Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile "
+"and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads "
+"Google."
+msgstr ""
+"Attention : bloquer un CAPTCHA peut casser les formulaires protégés. "
+"Cloudflare Turnstile et hCaptcha respectent la vie privée et ne nécessitent "
+"souvent aucun consentement ; reCAPTCHA charge Google."
+
+#: views/admin-settings.php:51
+msgid "Help"
+msgstr "Aide"
+
+#: views/admin-settings.php:62
+msgid "Consent log cleared."
+msgstr "Journal de consentement effacé."
+
+#: views/admin-settings.php:66
+msgid "General"
+msgstr "Général"
+
+#: views/admin-settings.php:67
+msgid "Banner"
+msgstr "Bannière"
+
+#: views/admin-settings.php:68
+msgid "Cookies"
+msgstr "Cookies"
+
+#: views/admin-settings.php:69
+msgid "Log"
+msgstr "Journal"
+
+#: views/admin-settings.php:80
+msgid "Set up cookie consent in a minute"
+msgstr "Configurez le consentement aux cookies en une minute"
+
+#: views/admin-settings.php:81
+msgid ""
+"Answer a few quick questions and the wizard configures the banner look, "
+"blocking rules and proof of consent for you. You can fine-tune everything in "
+"the tabs afterwards."
+msgstr ""
+"Répondez à quelques questions rapides et l’assistant configure pour vous "
+"l’apparence de la bannière, les règles de blocage et la preuve de "
+"consentement. Vous pourrez tout peaufiner ensuite dans les onglets."
+
+#: views/admin-settings.php:83
+msgid "Run setup wizard"
+msgstr "Lancer l’assistant de configuration"
+
+#: views/admin-settings.php:86
+msgid "Re-run setup wizard"
+msgstr "Relancer l’assistant de configuration"
+
+#: views/admin-settings.php:90
+msgid "Cookie consent"
+msgstr "Consentement aux cookies"
+
+#: views/admin-settings.php:91
+msgid ""
+"Show the consent banner and block configured scripts/iframes until the "
+"visitor agrees"
+msgstr ""
+"Afficher la bannière de consentement et bloquer les scripts/iframes "
+"configurés jusqu’à ce que le visiteur accepte"
+
+#: views/admin-settings.php:92
+msgid ""
+"The banner only appears once you have added at least one block rule or "
+"inline script (Blocking tab)."
+msgstr ""
+"La bannière n’apparaît qu’une fois que vous avez ajouté au moins une règle "
+"de blocage ou un script inline (onglet Blocage)."
+
+#: views/admin-settings.php:94
+msgid "Consent model"
+msgstr "Modèle de consentement"
+
+#: views/admin-settings.php:95
+msgid "Opt-in (EU / GDPR)"
+msgstr "Opt-in (UE / RGPD)"
+
+#: views/admin-settings.php:96
+msgid "Opt-in only in v1: nothing optional loads until the visitor agrees."
+msgstr ""
+"Opt-in uniquement en v1 : aucun élément optionnel ne se charge tant que le "
+"visiteur n’a pas accepté."
+
+#: views/admin-settings.php:98
+msgid "Consent duration (days)"
+msgstr "Durée du consentement (jours)"
+
+#: views/admin-settings.php:101
+msgid "Show to logged-in users"
+msgstr "Afficher aux utilisateurs connectés"
+
+#: views/admin-settings.php:102
+msgid ""
+"Run consent + blocking for logged-in users too (off = logged-in users see "
+"the unmodified site)"
+msgstr ""
+"Appliquer le consentement et le blocage aussi aux utilisateurs connectés "
+"(désactivé = les utilisateurs connectés voient le site non modifié)"
+
+#: views/admin-settings.php:104
+msgid "Respect DNT / GPC"
+msgstr "Respecter DNT / GPC"
+
+#: views/admin-settings.php:105
+msgid ""
+"Treat a Do-Not-Track / Global-Privacy-Control browser signal as a refusal of "
+"optional cookies"
+msgstr ""
+"Traiter un signal de navigateur Do-Not-Track / Global-Privacy-Control comme "
+"un refus des cookies optionnels"
+
+#: views/admin-settings.php:106
+msgid "…and hide the banner entirely for those visitors (otherwise still ask)"
+msgstr ""
+"…et masquer entièrement la bannière pour ces visiteurs (sinon, demander "
+"quand même)"
+
+#: views/admin-settings.php:109
+msgid "Proof of consent"
+msgstr "Preuve de consentement"
+
+#: views/admin-settings.php:111
+msgid "Store proof of consent"
+msgstr "Stocker la preuve de consentement"
+
+#: views/admin-settings.php:112
+msgid ""
+"Record each consent decision in the database (advised for GDPR "
+"accountability)"
+msgstr ""
+"Enregistrer chaque décision de consentement dans la base de données "
+"(conseillé pour la responsabilité RGPD)"
+
+#: views/admin-settings.php:114
+msgid "IP address"
+msgstr "Adresse IP"
+
+#: views/admin-settings.php:114
+msgid ""
+"A salted hash is irreversible but still lets you count unique consents. Your "
+"server already logs IPs; GDPR requires disclosing it, not omitting it."
+msgstr ""
+"Un hachage salé est irréversible tout en vous permettant de comptabiliser "
+"les consentements uniques. Votre serveur enregistre déjà les IP ; le RGPD "
+"exige de le divulguer, pas de l’omettre."
+
+#: views/admin-settings.php:116
+msgid "Do not store any IP"
+msgstr "Ne stocker aucune IP"
+
+#: views/admin-settings.php:116
+msgid "Store a salted hash"
+msgstr "Stocker un hachage salé"
+
+#: views/admin-settings.php:116
+msgid "Store the full IP"
+msgstr "Stocker l’IP complète"
+
+#: views/admin-settings.php:120
+msgid "Store user-agent"
+msgstr "Stocker le user-agent"
+
+#: views/admin-settings.php:121
+msgid "Record the browser user-agent string"
+msgstr "Enregistrer la chaîne user-agent du navigateur"
+
+#: views/admin-settings.php:123
+msgid "Store WP user"
+msgstr "Stocker l’utilisateur WP"
+
+#: views/admin-settings.php:124
+msgid "Record the logged-in user (guests are never identified)"
+msgstr ""
+"Enregistrer l’utilisateur connecté (les invités ne sont jamais identifiés)"
+
+#: views/admin-settings.php:126
+msgid "Log retention (days)"
+msgstr "Conservation du journal (jours)"
+
+#: views/admin-settings.php:127
+msgid "0 = keep forever"
+msgstr "0 = conserver indéfiniment"
+
+#: views/admin-settings.php:135 views/admin-settings.php:228
+msgid "Text"
+msgstr "Texte"
+
+#: views/admin-settings.php:136
+msgid "Presets"
+msgstr "Préréglages"
+
+#: views/admin-settings.php:144
+msgid "Header"
+msgstr "En-tête"
+
+#: views/admin-settings.php:146
+msgid "Message"
+msgstr "Message"
+
+#: views/admin-settings.php:148
+msgid "Accept button"
+msgstr "Bouton Accepter"
+
+#: views/admin-settings.php:150
+msgid "Deny button"
+msgstr "Bouton Refuser"
+
+#: views/admin-settings.php:152
+msgid "Save button"
+msgstr "Bouton Enregistrer"
+
+#: views/admin-settings.php:154
+msgid "Logo"
+msgstr "Logo"
+
+#: views/admin-settings.php:165
+msgid "Buttons & layout"
+msgstr "Boutons et mise en page"
+
+#: views/admin-settings.php:167
+msgid "Show “Deny” button"
+msgstr "Afficher le bouton « Tout refuser »"
+
+#: views/admin-settings.php:168
+msgid "Show “Save preferences” button"
+msgstr "Afficher le bouton « Enregistrer les préférences »"
+
+#: views/admin-settings.php:169
+msgid "Hide category options behind a “Customize” button (simpler banner)"
+msgstr ""
+"Masquer les options de catégories derrière un bouton « Personnaliser » "
+"(bannière simplifiée)"
+
+#: views/admin-settings.php:170
+msgid "Show a floating “Manage cookies” button after a decision"
+msgstr "Afficher un bouton flottant « Gérer les cookies » après une décision"
+
+#: views/admin-settings.php:173
+msgid "“Manage cookies” button label"
+msgstr "Libellé du bouton « Gérer les cookies »"
+
+#: views/admin-settings.php:178
+msgid "Footer links"
+msgstr "Liens de pied de page"
+
+#: views/admin-settings.php:178
+msgid ""
+"Add links shown at the bottom of the banner — e.g. your Privacy Policy. You "
+"can add several."
+msgstr ""
+"Ajoutez des liens affichés en bas de la bannière — par ex. votre politique "
+"de confidentialité. Vous pouvez en ajouter plusieurs."
+
+#: views/admin-settings.php:188
+msgid "Add link"
+msgstr "Ajouter un lien"
+
+#: views/admin-settings.php:192
+msgid "Top left"
+msgstr "En haut à gauche"
+
+#: views/admin-settings.php:193
+msgid "Top"
+msgstr "En haut"
+
+#: views/admin-settings.php:194
+msgid "Top right"
+msgstr "En haut à droite"
+
+#: views/admin-settings.php:201
+msgid "Appearance"
+msgstr "Apparence"
+
+#: views/admin-settings.php:202
+msgid ""
+"Auto follows your theme via WordPress global-style tokens. The back-office "
+"preview may not match your theme exactly — always check the result on the "
+"front end."
+msgstr ""
+"Le mode Auto suit votre thème via les jetons de styles globaux WordPress. "
+"L’aperçu en back-office peut ne pas correspondre exactement à votre thème — "
+"vérifiez toujours le résultat côté visiteur."
+
+#: views/admin-settings.php:204
+msgid "Auto"
+msgstr "Auto"
+
+#: views/admin-settings.php:210
+msgid "Custom"
+msgstr "Personnalisé"
+
+#: views/admin-settings.php:217
+msgid "Custom palettes"
+msgstr "Palettes personnalisées"
+
+#: views/admin-settings.php:227
+msgid "Background"
+msgstr "Arrière-plan"
+
+#: views/admin-settings.php:229
+msgid "Title"
+msgstr "Titre"
+
+#: views/admin-settings.php:230
+msgid "Border"
+msgstr "Bordure"
+
+#: views/admin-settings.php:231
+msgid "Accept button bg"
+msgstr "Fond du bouton Accepter"
+
+#: views/admin-settings.php:232
+msgid "Accept button text"
+msgstr "Texte du bouton Accepter"
+
+#: views/admin-settings.php:233
+msgid "Deny/Save button bg"
+msgstr "Fond du bouton Refuser/Enregistrer"
+
+#: views/admin-settings.php:234
+msgid "Deny/Save button text"
+msgstr "Texte du bouton Refuser/Enregistrer"
+
+#: views/admin-settings.php:243
+msgid "Popup width"
+msgstr "Largeur de la fenêtre"
+
+#: views/admin-settings.php:244 views/admin-settings.php:250
+msgid "Small"
+msgstr "Petite"
+
+#: views/admin-settings.php:244 views/admin-settings.php:250
+msgid "Medium"
+msgstr "Moyenne"
+
+#: views/admin-settings.php:244 views/admin-settings.php:250
+msgid "Large"
+msgstr "Grande"
+
+#: views/admin-settings.php:246
+msgid "Density (spacing)"
+msgstr "Densité (espacement)"
+
+#: views/admin-settings.php:247
+msgid "Compact"
+msgstr "Compact"
+
+#: views/admin-settings.php:247
+msgid "Cozy"
+msgstr "Confortable"
+
+#: views/admin-settings.php:247
+msgid "Comfortable"
+msgstr "Aéré"
+
+#: views/admin-settings.php:249
+msgid "Font size"
+msgstr "Taille de police"
+
+#: views/admin-settings.php:252
+msgid "Corners"
+msgstr "Coins"
+
+#: views/admin-settings.php:253
+msgid "Square"
+msgstr "Carrés"
+
+#: views/admin-settings.php:253
+msgid "Rounded"
+msgstr "Arrondis"
+
+#: views/admin-settings.php:253
+msgid "Pill"
+msgstr "Pilule"
+
+#: views/admin-settings.php:256
+msgid "Left"
+msgstr "Gauche"
+
+#: views/admin-settings.php:256
+msgid "Right"
+msgstr "Droite"
+
+#: views/admin-settings.php:258
+msgid "Title alignment"
+msgstr "Alignement du titre"
+
+#: views/admin-settings.php:260
+msgid "Text alignment"
+msgstr "Alignement du texte"
+
+#: views/admin-settings.php:262
+msgid "Buttons alignment"
+msgstr "Alignement des boutons"
+
+#: views/admin-settings.php:267
+msgid "Live preview"
+msgstr "Aperçu en direct"
+
+#: views/admin-settings.php:295 views/admin-settings.php:451
+msgid "Categories"
+msgstr "Catégories"
+
+#: views/admin-settings.php:295
+msgid ""
+"Functional cookies (WordPress login, cart, CSRF/security tokens) are always "
+"allowed — they cannot be blocked without breaking the site. Below are the "
+"optional categories visitors can accept or refuse. Leave a label blank to "
+"use the built-in default."
+msgstr ""
+"Les cookies fonctionnels (connexion WordPress, panier, jetons CSRF/sécurité) "
+"sont toujours autorisés — ils ne peuvent pas être bloqués sans casser le "
+"site. Ci-dessous figurent les catégories optionnelles que les visiteurs "
+"peuvent accepter ou refuser. Laissez un libellé vide pour utiliser la valeur "
+"par défaut intégrée."
+
+#: views/admin-settings.php:299
+msgid "Always allowed (cannot be disabled)"
+msgstr "Toujours autorisés (ne peuvent pas être désactivés)"
+
+#: views/admin-settings.php:310
+msgid "Add category"
+msgstr "Ajouter une catégorie"
+
+#: views/admin-settings.php:312
+msgid "Blocking"
+msgstr "Blocage"
+
+#: views/admin-settings.php:314
+msgid "Block method"
+msgstr "Méthode de blocage"
+
+#: views/admin-settings.php:314
+msgid ""
+"Full-page scan catches hardcoded scripts and iframes too; enqueued-only is "
+"lighter but misses them."
+msgstr ""
+"L’analyse de page complète détecte aussi les scripts et iframes codés en "
+"dur ; le mode « mis en file uniquement » est plus léger mais les manque."
+
+#: views/admin-settings.php:315
+msgid "Full-page scan"
+msgstr "Analyse de page complète"
+
+#: views/admin-settings.php:315
+msgid "Enqueued only"
+msgstr "Mis en file uniquement"
+
+#: views/admin-settings.php:316
+msgid "Block iframes"
+msgstr "Bloquer les iframes"
+
+#: views/admin-settings.php:316
+msgid ""
+"Turning this off may load third-party cookies before consent — a GDPR risk."
+msgstr ""
+"Désactiver cette option peut charger des cookies tiers avant le consentement "
+"— un risque RGPD."
+
+#: views/admin-settings.php:317
+msgid "Neutralise matching iframes until consent"
+msgstr "Neutraliser les iframes correspondantes jusqu’au consentement"
+
+#: views/admin-settings.php:318
+msgid "Re-prompt on change"
+msgstr "Redemander en cas de changement"
+
+#: views/admin-settings.php:318
+msgid ""
+"Default: only re-ask when the set of active categories changes. Enable to re-"
+"ask on any block-rule edit."
+msgstr ""
+"Par défaut : redemander uniquement lorsque l’ensemble des catégories actives "
+"change. Activez pour redemander à chaque modification d’une règle de blocage."
+
+#: views/admin-settings.php:319
+msgid "Re-ask on any rule change"
+msgstr "Redemander à chaque changement de règle"
+
+#: views/admin-settings.php:322
+msgid "What to block"
+msgstr "Quoi bloquer"
+
+#: views/admin-settings.php:322
+msgid ""
+"Scanning requests your own public pages, one at a time, to find third-party "
+"scripts and embeds. It runs as an anonymous visitor (admin/member-only "
+"cookies are never touched) and cannot see trackers injected later by "
+"JavaScript, e.g. via Tag Manager."
+msgstr ""
+"L’analyse interroge vos propres pages publiques, une à une, pour repérer les "
+"scripts et intégrations tiers. Elle s’exécute en tant que visiteur anonyme "
+"(les cookies réservés aux administrateurs/membres ne sont jamais touchés) et "
+"ne peut pas voir les traceurs injectés ultérieurement par JavaScript, par "
+"ex. via Tag Manager."
+
+#: views/admin-settings.php:326
+msgid "Scan depth"
+msgstr "Profondeur d’analyse"
+
+#: views/admin-settings.php:328
+msgid "Simple — home + a few pages"
+msgstr "Simple — accueil + quelques pages"
+
+#: views/admin-settings.php:329
+msgid "Deep — more pages"
+msgstr "Approfondie — plus de pages"
+
+#: views/admin-settings.php:331
+msgid ""
+"Deep scan requests many pages from your own server, one after another. On a "
+"heavy or poorly-optimised site this adds load — use it sparingly."
+msgstr ""
+"L’analyse approfondie interroge de nombreuses pages de votre propre serveur, "
+"l’une après l’autre. Sur un site lourd ou mal optimisé, cela ajoute de la "
+"charge — utilisez-la avec parcimonie."
+
+#: views/admin-settings.php:333
+msgid "Scan my site"
+msgstr "Analyser mon site"
+
+#: views/admin-settings.php:338
+msgid "Editor mode"
+msgstr "Mode d’édition"
+
+#: views/admin-settings.php:339
+msgid "Guided"
+msgstr "Guidé"
+
+#: views/admin-settings.php:339
+msgid "Raw text"
+msgstr "Texte brut"
+
+#: views/admin-settings.php:360
+msgid ""
+"Click a common service to add it, or add a custom rule. The pattern is "
+"matched against script/iframe URLs and inline script bodies."
+msgstr ""
+"Cliquez sur un service courant pour l’ajouter, ou ajoutez une règle "
+"personnalisée. Le motif est comparé aux URL des scripts/iframes et au "
+"contenu des scripts inline."
+
+#: views/admin-settings.php:374 views/admin-settings.php:384
+msgid "pattern (e.g. google-analytics.com)"
+msgstr "motif (par ex. google-analytics.com)"
+
+#: views/admin-settings.php:376 views/admin-settings.php:386
+msgid "Service name"
+msgstr "Nom du service"
+
+#: views/admin-settings.php:381
+msgid "Add custom rule"
+msgstr "Ajouter une règle personnalisée"
+
+#: views/admin-settings.php:394
+msgid ""
+"One rule per line: pattern | category | service name. The category must be "
+"one of your configured category slugs."
+msgstr ""
+"Une règle par ligne : motif | catégorie | nom du service. La catégorie doit "
+"correspondre à l’un des slugs de catégorie que vous avez configurés."
+
+#: views/admin-settings.php:397
+msgid "Inline scripts"
+msgstr "Scripts inline"
+
+#: views/admin-settings.php:397
+msgid ""
+"Paste a snippet (GA4, Matomo…) and pick a category — injected inert, runs "
+"only after consent, no theme editing. Tip: Matomo cookieless and Cloudflare "
+"Turnstile / hCaptcha usually need no blocking, and blocking a CAPTCHA can "
+"break forms."
+msgstr ""
+"Collez un extrait (GA4, Matomo…) et choisissez une catégorie — injecté "
+"inerte, il ne s’exécute qu’après le consentement, sans modifier le thème. "
+"Astuce : Matomo sans cookie et Cloudflare Turnstile / hCaptcha ne "
+"nécessitent généralement aucun blocage, et bloquer un CAPTCHA peut casser "
+"les formulaires."
+
+#: views/admin-settings.php:413
+msgid "Add inline script"
+msgstr "Ajouter un script inline"
+
+#. translators: %s: number of stored consent records.
+#: views/admin-settings.php:424
+msgid "Stored consent records: %s"
+msgstr "Enregistrements de consentement stockés : %s"
+
+#: views/admin-settings.php:427
+msgid "Accepted all"
+msgstr "Tout accepté"
+
+#: views/admin-settings.php:428
+msgid "Denied all"
+msgstr "Tout refusé"
+
+#: views/admin-settings.php:429
+msgid "Customised"
+msgstr "Personnalisé"
+
+#: views/admin-settings.php:436
+msgid "Export CSV"
+msgstr "Exporter en CSV"
+
+#: views/admin-settings.php:441
+msgid "Delete all"
+msgstr "Tout supprimer"
+
+#: views/admin-settings.php:447
+msgid "Date (UTC)"
+msgstr "Date (UTC)"
+
+#: views/admin-settings.php:448
+msgid "User"
+msgstr "Utilisateur"
+
+#: views/admin-settings.php:449
+msgid "Decision"
+msgstr "Décision"
+
+#: views/admin-settings.php:450
+msgid "IP"
+msgstr "IP"
+
+#: views/admin-settings.php:452
+msgid "Config"
+msgstr "Configuration"
+
+#: views/admin-settings.php:453
+msgid "User-agent"
+msgstr "User-agent"
+
+#. translators: %s: cookie category name.
+#: views/banner.php:51
+msgid "Allow %s cookies"
+msgstr "Autoriser les cookies %s"

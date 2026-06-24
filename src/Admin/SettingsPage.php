@@ -218,7 +218,7 @@ final class SettingsPage
         }
 
         $out['consent_type'] = 'optin';
-        $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['anonymized', 'full', 'none'], true) ? $in['ip_storage'] : 'anonymized';
+        $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['hashed', 'full', 'none'], true) ? $in['ip_storage'] : 'hashed';
         $out['cookie_days'] = max(1, (int) ($in['cookie_days'] ?? $d['cookie_days']));
         $out['log_retention_days'] = max(0, (int) ($in['log_retention_days'] ?? $d['log_retention_days']));
         $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';

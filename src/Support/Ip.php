@@ -12,6 +12,15 @@ final class Ip
         return filter_var($ip, FILTER_VALIDATE_IP) ? $ip : '';
     }
 
+    /** Salted, irreversible hash — lets you count uniques without storing the IP. */
+    public static function hash(string $ip): string
+    {
+        if ($ip === '') {
+            return '';
+        }
+        return substr(hash('sha256', $ip . '|' . wp_salt('auth')), 0, 40);
+    }
+
     /** IPv4 → /24, IPv6 → /48. Returns '' on invalid input. */
     public static function anonymise(string $ip): string
     {

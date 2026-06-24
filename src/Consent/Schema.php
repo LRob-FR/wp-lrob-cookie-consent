@@ -6,7 +6,7 @@ namespace LRob\CookieConsent\Consent;
 
 final class Schema
 {
-    public const DB_VERSION = 1;
+    public const DB_VERSION = 2;
     public const DB_VERSION_OPTION = 'lrob_cc_db_version';
 
     public static function table_name(): string
@@ -15,7 +15,7 @@ final class Schema
         return $wpdb->prefix . 'lrob_cc_consent_log';
     }
 
-    /** Idempotent — safe to call on every activation. */
+    /** Idempotent — safe to call on every activation. dbDelta adds new columns. */
     public static function create(): void
     {
         global $wpdb;
@@ -27,7 +27,8 @@ final class Schema
         $sql = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             created_at datetime NOT NULL,
-            ip_anon varchar(45) NOT NULL DEFAULT '',
+            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+            ip_anon varchar(64) NOT NULL DEFAULT '',
             categories varchar(191) NOT NULL DEFAULT '',
             config_version varchar(32) NOT NULL DEFAULT '',
             user_agent varchar(255) NOT NULL DEFAULT '',
@@ -38,5 +39,13 @@ final class Schema
         dbDelta($sql);
 
         update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
+    }
+
+    /** Run the idempotent migration when the stored schema is behind. */
+    public static function maybe_upgrade(): void
+    {
+        if ((int) get_option(self::DB_VERSION_OPTION, 0) < self::DB_VERSION) {
+            self::create();
+        }
     }
 }

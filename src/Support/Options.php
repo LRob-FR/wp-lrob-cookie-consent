@@ -35,7 +35,7 @@ final class Options
 
             // Proof of consent
             'log_consent'        => 1,          // on by default (advised for GDPR accountability)
-            'ip_storage'         => 'anonymized', // anonymized | full | none
+            'ip_storage'         => 'hashed',   // hashed | full | none
             'store_user_agent'   => 0,
             'log_retention_days' => 365,
 

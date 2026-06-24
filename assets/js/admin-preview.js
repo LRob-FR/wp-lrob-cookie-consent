@@ -188,6 +188,17 @@
 		rulesRows.appendChild(row);
 	}
 
+	function ruleRowByPattern(pattern) {
+		var found = null;
+		if (rulesRows) {
+			rulesRows.querySelectorAll('.lrob-cc-rule-row').forEach(function (r) {
+				var inp = r.querySelector('.lrob-cc-rule-pattern');
+				if (inp && inp.value.trim() === pattern) { found = r; }
+			});
+		}
+		return found;
+	}
+
 	function parseRulesToRows() {
 		if (!rulesRows || !rulesTextarea) { return; }
 		rulesRows.innerHTML = '';
@@ -441,27 +452,16 @@
 	function openWizard() {
 		var WS = A.wizardSettings || {};
 		var serviceSel = {};
-		var mode = 'add';
-		var hasExisting = rulesRows && rulesRows.querySelectorAll('.lrob-cc-rule-row').length > 0;
 		var screens = [];
 
-		// Patterns already in the rules — used to pre-check service questions.
+		// Patterns already in the rules — pre-check known services. Custom rules
+		// (patterns not offered by the wizard) are never touched.
 		var existingPatterns = {};
 		if (rulesTextarea) {
 			rulesTextarea.value.split('\n').forEach(function (l) { var p = l.split('|')[0].trim(); if (p) { existingPatterns[p] = true; } });
 		}
-
-		// 1. Existing-rules choice.
-		if (hasExisting) {
-			screens.push({
-				title: A.i18n.wizExisting || 'You already have rules.',
-				render: function (b) { b.innerHTML = radioGroup('mode', [
-					{ v: 'add', l: A.i18n.wizAddTo || 'Add to current' },
-					{ v: 'fresh', l: A.i18n.wizFresh || 'Clear and start fresh' }
-				], mode); bindRadio(b, 'mode', function (v) { mode = v; }); },
-				apply: function () {}
-			});
-		}
+		var allServices = [];
+		(A.wizard || []).forEach(function (step) { (step.services || []).forEach(function (s) { allServices.push(s); }); });
 
 		// 2. Tone (text preset). No "keep current": pick none → text is untouched.
 		if (WS.tone && (A.texts || []).length) {
@@ -582,22 +582,15 @@
 		}
 
 		function finish() {
-			if (mode === 'fresh' && rulesRows) {
-				rulesRows.innerHTML = '';
-				if (rulesTextarea) { rulesTextarea.value = ''; }
-			}
 			screens.forEach(function (s) { if (s.apply) { s.apply(); } });
 
-			// Add picked services, skipping patterns already present (no dupes).
-			var present = {};
-			if (rulesRows) {
-				rulesRows.querySelectorAll('.lrob-cc-rule-pattern').forEach(function (inp) { var v = inp.value.trim(); if (v) { present[v] = true; } });
-			}
-			Object.keys(serviceSel).forEach(function (p) {
-				if (present[p]) { return; }
-				var s = serviceSel[p];
-				addRuleRow(s.pattern, s.category, s.service);
-				present[p] = true;
+			// Sync only the wizard's known services: add the checked ones, remove
+			// the unchecked ones. Any other (custom) rule is left untouched.
+			allServices.forEach(function (svc) {
+				var want = !!serviceSel[svc.pattern];
+				var row = ruleRowByPattern(svc.pattern);
+				if (want && !row) { addRuleRow(svc.pattern, svc.category, svc.service); }
+				else if (!want && row) { row.remove(); }
 			});
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');

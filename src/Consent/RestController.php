@@ -48,7 +48,7 @@ final class RestController
         $stored_ip = match ((string) Options::get('ip_storage')) {
             'full'  => $ip,
             'none'  => '',
-            default => Ip::anonymise($ip),
+            default => Ip::hash($ip),
         };
 
         $ua = '';
@@ -57,6 +57,7 @@ final class RestController
         }
 
         $this->log->insert([
+            'user_id'        => get_current_user_id(),
             'ip_anon'        => (string) $stored_ip,
             'categories'     => implode(',', $categories),
             'config_version' => substr($version, 0, 32),

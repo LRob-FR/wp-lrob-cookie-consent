@@ -40,6 +40,8 @@ final class Plugin
 
         (new \LRob\CookieConsent\AutoUpdate\Updater())->register();
 
+        \LRob\CookieConsent\Consent\Schema::maybe_upgrade();
+
         $log = new \LRob\CookieConsent\Consent\LogRepository();
         $log->register();
         (new \LRob\CookieConsent\Consent\RestController($log))->register();

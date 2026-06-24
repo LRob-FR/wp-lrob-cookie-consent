@@ -19,7 +19,7 @@ final class LogRepository
     }
 
     /**
-     * @param array{ip_anon:string,categories:string,config_version:string,user_agent:string} $row
+     * @param array{user_id:int,ip_anon:string,categories:string,config_version:string,user_agent:string} $row
      */
     public function insert(array $row): void
     {
@@ -28,12 +28,13 @@ final class LogRepository
             Schema::table_name(),
             [
                 'created_at'     => gmdate('Y-m-d H:i:s'),
+                'user_id'        => $row['user_id'],
                 'ip_anon'        => $row['ip_anon'],
                 'categories'     => $row['categories'],
                 'config_version' => $row['config_version'],
                 'user_agent'     => $row['user_agent'],
             ],
-            ['%s', '%s', '%s', '%s', '%s']
+            ['%s', '%d', '%s', '%s', '%s', '%s']
         );
     }
 
@@ -86,7 +87,7 @@ final class LogRepository
         header('Content-Disposition: attachment; filename=lrob-cc-consent-log.csv');
 
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['id', 'created_at_utc', 'ip', 'categories', 'config_version', 'user_agent']);
+        fputcsv($out, ['id', 'created_at_utc', 'user_id', 'username', 'ip', 'categories', 'config_version', 'user_agent']);
 
         $batch = 1000;
         $offset = 0;
@@ -100,8 +101,10 @@ final class LogRepository
                 ARRAY_A
             );
             foreach ((array) $rows as $r) {
+                $user = (int) ($r['user_id'] ?? 0);
+                $username = $user > 0 ? (string) (get_userdata($user)->user_login ?? '') : '';
                 fputcsv($out, [
-                    $r['id'], $r['created_at'], $r['ip_anon'],
+                    $r['id'], $r['created_at'], $user, $username, $r['ip_anon'],
                     $r['categories'], $r['config_version'], $r['user_agent'],
                 ]);
             }

@@ -43,6 +43,15 @@ $hint = static function (string $text, string $kind = 'info'): void {
     printf('<p class="lrob-cc-hint lrob-cc-hint-%s">%s</p>', esc_attr($kind), esc_html($text));
 };
 
+// Inline clickable "?" help toggle — keeps long explanations out of the way.
+$help = static function (string $text): void {
+    printf(
+        '<details class="lrob-cc-help"><summary title="%s">?</summary><span class="lrob-cc-help-body">%s</span></details>',
+        esc_attr__('More info', 'lrob-cookie-consent'),
+        esc_html($text)
+    );
+};
+
 $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_scripts']) && $o['inline_scripts'] !== []);
 ?>
 <div class="wrap lrob-cc-admin">
@@ -55,7 +64,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
     <h2 class="nav-tab-wrapper lrob-cc-tabs">
         <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
         <a href="#banner" class="nav-tab" data-tab="banner"><?php esc_html_e('Banner', 'lrob-cookie-consent'); ?></a>
-        <a href="#blocking" class="nav-tab" data-tab="blocking"><?php esc_html_e('Blocking', 'lrob-cookie-consent'); ?></a>
+        <a href="#cookies" class="nav-tab" data-tab="cookies"><?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?></a>
         <a href="#log" class="nav-tab" data-tab="log"><?php esc_html_e('Log', 'lrob-cookie-consent'); ?></a>
     </h2>
 
@@ -103,10 +112,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
                 <tr><th><?php esc_html_e('IP address', 'lrob-cookie-consent'); ?></th>
                     <td>
-                        <?php foreach (['anonymized' => __('Store anonymised (IPv4 → /24, IPv6 → /48)', 'lrob-cookie-consent'), 'full' => __('Store full IP', 'lrob-cookie-consent'), 'none' => __('Do not store any IP', 'lrob-cookie-consent')] as $v => $l) : ?>
+                        <?php foreach (['hashed' => __('Store a salted hash (recommended)', 'lrob-cookie-consent'), 'full' => __('Store the full IP', 'lrob-cookie-consent'), 'none' => __('Do not store any IP', 'lrob-cookie-consent')] as $v => $l) : ?>
                             <label class="lrob-cc-radio-line"><input type="radio" name="<?php echo $name('ip_storage'); ?>" value="<?php echo esc_attr($v); ?>" <?php checked($o['ip_storage'], $v); ?> /> <?php echo esc_html($l); ?></label>
                         <?php endforeach; ?>
-                        <p class="description"><?php esc_html_e('Your server already logs IPs; GDPR requires disclosing it, not omitting it. Anonymisation is the privacy-friendly default.', 'lrob-cookie-consent'); ?></p></td></tr>
+                        <?php $hint(__('A salted hash is irreversible but still lets you count unique consents. Your server already logs IPs; GDPR requires disclosing it, not omitting it.', 'lrob-cookie-consent')); ?></td></tr>
 
                 <tr><th><?php esc_html_e('Store user-agent', 'lrob-cookie-consent'); ?></th>
                     <td><label><input type="checkbox" name="<?php echo $name('store_user_agent'); ?>" value="1" <?php echo $checked('store_user_agent'); ?> /></label></td></tr>
@@ -247,17 +256,15 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             </div>
         </section>
 
-        <!-- BLOCKING -->
-        <section class="lrob-cc-panel" data-panel="blocking" hidden>
+        <!-- COOKIES -->
+        <section class="lrob-cc-panel" data-panel="cookies" hidden>
             <table class="form-table" role="presentation">
-                <tr><th><?php esc_html_e('Block method', 'lrob-cookie-consent'); ?></th>
-                    <td><?php $seg('block_method', ['full' => __('Full-page scan (recommended)', 'lrob-cookie-consent'), 'enqueued' => __('Enqueued scripts only', 'lrob-cookie-consent')]); ?>
-                        <p class="description"><?php esc_html_e('Full-page scan catches hardcoded scripts and iframes too; enqueued-only is lighter but misses them.', 'lrob-cookie-consent'); ?></p></td></tr>
-                <tr><th><?php esc_html_e('Block iframes / embeds', 'lrob-cookie-consent'); ?></th>
-                    <td><label><input type="checkbox" name="<?php echo $name('block_iframes'); ?>" value="1" <?php echo $checked('block_iframes'); ?> /> <?php esc_html_e('Neutralise matching iframes until consent', 'lrob-cookie-consent'); ?></label>
-                        <p class="description"><?php esc_html_e('Turning this off may load third-party cookies before consent — a GDPR risk.', 'lrob-cookie-consent'); ?></p></td></tr>
-                <tr><th><?php esc_html_e('Re-prompt on rule change', 'lrob-cookie-consent'); ?></th>
-                    <td><label><input type="checkbox" name="<?php echo $name('reprompt_on_rule_change'); ?>" value="1" <?php echo $checked('reprompt_on_rule_change'); ?> /> <?php esc_html_e('Re-ask everyone whenever any block rule changes (default: only when the set of active categories changes)', 'lrob-cookie-consent'); ?></label></td></tr>
+                <tr><th><?php esc_html_e('Block method', 'lrob-cookie-consent'); ?> <?php $help(__('Full-page scan catches hardcoded scripts and iframes too; enqueued-only is lighter but misses them.', 'lrob-cookie-consent')); ?></th>
+                    <td><?php $seg('block_method', ['full' => __('Full-page scan', 'lrob-cookie-consent'), 'enqueued' => __('Enqueued only', 'lrob-cookie-consent')]); ?></td></tr>
+                <tr><th><?php esc_html_e('Block iframes', 'lrob-cookie-consent'); ?> <?php $help(__('Turning this off may load third-party cookies before consent — a GDPR risk.', 'lrob-cookie-consent')); ?></th>
+                    <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('block_iframes'); ?>" value="1" <?php echo $checked('block_iframes'); ?> /> <?php esc_html_e('Neutralise matching iframes until consent', 'lrob-cookie-consent'); ?></label></td></tr>
+                <tr><th><?php esc_html_e('Re-prompt on change', 'lrob-cookie-consent'); ?> <?php $help(__('Default: only re-ask when the set of active categories changes. Enable to re-ask on any block-rule edit.', 'lrob-cookie-consent')); ?></th>
+                    <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('reprompt_on_rule_change'); ?>" value="1" <?php echo $checked('reprompt_on_rule_change'); ?> /> <?php esc_html_e('Re-ask on any rule change', 'lrob-cookie-consent'); ?></label></td></tr>
             </table>
 
             <h3><?php esc_html_e('What to block', 'lrob-cookie-consent'); ?></h3>
@@ -276,11 +283,6 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 <div id="lrob-cc-scan-progress" hidden><progress id="lrob-cc-scan-bar" max="100" value="0"></progress> <span id="lrob-cc-scan-progress-text"></span></div>
                 <div id="lrob-cc-scan-results"></div>
             </div>
-
-            <p>
-                <button type="button" class="button lrob-cc-wizard-open"><?php esc_html_e('Guided setup wizard', 'lrob-cookie-consent'); ?></button>
-                <span class="description"><?php esc_html_e('Answer a few quick questions to generate rules.', 'lrob-cookie-consent'); ?></span>
-            </p>
 
             <p class="lrob-cc-field-label"><?php esc_html_e('Editor mode', 'lrob-cookie-consent'); ?></p>
             <?php $seg('rules_mode', ['structured' => __('Guided', 'lrob-cookie-consent'), 'raw' => __('Raw text', 'lrob-cookie-consent')]); ?>
@@ -389,15 +391,20 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
         <table class="widefat striped">
             <thead><tr>
                 <th><?php esc_html_e('Date (UTC)', 'lrob-cookie-consent'); ?></th>
+                <th><?php esc_html_e('User', 'lrob-cookie-consent'); ?></th>
                 <th><?php esc_html_e('IP', 'lrob-cookie-consent'); ?></th>
                 <th><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?></th>
                 <th><?php esc_html_e('Config', 'lrob-cookie-consent'); ?></th>
                 <th><?php esc_html_e('User-agent', 'lrob-cookie-consent'); ?></th>
             </tr></thead>
             <tbody>
-                <?php foreach ($log->recent(100) as $row) : ?>
+                <?php foreach ($log->recent(100) as $row) :
+                    $uid = (int) ($row['user_id'] ?? 0);
+                    $uname = $uid > 0 ? (get_userdata($uid)->user_login ?? ('#' . $uid)) : '—';
+                    ?>
                     <tr>
                         <td><?php echo esc_html((string) $row['created_at']); ?></td>
+                        <td><?php echo esc_html((string) $uname); ?></td>
                         <td><?php echo esc_html((string) $row['ip_anon']); ?></td>
                         <td><?php echo esc_html((string) $row['categories']); ?></td>
                         <td><code><?php echo esc_html((string) $row['config_version']); ?></code></td>

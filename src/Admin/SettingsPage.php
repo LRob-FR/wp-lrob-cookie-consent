@@ -206,6 +206,9 @@ final class SettingsPage
         $services = Services::common();
         $log = $this->log;
         $option = Options::OPTION_KEY;
+        $log_table = new ConsentLogTable($this->log);
+        $log_table->prepare_items();
+        $banner_versions = \LRob\CookieConsent\Consent\BannerVersion::all();
 
         include LROB_CC_PATH . 'views/admin-settings.php';
     }

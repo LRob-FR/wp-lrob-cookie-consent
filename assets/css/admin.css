@@ -392,6 +392,22 @@
 	margin-left: 14px;
 }
 
+.lrob-cc-btn-toggle {
+	margin-right: 10px;
+	white-space: nowrap;
+}
+
+.lrob-cc-readonly {
+	background: #f0f0f1;
+	color: #8c8f94;
+}
+
+.lrob-cc-choice {
+	display: inline-block;
+	margin-right: 6px;
+	white-space: nowrap;
+}
+
 .lrob-cc-custom-colors[data-theme-only] {
 	display: none;
 }

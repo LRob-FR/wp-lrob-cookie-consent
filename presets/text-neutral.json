@@ -1,9 +1,0 @@
-{
-	"id": "neutral",
-	"label": "Neutral (default)",
-	"header": "We value your privacy",
-	"message": "We use cookies to improve your experience, analyse traffic and personalise content. You can accept all, deny non-essential cookies, or choose by category.",
-	"accept": "Accept all",
-	"deny": "Deny",
-	"save": "Save preferences"
-}

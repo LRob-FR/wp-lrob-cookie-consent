@@ -38,16 +38,31 @@ final class RestController
             return new WP_REST_Response(['ok' => true], 200);
         }
 
-        $categories = array_values(array_intersect(
-            Categories::all(),
-            array_map('sanitize_key', (array) $request->get_param('categories'))
-        ));
-        $version = sanitize_text_field((string) $request->get_param('version'));
+        // Granular per-purpose decision (one explicit allow/deny per category —
+        // never a single blanket flag). functional is implicit, never a choice.
+        $raw_choices = (array) $request->get_param('choices');
+        $choices = [];
+        foreach (Categories::optional() as $cat) {
+            $choices[$cat] = !empty($raw_choices[$cat]) ? 1 : 0;
+        }
+
+        $method = sanitize_key((string) $request->get_param('method'));
+        if (!in_array($method, ['accept_all', 'deny_all', 'save', 'service'], true)) {
+            $method = 'save';
+        }
+        $event_type = sanitize_key((string) $request->get_param('event'));
+        if (!in_array($event_type, ['consent', 'update', 'withdraw'], true)) {
+            $event_type = 'consent';
+        }
+
+        $consent_id = substr(preg_replace('/[^a-z0-9]/', '', strtolower((string) $request->get_param('consent_id'))), 0, 40);
+        $banner_version = substr(preg_replace('/[^a-f0-9]/', '', strtolower((string) $request->get_param('banner_version'))), 0, 40);
+        $version = substr(sanitize_text_field((string) $request->get_param('version')), 0, 32);
 
         $ip = Ip::client_ip();
         $stored_ip = match ((string) Options::get('ip_storage')) {
-            'full'  => $ip,
-            'none'  => '',
+            'full' => $ip,
+            'none' => '',
             default => Ip::hash($ip),
         };
 
@@ -58,18 +73,16 @@ final class RestController
 
         $user_id = (int) Options::get('store_wp_user') === 1 ? get_current_user_id() : 0;
 
-        $optional = Categories::optional();
-        $accepted = array_values(array_intersect($optional, $categories));
-        $decision = (count($optional) > 0 && count($accepted) === count($optional))
-            ? 'accept_all'
-            : (count($accepted) === 0 ? 'deny_all' : 'custom');
-
         $this->log->insert([
+            'consent_id'     => $consent_id,
             'user_id'        => $user_id,
-            'decision'       => $decision,
+            'event_type'     => $event_type,
+            'method'         => $method,
+            'choices'        => (string) wp_json_encode($choices),
+            'payload'        => substr((string) $request->get_body(), 0, 2000),
+            'banner_version' => $banner_version,
+            'config_version' => $version,
             'ip_anon'        => (string) $stored_ip,
-            'categories'     => implode(',', $categories),
-            'config_version' => substr($version, 0, 32),
             'user_agent'     => $ua,
         ]);
 

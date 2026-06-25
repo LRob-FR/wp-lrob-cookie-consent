@@ -6,13 +6,19 @@ namespace LRob\CookieConsent\Consent;
 
 final class Schema
 {
-    public const DB_VERSION = 3;
+    public const DB_VERSION = 4;
     public const DB_VERSION_OPTION = 'lrob_cc_db_version';
 
     public static function table_name(): string
     {
         global $wpdb;
         return $wpdb->prefix . 'lrob_cc_consent_log';
+    }
+
+    public static function versions_table(): string
+    {
+        global $wpdb;
+        return $wpdb->prefix . 'lrob_cc_banner_versions';
     }
 
     /** Idempotent — safe to call on every activation. dbDelta adds new columns. */
@@ -22,22 +28,42 @@ final class Schema
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         $table = self::table_name();
+        $versions = self::versions_table();
         $charset_collate = $wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE {$table} (
+        // One row per consent event. choices = granular per-purpose decision
+        // (JSON {category:1|0}); payload = raw client act; banner_version links
+        // to the exact information text shown then; expires_at = renewal due.
+        $log = "CREATE TABLE {$table} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             created_at datetime NOT NULL,
+            expires_at datetime NOT NULL,
+            consent_id varchar(40) NOT NULL DEFAULT '',
             user_id bigint(20) unsigned NOT NULL DEFAULT 0,
-            decision varchar(16) NOT NULL DEFAULT '',
-            ip_anon varchar(64) NOT NULL DEFAULT '',
-            categories varchar(191) NOT NULL DEFAULT '',
+            event_type varchar(16) NOT NULL DEFAULT 'consent',
+            method varchar(24) NOT NULL DEFAULT '',
+            choices text NOT NULL,
+            payload text NOT NULL,
+            banner_version varchar(40) NOT NULL DEFAULT '',
             config_version varchar(32) NOT NULL DEFAULT '',
+            ip_anon varchar(64) NOT NULL DEFAULT '',
             user_agent varchar(255) NOT NULL DEFAULT '',
             PRIMARY KEY  (id),
-            KEY created_at (created_at)
+            KEY created_at (created_at),
+            KEY consent_id (consent_id)
         ) {$charset_collate};";
 
-        dbDelta($sql);
+        $ver = "CREATE TABLE {$versions} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            version_hash varchar(40) NOT NULL,
+            snapshot longtext NOT NULL,
+            created_at datetime NOT NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY version_hash (version_hash)
+        ) {$charset_collate};";
+
+        dbDelta($log);
+        dbDelta($ver);
 
         update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
     }

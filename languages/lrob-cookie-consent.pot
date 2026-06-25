@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-24T12:51:59+00:00\n"
+"POT-Creation-Date: 2026-06-25T09:16:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -32,6 +32,39 @@ msgstr ""
 
 #. Author URI of the plugin
 msgid "https://www.lrob.fr"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:24
+msgid "Date (UTC)"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:25
+msgid "Subject"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:26
+msgid "Event"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:27
+msgid "Act"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:28
+msgid "Choices"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:29
+msgid "Text version"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:30
+msgid "Renew by"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:46
+#: src/Admin/ConsentLogTable.php:65
+msgid "Delete"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:55
@@ -144,7 +177,7 @@ msgid "Cancel"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:155
-#: views/admin-settings.php:160
+#: views/admin-settings.php:162
 #: views/admin-settings.php:184
 #: views/admin-settings.php:306
 #: views/admin-settings.php:377
@@ -168,7 +201,7 @@ msgid "Description"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:159
-#: views/admin-settings.php:159
+#: views/admin-settings.php:161
 msgid "Select logo"
 msgstr ""
 
@@ -279,8 +312,8 @@ msgstr ""
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:323
-#: src/Admin/SettingsPage.php:332
+#: src/Admin/SettingsPage.php:326
+#: src/Admin/SettingsPage.php:335
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -289,15 +322,15 @@ msgid "Lean, opinionated GDPR / ePrivacy cookie consent — opt-in banner, scrip
 msgstr ""
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:80
+#: src/Frontend/Assets.php:81
 msgid "This content is blocked. Click to accept %s and load it."
 msgstr ""
 
-#: src/Frontend/Assets.php:81
+#: src/Frontend/Assets.php:82
 msgid "Accept & load"
 msgstr ""
 
-#: src/Frontend/Assets.php:82
+#: src/Frontend/Assets.php:83
 #: views/admin-settings.php:174
 msgid "Manage cookies"
 msgstr ""
@@ -307,6 +340,7 @@ msgid "Manage cookie preferences"
 msgstr ""
 
 #: src/Frontend/Banner.php:35
+#: src/Support/Presets.php:20
 msgid "We value your privacy"
 msgstr ""
 
@@ -315,14 +349,20 @@ msgid "We use cookies to improve your experience. Choose which categories you al
 msgstr ""
 
 #: src/Frontend/Banner.php:37
+#: src/Support/Presets.php:22
+#: src/Support/Presets.php:49
 msgid "Accept all"
 msgstr ""
 
 #: src/Frontend/Banner.php:38
+#: src/Support/Presets.php:23
+#: src/Support/Presets.php:32
 msgid "Deny"
 msgstr ""
 
 #: src/Frontend/Banner.php:39
+#: src/Support/Presets.php:24
+#: src/Support/Presets.php:51
 msgid "Save preferences"
 msgstr ""
 
@@ -376,6 +416,83 @@ msgstr ""
 
 #: src/Support/Categories.php:37
 msgid "Spam protection, CAPTCHAs and firewalls."
+msgstr ""
+
+#: src/Support/Presets.php:19
+msgid "Neutral (default)"
+msgstr ""
+
+#: src/Support/Presets.php:21
+msgid "We use cookies to improve your experience, analyse traffic and personalise content. You can accept all, deny non-essential cookies, or choose by category."
+msgstr ""
+
+#: src/Support/Presets.php:28
+msgid "Minimal"
+msgstr ""
+
+#: src/Support/Presets.php:29
+#: views/admin-settings.php:68
+msgid "Cookies"
+msgstr ""
+
+#: src/Support/Presets.php:30
+msgid "We use cookies. Choose what you allow."
+msgstr ""
+
+#: src/Support/Presets.php:31
+msgid "Accept"
+msgstr ""
+
+#: src/Support/Presets.php:33
+msgid "Save"
+msgstr ""
+
+#: src/Support/Presets.php:37
+msgid "Friendly 🍪"
+msgstr ""
+
+#: src/Support/Presets.php:38
+msgid "Cookie time! 🍪"
+msgstr ""
+
+#: src/Support/Presets.php:39
+msgid "We bake a few cookies to keep things running smoothly and to see what you love most. Pick your flavour below — no hard feelings if you pass."
+msgstr ""
+
+#: src/Support/Presets.php:40
+msgid "Yes please"
+msgstr ""
+
+#: src/Support/Presets.php:41
+msgid "No thanks"
+msgstr ""
+
+#: src/Support/Presets.php:42
+msgid "Save my choices"
+msgstr ""
+
+#: src/Support/Presets.php:46
+msgid "Shop 🛒"
+msgstr ""
+
+#: src/Support/Presets.php:47
+msgid "A few cookies to keep the shop running 🍪"
+msgstr ""
+
+#: src/Support/Presets.php:48
+msgid "Some cookies keep your cart and checkout working; others help us understand what sells. Allow the ones you're comfortable with."
+msgstr ""
+
+#: src/Support/Presets.php:50
+msgid "Essential only"
+msgstr ""
+
+#: src/Support/Presets.php:63
+msgid "Neutral"
+msgstr ""
+
+#: src/Support/Presets.php:72
+msgid "High contrast"
 msgstr ""
 
 #: src/Support/Services.php:64
@@ -432,10 +549,6 @@ msgstr ""
 
 #: views/admin-settings.php:67
 msgid "Banner"
-msgstr ""
-
-#: views/admin-settings.php:68
-msgid "Cookies"
 msgstr ""
 
 #: views/admin-settings.php:69
@@ -587,24 +700,21 @@ msgstr ""
 msgid "Deny button"
 msgstr ""
 
-#: views/admin-settings.php:152
+#: views/admin-settings.php:151
+#: views/admin-settings.php:154
+msgid "Show"
+msgstr ""
+
+#: views/admin-settings.php:153
 msgid "Save button"
 msgstr ""
 
-#: views/admin-settings.php:154
+#: views/admin-settings.php:156
 msgid "Logo"
 msgstr ""
 
-#: views/admin-settings.php:165
-msgid "Buttons & layout"
-msgstr ""
-
 #: views/admin-settings.php:167
-msgid "Show “Deny” button"
-msgstr ""
-
-#: views/admin-settings.php:168
-msgid "Show “Save preferences” button"
+msgid "Layout"
 msgstr ""
 
 #: views/admin-settings.php:169
@@ -771,7 +881,6 @@ msgid "Live preview"
 msgstr ""
 
 #: views/admin-settings.php:295
-#: views/admin-settings.php:451
 msgid "Categories"
 msgstr ""
 
@@ -930,28 +1039,24 @@ msgstr ""
 msgid "Delete all"
 msgstr ""
 
-#: views/admin-settings.php:447
-msgid "Date (UTC)"
-msgstr ""
-
-#: views/admin-settings.php:448
-msgid "User"
-msgstr ""
-
-#: views/admin-settings.php:449
-msgid "Decision"
+#: views/admin-settings.php:450
+msgid "Information-text versions"
 msgstr ""
 
 #: views/admin-settings.php:450
-msgid "IP"
+msgid "Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given."
 msgstr ""
 
 #: views/admin-settings.php:452
-msgid "Config"
+msgid "Version"
 msgstr ""
 
-#: views/admin-settings.php:453
-msgid "User-agent"
+#: views/admin-settings.php:452
+msgid "First seen (UTC)"
+msgstr ""
+
+#: views/admin-settings.php:455
+msgid "No versions recorded yet."
 msgstr ""
 
 #. translators: %s: cookie category name.

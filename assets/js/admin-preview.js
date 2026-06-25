@@ -124,6 +124,17 @@
 
 	$(document).on('input change', '[data-field]', update);
 
+	// Button "Show" toggles grey out their text field (readonly, so the value
+	// is preserved across saves).
+	function syncTextToggle(cb) {
+		var target = document.querySelector('[data-field="' + cb.getAttribute('data-toggle-text') + '"]');
+		if (!target) { return; }
+		target.readOnly = !cb.checked;
+		target.classList.toggle('lrob-cc-readonly', !cb.checked);
+	}
+	$('[data-toggle-text]').each(function () { syncTextToggle(this); });
+	$(document).on('change', '[data-toggle-text]', function () { syncTextToggle(this); });
+
 	// --- Colour pickers --------------------------------------------------
 	$('.lrob-cc-color').wpColorPicker({
 		change: function () { setTimeout(update, 50); },
@@ -707,8 +718,14 @@
 		});
 	});
 
-	// --- Restore tab from the URL hash (defaults to General) -------------
-	if (window.location.hash) { activateTab(window.location.hash.replace('#', '')); }
+	// --- Restore tab: URL hash, else ?tab= (server round-trips like a log
+	// delete have no hash), else General.
+	if (window.location.hash) {
+		activateTab(window.location.hash.replace('#', ''));
+	} else {
+		var tabMatch = window.location.search.match(/[?&]tab=([a-z]+)/);
+		if (tabMatch) { activateTab(tabMatch[1]); }
+	}
 
 	update();
 })(jQuery);

@@ -152,10 +152,34 @@
 		return OPTIONAL.every(function (cat) { return !!a[cat] === !!b[cat]; });
 	}
 
+	function isWithdrawal(prior, cur) {
+		return OPTIONAL.some(function (cat) { return prior[cat] && !cur[cat]; });
+	}
+
+	function genId() {
+		var s = '';
+		if (window.crypto && crypto.getRandomValues) {
+			var a = new Uint8Array(16);
+			crypto.getRandomValues(a);
+			for (var i = 0; i < 16; i++) { s += ('0' + a[i].toString(16)).slice(-2); }
+		} else {
+			for (var j = 0; j < 32; j++) { s += Math.floor(Math.random() * 16).toString(16); }
+		}
+		return s;
+	}
+
+	function choicesMap(consent) {
+		var m = {};
+		OPTIONAL.forEach(function (cat) { m[cat] = !!consent[cat]; });
+		return m;
+	}
+
 	// --- Persisting a decision ------------------------------------------
-	function persist(consent) {
+	function persist(consent, method) {
 		var prior = stored(); // before we overwrite the cookie
 		consent.functional = true;
+		// Anonymous subject identifier — stable per browser, reused across events.
+		consent.cid = (prior && prior.cid) ? prior.cid : (consent.cid || genId());
 		consent.ts = Math.floor(Date.now() / 1000);
 		consent.version = VERSION;
 		setCookie(COOKIE, JSON.stringify(consent), DAYS);
@@ -169,11 +193,14 @@
 		document.dispatchEvent(new CustomEvent('lrob_cc_status_change', {
 			detail: { categories: acceptedCategories(), consent: consent }
 		}));
-		// Don't re-log an unchanged decision.
-		if (!sameDecision(prior, consent)) { logConsent(consent); }
+		// Don't re-log an unchanged decision; withdrawals/updates are logged.
+		if (!sameDecision(prior, consent)) {
+			var ev = !prior ? 'consent' : (isWithdrawal(prior, consent) ? 'withdraw' : 'update');
+			logConsent(consent, method || 'save', ev);
+		}
 	}
 
-	function logConsent(consent) {
+	function logConsent(consent, method, ev) {
 		if (!D.rest || !D.rest.logConsent || !D.rest.url) { return; }
 		try {
 			fetch(D.rest.url, {
@@ -181,8 +208,12 @@
 				headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': D.rest.nonce || '' },
 				credentials: 'same-origin',
 				body: JSON.stringify({
-					categories: acceptedCategories(),
-					version: VERSION
+					consent_id: consent.cid,
+					method: method,
+					event: ev,
+					choices: choicesMap(consent),
+					version: VERSION,
+					banner_version: D.bannerVersion || ''
 				})
 			}).catch(function () {});
 		} catch (e) {}
@@ -192,19 +223,19 @@
 	function acceptAll() {
 		var c = emptyConsent();
 		OPTIONAL.forEach(function (cat) { c[cat] = true; });
-		persist(c);
+		persist(c, 'accept_all');
 		hideBanner();
 	}
 
 	function denyAll() {
-		persist(emptyConsent());
+		persist(emptyConsent(), 'deny_all');
 		hideBanner();
 	}
 
 	function setConsent(category, value) {
 		var data = stored() || emptyConsent();
 		if (category !== 'functional') { data[category] = (value === 'allow'); }
-		persist(data);
+		persist(data, 'service');
 	}
 
 	function savePreferences() {

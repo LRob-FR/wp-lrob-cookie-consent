@@ -20,7 +20,7 @@ final class Options
         return [
             'enabled'            => 1,
             'consent_type'       => 'optin',   // v1: opt-in only (strict EU model)
-            'cookie_days'        => 365,
+            'cookie_days'        => 395,        // ~13 months (CNIL renewal recommendation)
             'respect_dnt'        => 1,          // honour DNT/GPC as "deny optional"
             'dnt_hide_banner'    => 0,          // still ask by default (DNT is ambiguous)
             'show_to_logged_in'  => 1,          // banner behaves the same for admins
@@ -36,7 +36,7 @@ final class Options
 
             // Proof of consent
             'log_consent'        => 1,          // on by default (advised for GDPR accountability)
-            'ip_storage'         => 'none',     // none (default) | hashed | full
+            'ip_storage'         => 'hashed',   // hashed (default) | full | none — a subject_id is always logged regardless
             'store_user_agent'   => 0,
             'store_wp_user'      => 1,          // record the logged-in WP user id
             'log_retention_days' => 365,

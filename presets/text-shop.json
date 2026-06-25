@@ -1,9 +1,0 @@
-{
-	"id": "shop",
-	"label": "Shop 🛒",
-	"header": "A few cookies to keep the shop running 🍪",
-	"message": "Some cookies keep your cart and checkout working; others help us understand what sells. Allow the ones you're comfortable with.",
-	"accept": "Accept all",
-	"deny": "Essential only",
-	"save": "Save preferences"
-}

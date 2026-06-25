@@ -148,9 +148,11 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <tr><th><?php esc_html_e('Accept button', 'lrob-cookie-consent'); ?></th>
                             <td><input type="text" data-field="text_accept" name="<?php echo $name('text_accept'); ?>" value="<?php echo esc_attr((string) $o['text_accept']); ?>" placeholder="<?php echo esc_attr($texts['accept']); ?>" /></td></tr>
                         <tr><th><?php esc_html_e('Deny button', 'lrob-cookie-consent'); ?></th>
-                            <td><input type="text" data-field="text_deny" name="<?php echo $name('text_deny'); ?>" value="<?php echo esc_attr((string) $o['text_deny']); ?>" placeholder="<?php echo esc_attr($texts['deny']); ?>" /></td></tr>
+                            <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_deny" data-toggle-text="text_deny" name="<?php echo $name('show_deny'); ?>" value="1" <?php echo $checked('show_deny'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
+                                <input type="text" data-field="text_deny" name="<?php echo $name('text_deny'); ?>" value="<?php echo esc_attr((string) $o['text_deny']); ?>" placeholder="<?php echo esc_attr($texts['deny']); ?>"<?php echo empty($o['show_deny']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
                         <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?></th>
-                            <td><input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($texts['save']); ?>" /></td></tr>
+                            <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_save" data-toggle-text="text_save" name="<?php echo $name('show_save'); ?>" value="1" <?php echo $checked('show_save'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
+                                <input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($texts['save']); ?>"<?php echo empty($o['show_save']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
                         <tr><th><?php esc_html_e('Logo', 'lrob-cookie-consent'); ?></th>
                             <td>
                                 <div class="lrob-cc-logo-field">
@@ -162,10 +164,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             </td></tr>
                     </table>
 
-                    <h3><?php esc_html_e('Buttons & layout', 'lrob-cookie-consent'); ?></h3>
+                    <h3><?php esc_html_e('Layout', 'lrob-cookie-consent'); ?></h3>
                     <p>
-                        <label class="lrob-cc-check"><input type="checkbox" data-field="show_deny" name="<?php echo $name('show_deny'); ?>" value="1" <?php echo $checked('show_deny'); ?> /> <?php esc_html_e('Show “Deny” button', 'lrob-cookie-consent'); ?></label>
-                        <label class="lrob-cc-check"><input type="checkbox" data-field="show_save" name="<?php echo $name('show_save'); ?>" value="1" <?php echo $checked('show_save'); ?> /> <?php esc_html_e('Show “Save preferences” button', 'lrob-cookie-consent'); ?></label>
                         <label class="lrob-cc-check"><input type="checkbox" data-field="categories_collapsed" name="<?php echo $name('categories_collapsed'); ?>" value="1" <?php echo $checked('categories_collapsed'); ?> /> <?php esc_html_e('Hide category options behind a “Customize” button (simpler banner)', 'lrob-cookie-consent'); ?></label>
                         <label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('revisit_button'); ?>" value="1" <?php echo $checked('revisit_button'); ?> /> <?php esc_html_e('Show a floating “Manage cookies” button after a decision', 'lrob-cookie-consent'); ?></label>
                     </p>
@@ -442,31 +442,20 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             </form>
         </p>
 
-        <table class="widefat striped">
-            <thead><tr>
-                <th><?php esc_html_e('Date (UTC)', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('User', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('Decision', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('IP', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('Config', 'lrob-cookie-consent'); ?></th>
-                <th><?php esc_html_e('User-agent', 'lrob-cookie-consent'); ?></th>
-            </tr></thead>
+        <form method="post" action="<?php echo esc_url(add_query_arg(['page' => 'lrob-cookie-consent', 'tab' => 'log'], admin_url('options-general.php'))); ?>">
+            <input type="hidden" name="page" value="lrob-cookie-consent" />
+            <?php $log_table->display(); ?>
+        </form>
+
+        <h3><?php esc_html_e('Information-text versions', 'lrob-cookie-consent'); ?> <?php $help(__('Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given.', 'lrob-cookie-consent')); ?></h3>
+        <table class="widefat striped" style="max-width:520px">
+            <thead><tr><th><?php esc_html_e('Version', 'lrob-cookie-consent'); ?></th><th><?php esc_html_e('First seen (UTC)', 'lrob-cookie-consent'); ?></th></tr></thead>
             <tbody>
-                <?php foreach ($log->recent(100) as $row) :
-                    $uid = (int) ($row['user_id'] ?? 0);
-                    $uname = $uid > 0 ? (get_userdata($uid)->user_login ?? ('#' . $uid)) : '—';
-                    ?>
-                    <tr>
-                        <td><?php echo esc_html((string) $row['created_at']); ?></td>
-                        <td><?php echo esc_html((string) $uname); ?></td>
-                        <td><?php echo esc_html((string) ($row['decision'] ?? '')); ?></td>
-                        <td><?php echo esc_html((string) $row['ip_anon']); ?></td>
-                        <td><?php echo esc_html((string) $row['categories']); ?></td>
-                        <td><code><?php echo esc_html((string) $row['config_version']); ?></code></td>
-                        <td><?php echo esc_html((string) $row['user_agent']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
+                <?php if (empty($banner_versions)) : ?>
+                    <tr><td colspan="2"><?php esc_html_e('No versions recorded yet.', 'lrob-cookie-consent'); ?></td></tr>
+                <?php else : foreach ($banner_versions as $v) : ?>
+                    <tr><td><code><?php echo esc_html(substr((string) $v['version_hash'], 0, 12)); ?></code></td><td><?php echo esc_html((string) $v['created_at']); ?></td></tr>
+                <?php endforeach; endif; ?>
             </tbody>
         </table>
     </section>

@@ -19,23 +19,30 @@ final class LogRepository
     }
 
     /**
-     * @param array{user_id:int,decision:string,ip_anon:string,categories:string,config_version:string,user_agent:string} $row
+     * @param array{consent_id:string,user_id:int,event_type:string,method:string,choices:string,payload:string,banner_version:string,config_version:string,ip_anon:string,user_agent:string} $row
      */
     public function insert(array $row): void
     {
         global $wpdb;
+        $now = time();
+        $days = max(1, (int) Options::get('cookie_days'));
         $wpdb->insert(
             Schema::table_name(),
             [
-                'created_at'     => gmdate('Y-m-d H:i:s'),
+                'created_at'     => gmdate('Y-m-d H:i:s', $now),
+                'expires_at'     => gmdate('Y-m-d H:i:s', $now + $days * DAY_IN_SECONDS),
+                'consent_id'     => $row['consent_id'],
                 'user_id'        => $row['user_id'],
-                'decision'       => $row['decision'],
-                'ip_anon'        => $row['ip_anon'],
-                'categories'     => $row['categories'],
+                'event_type'     => $row['event_type'],
+                'method'         => $row['method'],
+                'choices'        => $row['choices'],
+                'payload'        => $row['payload'],
+                'banner_version' => $row['banner_version'],
                 'config_version' => $row['config_version'],
+                'ip_anon'        => $row['ip_anon'],
                 'user_agent'     => $row['user_agent'],
             ],
-            ['%s', '%d', '%s', '%s', '%s', '%s', '%s']
+            ['%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
         );
     }
 
@@ -49,30 +56,48 @@ final class LogRepository
     public function decision_counts(): array
     {
         global $wpdb;
-        $rows = $wpdb->get_results('SELECT decision, COUNT(*) AS n FROM ' . Schema::table_name() . ' GROUP BY decision', ARRAY_A);
+        $rows = $wpdb->get_results('SELECT method, COUNT(*) AS n FROM ' . Schema::table_name() . ' GROUP BY method', ARRAY_A);
         $out = ['accept_all' => 0, 'deny_all' => 0, 'custom' => 0];
         foreach ((array) $rows as $r) {
-            $d = (string) ($r['decision'] ?? '');
-            if (isset($out[$d])) {
-                $out[$d] = (int) $r['n'];
-            }
+            $m = (string) ($r['method'] ?? '');
+            $bucket = $m === 'accept_all' ? 'accept_all' : ($m === 'deny_all' ? 'deny_all' : 'custom');
+            $out[$bucket] += (int) $r['n'];
         }
         return $out;
     }
 
-    /** @return list<array<string,mixed>> */
-    public function recent(int $limit = 100, int $offset = 0): array
+    /**
+     * @return array{rows:list<array<string,mixed>>,total:int}
+     */
+    public function query(int $per_page, int $offset, string $orderby = 'id', string $order = 'DESC'): array
     {
         global $wpdb;
+        $orderby = in_array($orderby, ['id', 'created_at', 'event_type', 'method'], true) ? $orderby : 'id';
+        $order = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
+        $table = Schema::table_name();
         $rows = $wpdb->get_results(
-            $wpdb->prepare(
-                'SELECT * FROM ' . Schema::table_name() . ' ORDER BY id DESC LIMIT %d OFFSET %d',
-                $limit,
-                $offset
-            ),
+            $wpdb->prepare("SELECT * FROM {$table} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d", $per_page, $offset),
             ARRAY_A
         );
-        return is_array($rows) ? $rows : [];
+        return ['rows' => is_array($rows) ? $rows : [], 'total' => $this->count()];
+    }
+
+    public function delete(int $id): void
+    {
+        global $wpdb;
+        $wpdb->delete(Schema::table_name(), ['id' => $id], ['%d']);
+    }
+
+    /** @param list<int> $ids */
+    public function delete_ids(array $ids): void
+    {
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if ($ids === []) {
+            return;
+        }
+        global $wpdb;
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        $wpdb->query($wpdb->prepare('DELETE FROM ' . Schema::table_name() . " WHERE id IN ({$placeholders})", $ids));
     }
 
     public function purge_all(): void
@@ -103,25 +128,22 @@ final class LogRepository
         header('Content-Disposition: attachment; filename=lrob-cc-consent-log.csv');
 
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['id', 'created_at_utc', 'user_id', 'username', 'decision', 'ip', 'categories', 'config_version', 'user_agent']);
+        fputcsv($out, ['id', 'created_at_utc', 'expires_at_utc', 'subject_id', 'user_id', 'username', 'event', 'method', 'choices', 'banner_version', 'config_version', 'ip', 'user_agent']);
 
         $batch = 1000;
         $offset = 0;
         do {
             $rows = $wpdb->get_results(
-                $wpdb->prepare(
-                    'SELECT * FROM ' . Schema::table_name() . ' ORDER BY id ASC LIMIT %d OFFSET %d',
-                    $batch,
-                    $offset
-                ),
+                $wpdb->prepare('SELECT * FROM ' . Schema::table_name() . ' ORDER BY id ASC LIMIT %d OFFSET %d', $batch, $offset),
                 ARRAY_A
             );
             foreach ((array) $rows as $r) {
                 $user = (int) ($r['user_id'] ?? 0);
                 $username = $user > 0 ? (string) (get_userdata($user)->user_login ?? '') : '';
                 fputcsv($out, [
-                    $r['id'], $r['created_at'], $user, $username, $r['decision'] ?? '', $r['ip_anon'],
-                    $r['categories'], $r['config_version'], $r['user_agent'],
+                    $r['id'], $r['created_at'], $r['expires_at'], $r['consent_id'], $user, $username,
+                    $r['event_type'], $r['method'], $r['choices'], $r['banner_version'],
+                    $r['config_version'], $r['ip_anon'], $r['user_agent'],
                 ]);
             }
             $offset += $batch;

@@ -107,12 +107,6 @@ wp-lrob-cookie-consent/
 
 │       └── admin.css
 
-├── presets/
-
-│   ├── text-*.json               # cookie-message text presets (neutral/minimal/fun)
-
-│   └── styles.json               # style presets: color/shape/size sets
-
 ├── languages/
 
 │   └── lrob-cookie-consent-fr_FR.po/.mo
@@ -227,18 +221,25 @@ Two kinds, both selectable in the Banner tab, both applied client-side into the 
   - *Colors*: Follow theme (default), Light, Dark, plus a few accent pairings (e.g. Neutral, High-contrast, Brand-soft) — sets button colors + text/bg colors.
   - *Shape*: Square / Rounded / Pill (border-radius scale).
   - *Size*: Compact / Default / Large (padding + font-size scale).
-- **Text presets** — ready-to-use, translatable copy for header/message/buttons, stored as JSON under `presets/` (age-gate `messages/*.json` pattern). Ship a spread of tones: a neutral/legal default, a short/minimal one, and a few friendly/fun ones, e.g. *"A few cookies to keep the shop running 🍪"*. Each preset's strings pass through the text domain so translations apply.
+- **Text presets** — ready-to-use copy for header/message/buttons, defined in PHP (`Support\Presets`) with `__()` so the messages **and buttons** are translatable (gettext can't extract from JSON). Tones: neutral/legal default, minimal, and friendly/fun ones, e.g. *"A few cookies to keep the shop running 🍪"*. The chosen preset id is remembered (`text_preset`).
 
 Expose `apply_filters('lrob_cc_style_presets', $presets)` and `apply_filters('lrob_cc_text_presets', $presets)` so client sites can register their own.
 
-## 6. Proof of consent (`class-log.php`)
+## 6. Proof of consent (`Consent\*`) — legally robust
 
-Minimal, GDPR-clean:
-- On consent save, POST to REST `lrob-cc/v1/log` storing: timestamp, IP, logged-in `user_id` (0 for guests; username shown in admin), consented categories, config version, user-agent (off by default, opt-in). **IP storage is a single choice** (`ip_storage`): *hashed* (default — salted SHA-256, irreversible but unique-countable), *full*, or *none*. No partial /24 and no contradictory "anonymise + store full" pair.
-- **Logging is ON by default** (advised for GDPR accountability); admins can switch it off.
-- Storage: custom table `{prefix}lrob_cc_consent_log` via `dbDelta` (idempotent install). Use the **UTC-epoch bucket pattern** from email-toolkit's `LogRepository::counts_by_bucket()` for any time-grouped queries (avoid `UNIX_TIMESTAMP()` / server-tz drift).
-- Skip logging for bots/speedbots (port Complianz patterns).
-- Only log when "Store proof of consent" setting is on. Admin: table view + CSV export + configurable retention/purge.
+The burden of proof is on the data controller: a click is not enough — we must be able to show consent was **free, specific, informed, unambiguous**, and record withdrawals too. Each consent event (`Consent\Schema` table `{prefix}lrob_cc_consent_log`, schema v4) stores:
+- **Precise timestamp** (`created_at`, UTC) + **`expires_at`** (created + `cookie_days`, ~13 months / CNIL renewal).
+- **Anonymous subject identifier** (`consent_id`) — a random token generated client-side, stored in the consent cookie and reused across that browser's events (data-minimised; not PII). Always logged so records are auditable regardless of IP setting.
+- **Granular per-purpose decision** (`choices` JSON: `{category: 1|0}` for every optional category — an explicit allow/deny per purpose, never a single blanket flag). functional is implicit, never a choice.
+- **Banner text version** (`banner_version`) — links to the exact information text shown then (see §6b).
+- **Technical trace of the positive act**: `method` (which button: accept_all / deny_all / save / service) + `payload` (raw client JSON) + `event_type` (consent / update / **withdraw**). Withdrawals are logged the same way.
+- `config_version`, optional `user_id` (`store_wp_user`), `ip_anon` (`ip_storage`: *hashed* default / *full* / *none* — the subject_id keeps records identifiable either way), `user_agent` (opt-in).
+- Skip logging for bots; only when "Store proof of consent" is on (default on).
+
+### 6b. Versioning, retention, audit
+- **Information text is versioned** (`Consent\BannerVersion` + `{prefix}lrob_cc_banner_versions`): the current snapshot (header/message/buttons/category labels) is hashed; the hash shown is recorded with each consent; editing the text yields a new hash, and old records keep pointing to the version they were given. Admin lists versions.
+- **Retention**: configurable purge (daily cron) — proof is not kept indefinitely (minimisation).
+- **Audit view**: `Admin\ConsentLogTable` (a `WP_List_Table`) — sortable/paginated, **per-row + bulk delete**, CSV export, for CNIL inspection.
 
 ## 7. Admin settings (`class-admin.php` + `views/admin-settings.php`)
 

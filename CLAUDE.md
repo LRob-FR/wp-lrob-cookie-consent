@@ -10,6 +10,16 @@ WordPress plugin **LRob - Cookie Consent** (slug `lrob-cookie-consent`). A lean,
 
 **It must suit everyone** — a non-technical owner who just wants a compliant banner with sane defaults *and* an advanced user who wants to tune it. Defaults = what GDPR mandates or best practice advises; everything beyond that is an option, never a requirement.
 
+## Status & backlog (as of this point)
+
+Functionally complete and shipping from `main` at **v0.0.1** (not yet smoke-tested in a live WP — validated by `php -l`/`node --check` + the build pipeline only). French (`fr_FR`) is kept at **0 fuzzy / 0 untranslated** every build via a translation subagent.
+
+**Open work (the user will pick what's next):**
+- **Layout redesign** — the settings still stack vertically ("scroll-simulator"). Wants multi-column layouts, a **categories modal**, and **Gutenberg-style unit controls** (slider + value + default, validated) for the size/radius fields. Also: detect-cookies step inside the wizard, drag-reorder buttons.
+- **Safe mode** — optional "block ALL cross-origin resources by default; unknown/unauthorised → placeholder advising the visitor to contact the site owner via an admin-set contact page." Needs a `safe_mode` option, a block-everything path in `Blocking\Blocker`, an "unknown" placeholder, and a `contact_page_id` option + UI.
+- **Granular scan UI** — replace the scope dropdown with per-type checkboxes (home forced, pages, posts, each CPT) + per-type limit + newest/oldest order.
+- **Responsive-embed void** — for oEmbeds in a `.wp-block-embed` wrapper, the theme reserves aspect-ratio space, so a thin gap can remain around the (correctly-sized) placeholder; needs wrapper-targeted CSS.
+
 ## Heritage — two sibling plugins, two different things to borrow
 
 This plugin lives beside other LRob plugins. Conventions are lifted from two of them:
@@ -67,12 +77,12 @@ Anything added — option key, table, hook, CSS class — **must** follow these 
 **Single-purpose** — no `ModuleManager`. `Plugin::boot()` loads the text domain, registers the `Updater`, then wires admin vs front based on context (`is_admin()`).
 
 **Subsystems** (see `spec.md` for the full brief):
-- `Blocking\Blocker` (§3) — output-buffer the front response on `template_redirect`, rewrite `<script>`/`<iframe>` matching admin rules to `text/plain` / `data-src`, insert clickable placeholders for embeds. Skip buffering for admin/REST/AJAX/cron/feed/POST/bots. Block method is a setting (full-page scan vs enqueued-only); iframe blocking is a setting (default on, with a GDPR-risk warning when off).
+- `Blocking\Blocker` (§3) — always output-buffers the front response on `template_redirect` (no "enqueued-only" mode — it was removed), rewrites `<script>`/`<iframe>` matching admin rules to `text/plain` / `data-src`; consent.js builds the sized click-to-load placeholders. Skip buffering for admin/REST/AJAX/cron/feed/POST/bots/(logged-in when off). `block_iframes` toggle (default on). **Never enforces `functional` rules** (`enforceable_rules()` excludes them) — functional entries are references for necessary cookies, documented but not blocked.
 - `Frontend\{Banner,Assets}` (§4–§5) — banner markup + the `assets/js/consent.js` state machine, public `window.lrobCc` API, category body classes, optional WP Consent API mirroring. **FSE-first appearance**: defaults inherit the theme's global-style tokens (`--wp--preset--color--*`, font sizes, button styling) via `wp_get_global_settings()` so a fresh install looks native with zero customization. Theme mode Auto (follow site, default) / Light / Dark (forced palettes) / Custom. Every color is a `.lrob-cc-banner` CSS variable — no hardcoded colors. Style + text presets (PHP `Support\Presets`, `__()`-translatable) lower the customization burden; both filterable (`lrob_cc_style_presets`, `lrob_cc_text_presets`).
-- `Consent\{Schema,LogRepository,RestController}` (§6) — proof of consent: POST to `lrob-cc/v1/log`, store timestamp + anonymized IP (default on) + categories + config version + UA (default off). Logging itself **off by default**.
+- `Consent\{Schema,LogRepository,RestController,BannerVersion}` (§6) — legally-robust proof of consent (schema v4, migrates via `Schema::maybe_upgrade()`). One row per event: anonymous `consent_id` (subject), granular per-purpose `choices` JSON, `method`+`payload` (the act), `event_type` (consent/update/withdraw), `banner_version` → `BannerVersion` snapshot (text + category labels + **what each category blocks**; orphan-pruned), `expires_at` (~13mo), IP (`ip_storage` hashed default/full), opt-in UA + `user_id`. Logging **on by default**. Admin: `Admin\ConsentLogTable` (`WP_List_Table`, per-row/bulk delete, CSV).
 - `Admin\SettingsPage` (§7) — single Settings-API page, tabs General / Banner / **Cookies** / Log, single `lrob_cc_options` array, **live preview** (age-gate pattern), segmented (button) controls, guided rule editor + raw mode, scan + wizard AJAX, clickable "?" help toggles.
-- `Support\Categories` — `functional` is hardcoded/forced-on; optional categories are **admin-managed** (`lrob_cc_options['categories']`, seeded defaults preferences/statistics/marketing/security, custom allowed). Everything iterates `Categories::optional()`/`labels()` — never hardcode the category list.
-- `Scanning\{ScanProvider,LocalScanner,Scanner}` (§9b) — anonymous local crawl that suggests block rules; provider seam (`lrob_cc_scan_providers`) reserved for a future remote LRob deep-scan.
+- `Support\Categories` — `functional` is hardcoded/forced-on. Optional categories = **immutable built-in defaults** (`preferences/statistics/marketing/embed/security`, computed — NOT stored) + **custom** ones (`lrob_cc_options['categories']` holds customs only, so new built-ins appear for everyone and old saves can't freeze them out). Everything iterates `Categories::optional()`/`labels()` — never hardcode. Rules referencing an invalid category are dropped, so keep this list authoritative.
+- `Scanning\{Scanner,LocalScanner,ScanProvider}` (§9b) — two modes: **database** (reads all published `post_content`, broad host map catches oEmbed-by-URL) and **visit pages** (anonymous `wp_remote_get` of a selectable scope — home + pages/posts/CPTs, ≤50, listed). AJAX `lrob_cc_scan_targets`/`_url`/`_db`/`_search_pages`. Provider seam reserved for a remote deep-scan.
 - `AutoUpdate\Updater` (§8) — port of email-toolkit's GitHub updater for repo `LRob-FR/wp-lrob-cookie-consent`.
 
 ## Conventions to follow

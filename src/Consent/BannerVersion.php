@@ -68,11 +68,27 @@ final class BannerVersion
         return $row;
     }
 
-    /** @return list<array<string,mixed>> */
+    /** @return list<array<string,mixed>> each with decoded snapshot */
     public static function all(): array
     {
         global $wpdb;
-        $rows = $wpdb->get_results('SELECT version_hash, created_at FROM ' . Schema::versions_table() . ' ORDER BY id DESC', ARRAY_A);
-        return is_array($rows) ? $rows : [];
+        $rows = $wpdb->get_results('SELECT version_hash, snapshot, created_at FROM ' . Schema::versions_table() . ' ORDER BY id DESC', ARRAY_A);
+        if (!is_array($rows)) {
+            return [];
+        }
+        foreach ($rows as &$row) {
+            $row['snapshot'] = json_decode((string) $row['snapshot'], true);
+        }
+        return $rows;
+    }
+
+    /** @return array<string,array<string,mixed>> hash → decoded snapshot, for lookups/export */
+    public static function map(): array
+    {
+        $out = [];
+        foreach (self::all() as $row) {
+            $out[(string) $row['version_hash']] = is_array($row['snapshot']) ? $row['snapshot'] : [];
+        }
+        return $out;
     }
 }

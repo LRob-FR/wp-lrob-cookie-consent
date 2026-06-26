@@ -468,6 +468,32 @@
 	margin-right: 4px;
 }
 
+.lrob-cc-version {
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	padding: 8px 12px;
+	margin-bottom: 8px;
+	max-width: 720px;
+}
+
+.lrob-cc-version summary {
+	cursor: pointer;
+}
+
+.lrob-cc-version-body {
+	margin-top: 8px;
+	font-size: 13px;
+}
+
+.lrob-cc-version-body p {
+	margin: 4px 0;
+}
+
+.lrob-cc-version-cats {
+	margin: 4px 0 0 18px;
+	list-style: disc;
+}
+
 /* Confirm dialog. */
 .lrob-cc-confirm-overlay {
 	position: fixed;

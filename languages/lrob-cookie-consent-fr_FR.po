@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-26T21:42:37+00:00\n"
+"POT-Creation-Date: 2026-06-26T21:51:07+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -47,8 +47,8 @@ msgid "Date (UTC)"
 msgstr "Date (UTC)"
 
 #: src/Admin/ConsentLogTable.php:25
-msgid "Subject"
-msgstr "Sujet"
+msgid "Visitor ID"
+msgstr "ID visiteur"
 
 #: src/Admin/ConsentLogTable.php:26
 msgid "Event"
@@ -703,12 +703,8 @@ msgstr ""
 "exige de le divulguer, pas de l’omettre."
 
 #: views/admin-settings.php:116
-msgid "Do not store any IP"
-msgstr "Ne stocker aucune IP"
-
-#: views/admin-settings.php:116
-msgid "Store a salted hash"
-msgstr "Stocker un hachage salé"
+msgid "Store a salted hash (recommended)"
+msgstr "Stocker un hachage salé (recommandé)"
 
 #: views/admin-settings.php:116
 msgid "Store the full IP"
@@ -747,11 +743,11 @@ msgstr "Texte"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: views/admin-settings.php:144
+#: views/admin-settings.php:144 views/admin-settings.php:461
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:146
+#: views/admin-settings.php:146 views/admin-settings.php:462
 msgid "Message"
 msgstr "Message"
 
@@ -951,7 +947,7 @@ msgstr "Alignement des boutons"
 msgid "Live preview"
 msgstr "Aperçu en direct"
 
-#: views/admin-settings.php:295
+#: views/admin-settings.php:295 views/admin-settings.php:464
 msgid "Categories"
 msgstr "Catégories"
 
@@ -1168,24 +1164,26 @@ msgstr "Versions du texte d’information"
 msgid ""
 "Each consent record links to the exact banner text shown at that moment. "
 "Editing the text creates a new version; older records keep pointing to the "
-"version they were given."
+"version they were given. The full text (and what each category covers) is "
+"stored and included in the CSV export."
 msgstr ""
 "Chaque enregistrement de consentement est lié au texte exact de la bannière "
 "affiché à ce moment-là. Modifier le texte crée une nouvelle version ; les "
 "anciens enregistrements continuent de pointer vers la version qui leur a été "
-"présentée."
+"présentée. Le texte complet (et ce que couvre chaque catégorie) est conservé "
+"et inclus dans l’export CSV."
 
 #: views/admin-settings.php:452
-msgid "Version"
-msgstr "Version"
-
-#: views/admin-settings.php:452
-msgid "First seen (UTC)"
-msgstr "Première apparition (UTC)"
-
-#: views/admin-settings.php:455
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
+
+#: views/admin-settings.php:459
+msgid "UTC"
+msgstr "UTC"
+
+#: views/admin-settings.php:463
+msgid "Buttons"
+msgstr "Boutons"
 
 #. translators: %s: cookie category name.
 #: views/banner.php:51

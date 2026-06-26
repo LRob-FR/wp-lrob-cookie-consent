@@ -60,11 +60,7 @@ final class RestController
         $version = substr(sanitize_text_field((string) $request->get_param('version')), 0, 32);
 
         $ip = Ip::client_ip();
-        $stored_ip = match ((string) Options::get('ip_storage')) {
-            'full' => $ip,
-            'none' => '',
-            default => Ip::hash($ip),
-        };
+        $stored_ip = ((string) Options::get('ip_storage')) === 'full' ? $ip : Ip::hash($ip);
 
         $ua = '';
         if ((int) Options::get('store_user_agent') === 1 && isset($_SERVER['HTTP_USER_AGENT'])) {

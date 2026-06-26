@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-26T21:43:12+00:00\n"
+"POT-Creation-Date: 2026-06-26T21:53:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -39,7 +39,7 @@ msgid "Date (UTC)"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:25
-msgid "Subject"
+msgid "Visitor ID"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:26
@@ -644,11 +644,7 @@ msgid "A salted hash is irreversible but still lets you count unique consents. Y
 msgstr ""
 
 #: views/admin-settings.php:116
-msgid "Do not store any IP"
-msgstr ""
-
-#: views/admin-settings.php:116
-msgid "Store a salted hash"
+msgid "Store a salted hash (recommended)"
 msgstr ""
 
 #: views/admin-settings.php:116
@@ -689,10 +685,12 @@ msgid "Presets"
 msgstr ""
 
 #: views/admin-settings.php:144
+#: views/admin-settings.php:461
 msgid "Header"
 msgstr ""
 
 #: views/admin-settings.php:146
+#: views/admin-settings.php:462
 msgid "Message"
 msgstr ""
 
@@ -885,6 +883,7 @@ msgid "Live preview"
 msgstr ""
 
 #: views/admin-settings.php:295
+#: views/admin-settings.php:464
 msgid "Categories"
 msgstr ""
 
@@ -1048,19 +1047,19 @@ msgid "Information-text versions"
 msgstr ""
 
 #: views/admin-settings.php:450
-msgid "Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given."
+msgid "Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given. The full text (and what each category covers) is stored and included in the CSV export."
 msgstr ""
 
 #: views/admin-settings.php:452
-msgid "Version"
-msgstr ""
-
-#: views/admin-settings.php:452
-msgid "First seen (UTC)"
-msgstr ""
-
-#: views/admin-settings.php:455
 msgid "No versions recorded yet."
+msgstr ""
+
+#: views/admin-settings.php:459
+msgid "UTC"
+msgstr ""
+
+#: views/admin-settings.php:463
+msgid "Buttons"
 msgstr ""
 
 #. translators: %s: cookie category name.

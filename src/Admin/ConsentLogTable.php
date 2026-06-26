@@ -22,7 +22,7 @@ final class ConsentLogTable extends \WP_List_Table
         return [
             'cb'             => '<input type="checkbox" />',
             'created_at'     => __('Date (UTC)', 'lrob-cookie-consent'),
-            'consent_id'     => __('Subject', 'lrob-cookie-consent'),
+            'consent_id'     => __('Visitor ID', 'lrob-cookie-consent'),
             'event_type'     => __('Event', 'lrob-cookie-consent'),
             'method'         => __('Act', 'lrob-cookie-consent'),
             'choices'        => __('Choices', 'lrob-cookie-consent'),

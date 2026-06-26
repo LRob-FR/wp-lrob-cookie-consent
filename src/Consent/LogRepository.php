@@ -127,8 +127,12 @@ final class LogRepository
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename=lrob-cc-consent-log.csv');
 
+        $versions = BannerVersion::map();
+
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['id', 'created_at_utc', 'expires_at_utc', 'subject_id', 'user_id', 'username', 'event', 'method', 'choices', 'banner_version', 'config_version', 'ip', 'user_agent']);
+        // Each row carries the exact information text shown and what every
+        // category covered, so a proof line is self-contained for audit.
+        fputcsv($out, ['id', 'created_at_utc', 'expires_at_utc', 'visitor_id', 'user_id', 'username', 'event', 'method', 'choices', 'banner_version', 'info_header', 'info_message', 'categories_shown', 'config_version', 'ip', 'user_agent']);
 
         $batch = 1000;
         $offset = 0;
@@ -140,10 +144,14 @@ final class LogRepository
             foreach ((array) $rows as $r) {
                 $user = (int) ($r['user_id'] ?? 0);
                 $username = $user > 0 ? (string) (get_userdata($user)->user_login ?? '') : '';
+                $snap = $versions[(string) ($r['banner_version'] ?? '')] ?? [];
+                $texts = is_array($snap['texts'] ?? null) ? $snap['texts'] : [];
+                $cats = is_array($snap['categories'] ?? null) ? $snap['categories'] : [];
                 fputcsv($out, [
                     $r['id'], $r['created_at'], $r['expires_at'], $r['consent_id'], $user, $username,
                     $r['event_type'], $r['method'], $r['choices'], $r['banner_version'],
-                    $r['config_version'], $r['ip_anon'], $r['user_agent'],
+                    (string) ($texts['header'] ?? ''), (string) ($texts['message'] ?? ''),
+                    (string) wp_json_encode($cats), $r['config_version'], $r['ip_anon'], $r['user_agent'],
                 ]);
             }
             $offset += $batch;

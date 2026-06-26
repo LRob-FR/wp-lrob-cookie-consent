@@ -113,7 +113,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
                 <tr><th><?php esc_html_e('IP address', 'lrob-cookie-consent'); ?> <?php $help(__('A salted hash is irreversible but still lets you count unique consents. Your server already logs IPs; GDPR requires disclosing it, not omitting it.', 'lrob-cookie-consent')); ?></th>
                     <td>
-                        <?php foreach (['none' => __('Do not store any IP', 'lrob-cookie-consent'), 'hashed' => __('Store a salted hash', 'lrob-cookie-consent'), 'full' => __('Store the full IP', 'lrob-cookie-consent')] as $v => $l) : ?>
+                        <?php foreach (['hashed' => __('Store a salted hash (recommended)', 'lrob-cookie-consent'), 'full' => __('Store the full IP', 'lrob-cookie-consent')] as $v => $l) : ?>
                             <label class="lrob-cc-radio-line"><input type="radio" name="<?php echo $name('ip_storage'); ?>" value="<?php echo esc_attr($v); ?>" <?php checked($o['ip_storage'], $v); ?> /> <?php echo esc_html($l); ?></label>
                         <?php endforeach; ?></td></tr>
 
@@ -447,16 +447,28 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             <?php $log_table->display(); ?>
         </form>
 
-        <h3><?php esc_html_e('Information-text versions', 'lrob-cookie-consent'); ?> <?php $help(__('Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given.', 'lrob-cookie-consent')); ?></h3>
-        <table class="widefat striped" style="max-width:520px">
-            <thead><tr><th><?php esc_html_e('Version', 'lrob-cookie-consent'); ?></th><th><?php esc_html_e('First seen (UTC)', 'lrob-cookie-consent'); ?></th></tr></thead>
-            <tbody>
-                <?php if (empty($banner_versions)) : ?>
-                    <tr><td colspan="2"><?php esc_html_e('No versions recorded yet.', 'lrob-cookie-consent'); ?></td></tr>
-                <?php else : foreach ($banner_versions as $v) : ?>
-                    <tr><td><code><?php echo esc_html(substr((string) $v['version_hash'], 0, 12)); ?></code></td><td><?php echo esc_html((string) $v['created_at']); ?></td></tr>
-                <?php endforeach; endif; ?>
-            </tbody>
-        </table>
+        <h3><?php esc_html_e('Information-text versions', 'lrob-cookie-consent'); ?> <?php $help(__('Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given. The full text (and what each category covers) is stored and included in the CSV export.', 'lrob-cookie-consent')); ?></h3>
+        <?php if (empty($banner_versions)) : ?>
+            <p><?php esc_html_e('No versions recorded yet.', 'lrob-cookie-consent'); ?></p>
+        <?php else : foreach ($banner_versions as $v) :
+            $snap = is_array($v['snapshot'] ?? null) ? $v['snapshot'] : [];
+            $st = is_array($snap['texts'] ?? null) ? $snap['texts'] : [];
+            $sc = is_array($snap['categories'] ?? null) ? $snap['categories'] : [];
+            ?>
+            <details class="lrob-cc-version">
+                <summary><code><?php echo esc_html(substr((string) $v['version_hash'], 0, 12)); ?></code> — <?php echo esc_html((string) $v['created_at']); ?> <?php esc_html_e('UTC', 'lrob-cookie-consent'); ?></summary>
+                <div class="lrob-cc-version-body">
+                    <p><strong><?php esc_html_e('Header', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['header'] ?? '')); ?></p>
+                    <p><strong><?php esc_html_e('Message', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['message'] ?? '')); ?></p>
+                    <p><strong><?php esc_html_e('Buttons', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html(trim(($st['accept'] ?? '') . ' / ' . ($st['deny'] ?? '') . ' / ' . ($st['save'] ?? ''), ' /')); ?></p>
+                    <p><strong><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?>:</strong></p>
+                    <ul class="lrob-cc-version-cats">
+                        <?php foreach ($sc as $slug => $cat) : ?>
+                            <li><strong><?php echo esc_html((string) ($cat['title'] ?? $slug)); ?></strong> — <?php echo esc_html((string) ($cat['desc'] ?? '')); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </details>
+        <?php endforeach; endif; ?>
     </section>
 </div>

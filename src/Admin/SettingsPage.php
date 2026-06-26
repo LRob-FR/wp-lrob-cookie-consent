@@ -71,7 +71,8 @@ final class SettingsPage
     public function handle_scan_targets(): void
     {
         $this->require_scan_access();
-        wp_send_json_success(['urls' => Scanner::targets()]);
+        $scope = isset($_POST['scope']) ? sanitize_key(wp_unslash((string) $_POST['scope'])) : 'pages';
+        wp_send_json_success(['urls' => Scanner::targets($scope)]);
     }
 
     public function handle_scan_db(): void
@@ -236,15 +237,16 @@ final class SettingsPage
         }
 
         $o = Options::all();
+        $defaults = Options::defaults();
         $texts = Banner::texts();
         $labels = Banner::category_labels();
         $optional = Categories::optional();
-        $category_rows = array_map(static function (array $c): array {
-            return $c + ['ph_label' => Categories::default_label($c['slug']), 'ph_desc' => Categories::default_desc($c['slug'])];
-        }, Categories::stored());
+        $default_categories = Categories::defaults();
+        $category_rows = Categories::custom(); // only customs are editable; defaults are immutable
         $text_presets = Presets::text();
         $color_presets = Presets::styles()['colors'] ?? [];
         $services = Services::common();
+        $scan_scopes = Scanner::scopes();
         $log = $this->log;
         $option = Options::OPTION_KEY;
         $log_table = new ConsentLogTable($this->log);
@@ -273,8 +275,11 @@ final class SettingsPage
 
         $out['consent_type'] = 'optin';
         $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['hashed', 'full'], true) ? $in['ip_storage'] : 'hashed';
-        $out['cookie_days'] = max(1, (int) ($in['cookie_days'] ?? $d['cookie_days']));
-        $out['log_retention_days'] = max(0, (int) ($in['log_retention_days'] ?? $d['log_retention_days']));
+        // Emptying a duration field restores its default instead of falling to 0/1.
+        $cd = (string) ($in['cookie_days'] ?? '');
+        $out['cookie_days'] = $cd === '' ? $d['cookie_days'] : max(1, (int) $cd);
+        $lr = (string) ($in['log_retention_days'] ?? '');
+        $out['log_retention_days'] = $lr === '' ? $d['log_retention_days'] : max(0, (int) $lr);
         $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';
         $out['rules_mode'] = in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';
 
@@ -286,8 +291,8 @@ final class SettingsPage
                     continue;
                 }
                 $slug = sanitize_key((string) ($c['slug'] ?? ''));
-                if ($slug === '' || $slug === 'functional' || isset($seen[$slug])) {
-                    continue;
+                if ($slug === '' || Categories::is_default($slug) || isset($seen[$slug])) {
+                    continue; // defaults are immutable and never stored
                 }
                 $seen[$slug] = true;
                 $out['categories'][] = [

@@ -306,6 +306,57 @@
 	flex: none;
 }
 
+/* Category grid (immutable built-ins shown as cards). */
+.lrob-cc-cat-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 10px;
+	max-width: 920px;
+	margin: 10px 0 16px;
+}
+
+.lrob-cc-cat-card {
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 10px 12px;
+	background: #fff;
+}
+
+.lrob-cc-cat-card.is-locked {
+	background: #f6f7f7;
+}
+
+.lrob-cc-cat-card strong {
+	display: block;
+}
+
+.lrob-cc-cat-badge {
+	display: inline-block;
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #50575e;
+	background: #e2e4e7;
+	border-radius: 8px;
+	padding: 1px 7px;
+	margin: 5px 0;
+}
+
+.lrob-cc-cat-card-desc {
+	display: block;
+	font-size: 12px;
+	color: #50575e;
+}
+
+.lrob-cc-scan-scope {
+	margin: 8px 0;
+}
+
+.lrob-cc-scan-scope label {
+	font-weight: 600;
+	margin-right: 8px;
+}
+
 /* Category rows. */
 .lrob-cc-cat-row {
 	display: flex;

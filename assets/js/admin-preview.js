@@ -148,6 +148,15 @@
 	$('[data-toggle-text]').each(function () { syncTextToggle(this); });
 	$(document).on('change', '[data-toggle-text]', function () { syncTextToggle(this); });
 
+	// Duration "Default" buttons + restore default when a field is emptied.
+	$(document).on('click', '.lrob-cc-default-btn', function () {
+		var input = document.querySelector('[name="' + this.getAttribute('data-target') + '"]');
+		if (input) { input.value = input.getAttribute('data-default') || ''; }
+	});
+	$(document).on('blur', '.lrob-cc-num-default', function () {
+		if (this.value.trim() === '') { this.value = this.getAttribute('data-default') || ''; }
+	});
+
 	// Clicking a consent-version link opens that version's full detail.
 	$(document).on('click', '.lrob-cc-ver-link', function () {
 		var det = document.querySelector(this.getAttribute('href'));
@@ -340,14 +349,21 @@
 			add.className = 'button button-primary';
 			add.textContent = A.i18n.addSelected || 'Add selected as rules';
 			add.addEventListener('click', function () {
+				var lastRow = null;
 				scanResults.querySelectorAll('.lrob-cc-scan-pick:checked').forEach(function (cb) {
 					var i = cb.getAttribute('data-i');
 					var r = res[i];
 					var cat = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + i + '"]').value;
 					addRuleRow(r.pattern, cat, r.service || '');
+					lastRow = rulesRows ? rulesRows.lastElementChild : null;
 				});
 				serializeRules();
 				toStructuredMode();
+				if (lastRow && lastRow.scrollIntoView) {
+					lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+					var firstInput = lastRow.querySelector('input');
+					if (firstInput) { firstInput.focus(); }
+				}
 			});
 			scanResults.appendChild(add);
 		}
@@ -365,12 +381,25 @@
 	var scanProgressText = document.getElementById('lrob-cc-scan-progress-text');
 	var scanDbNote = document.getElementById('lrob-cc-scan-db-note');
 	var scanPagesWarn = document.getElementById('lrob-cc-scan-pages-warn');
+	var scanScopeWrap = document.getElementById('lrob-cc-scan-scope-wrap');
+	var scanScope = document.getElementById('lrob-cc-scan-scope');
+	var scanManyWarn = document.getElementById('lrob-cc-scan-many-warn');
 
-	$(document).on('change', 'input[name="lrob-cc-scan-method"]', function () {
-		var pages = this.value === 'pages';
+	function scanScopeCount() {
+		if (!scanScope) { return 0; }
+		var opt = scanScope.options[scanScope.selectedIndex];
+		return opt ? (parseInt(opt.getAttribute('data-count'), 10) || 0) : 0;
+	}
+	function updateScanUi() {
+		var pages = (document.querySelector('input[name="lrob-cc-scan-method"]:checked') || {}).value === 'pages';
 		if (scanDbNote) { scanDbNote.hidden = pages; }
 		if (scanPagesWarn) { scanPagesWarn.hidden = !pages; }
-	});
+		if (scanScopeWrap) { scanScopeWrap.hidden = !pages; }
+		if (scanManyWarn) { scanManyWarn.hidden = !(pages && scanScopeCount() > 10); }
+	}
+	$(document).on('change', 'input[name="lrob-cc-scan-method"]', updateScanUi);
+	$(scanScope).on('change', updateScanUi);
+	updateScanUi();
 
 	function scanAjax(action, params) {
 		var body = 'action=' + action + '&nonce=' + encodeURIComponent(A.scanNonce || '');
@@ -453,7 +482,7 @@
 			}
 
 			if (scanProgress) { scanProgress.hidden = false; }
-			scanAjax('lrob_cc_scan_targets', {}).then(function (json) {
+			scanAjax('lrob_cc_scan_targets', { scope: scanScope ? scanScope.value : 'pages' }).then(function (json) {
 				if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
 					scanEnd();
 					scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');

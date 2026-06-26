@@ -38,25 +38,64 @@ final class Scanner
         ];
     }
 
+    /** @return list<string> public post type names (excluding attachments) */
+    public static function public_post_types(): array
+    {
+        $types = get_post_types(['public' => true], 'names');
+        unset($types['attachment']);
+        return array_values($types);
+    }
+
     /**
-     * The exact set of URLs the "visit pages" scan fetches: the home page, then
-     * all published pages and recent posts (most-recently-modified first, capped
-     * at 50). The full list is shown in the UI so the scan is predictable.
+     * Selectable scan scopes with their URL counts (capped at the 50 the scan
+     * fetches). Always starts with the home page.
+     *
+     * @return list<array{id:string,label:string,count:int}>
+     */
+    public static function scopes(): array
+    {
+        $count = static fn (string $type): int => (int) (wp_count_posts($type)->publish ?? 0);
+        $cpt = 0;
+        foreach (self::public_post_types() as $type) {
+            if (!in_array($type, ['page', 'post'], true)) {
+                $cpt += $count($type);
+            }
+        }
+        return [
+            ['id' => 'home', 'label' => __('Home page only', 'lrob-cookie-consent'), 'count' => 1],
+            ['id' => 'pages', 'label' => __('Home + all pages', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('page'))],
+            ['id' => 'posts', 'label' => __('Home + recent posts', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('post'))],
+            ['id' => 'all', 'label' => __('Everything (pages, posts, custom types)', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('page') + $count('post') + $cpt)],
+        ];
+    }
+
+    /**
+     * The exact URLs the "visit pages" scan fetches for a scope — home page
+     * first, then the matching published content (most-recent first, ≤50).
      *
      * @return list<string>
      */
-    public static function targets(): array
+    public static function targets(string $scope = 'pages'): array
     {
         $urls = [home_url('/')];
+        if ($scope === 'home') {
+            return $urls;
+        }
+        $types = match ($scope) {
+            'pages' => ['page'],
+            'posts' => ['post'],
+            default => self::public_post_types(),
+        };
         $posts = get_posts([
             'numberposts' => 49,
-            'post_type'   => ['page', 'post'],
+            'post_type'   => $types,
             'post_status' => 'publish',
+            'fields'      => 'ids',
             'orderby'     => 'modified',
             'order'       => 'DESC',
         ]);
-        foreach ($posts as $post) {
-            $link = get_permalink($post);
+        foreach ($posts as $pid) {
+            $link = get_permalink((int) $pid);
             if (is_string($link)) {
                 $urls[] = $link;
             }

@@ -81,7 +81,7 @@ final class Blocker
                 $html
             );
         }
-        if (stripos($html, '<iframe') !== false) {
+        if ((int) Options::get('block_iframes') === 1 && stripos($html, '<iframe') !== false) {
             $html = (string) preg_replace_callback(
                 '/<iframe\b([^>]*)>/i',
                 [$this, 'transform_iframe'],

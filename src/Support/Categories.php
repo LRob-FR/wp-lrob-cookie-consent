@@ -41,13 +41,24 @@ final class Categories
         };
     }
 
+    public static function is_default(string $slug): bool
+    {
+        return $slug === self::FUNCTIONAL || in_array($slug, self::DEFAULTS, true);
+    }
+
+    /** Built-in optional slugs (immutable, always present, fixed order). @return list<string> */
+    public static function defaults(): array
+    {
+        return self::DEFAULTS;
+    }
+
     /**
-     * Raw optional category definitions (admin overrides), or the defaults when
-     * none are stored. functional is never in this list.
+     * Admin-added custom categories only — the option stores nothing else, so
+     * built-in defaults are computed and can never be edited or frozen out.
      *
      * @return list<array{slug:string,label:string,desc:string}>
      */
-    public static function stored(): array
+    public static function custom(): array
     {
         $opt = Options::get('categories');
         $out = [];
@@ -57,24 +68,23 @@ final class Categories
                     continue;
                 }
                 $slug = sanitize_key((string) ($c['slug'] ?? ''));
-                if ($slug === '' || $slug === self::FUNCTIONAL || isset($out[$slug])) {
+                if ($slug === '' || self::is_default($slug) || isset($out[$slug])) {
                     continue;
                 }
                 $out[$slug] = ['slug' => $slug, 'label' => (string) ($c['label'] ?? ''), 'desc' => (string) ($c['desc'] ?? '')];
             }
         }
-        if ($out === []) {
-            foreach (self::DEFAULTS as $slug) {
-                $out[$slug] = ['slug' => $slug, 'label' => '', 'desc' => ''];
-            }
-        }
         return array_values($out);
     }
 
-    /** @return list<string> optional category slugs, in order */
+    /** @return list<string> optional slugs: immutable defaults, then customs */
     public static function optional(): array
     {
-        return array_map(static fn (array $c): string => $c['slug'], self::stored());
+        $slugs = self::DEFAULTS;
+        foreach (self::custom() as $c) {
+            $slugs[] = $c['slug'];
+        }
+        return $slugs;
     }
 
     /** @return list<string> functional first, then the optional ones */
@@ -95,14 +105,14 @@ final class Categories
      */
     public static function labels(): array
     {
-        $out = [self::FUNCTIONAL => [
-            'title' => self::default_label(self::FUNCTIONAL),
-            'desc'  => self::default_desc(self::FUNCTIONAL),
-        ]];
-        foreach (self::stored() as $c) {
+        $out = [];
+        foreach (array_merge([self::FUNCTIONAL], self::DEFAULTS) as $slug) {
+            $out[$slug] = ['title' => self::default_label($slug), 'desc' => self::default_desc($slug)];
+        }
+        foreach (self::custom() as $c) {
             $out[$c['slug']] = [
                 'title' => $c['label'] !== '' ? $c['label'] : self::default_label($c['slug']),
-                'desc'  => $c['desc'] !== '' ? $c['desc'] : self::default_desc($c['slug']),
+                'desc'  => $c['desc'],
             ];
         }
         return apply_filters('lrob_cc_category_labels', $out);

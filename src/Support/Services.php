@@ -23,10 +23,11 @@ final class Services
             ['label' => 'Facebook / Meta Pixel', 'pattern' => 'connect.facebook.net', 'category' => 'marketing', 'service' => 'Facebook'],
             ['label' => 'Google Ads', 'pattern' => 'googleadservices.com', 'category' => 'marketing', 'service' => 'Google Ads'],
             ['label' => 'LinkedIn Insight', 'pattern' => 'snap.licdn.com', 'category' => 'marketing', 'service' => 'LinkedIn'],
-            ['label' => 'Google Maps', 'pattern' => 'maps.google.com', 'category' => 'preferences', 'service' => 'Google Maps'],
             ['label' => 'Gravatar', 'pattern' => 'gravatar.com', 'category' => 'preferences', 'service' => 'Gravatar'],
             // Embedded external content → the "external content" category (not
             // inherently marketing).
+            ['label' => 'Google Maps', 'pattern' => 'maps.google.com', 'category' => 'embed', 'service' => 'Google Maps'],
+            ['label' => 'Google Maps embed', 'pattern' => 'google.com/maps/embed', 'category' => 'embed', 'service' => 'Google Maps'],
             ['label' => 'YouTube', 'pattern' => 'youtube.com/embed', 'category' => 'embed', 'service' => 'YouTube'],
             ['label' => 'YouTube (no-cookie)', 'pattern' => 'youtube-nocookie.com', 'category' => 'embed', 'service' => 'YouTube'],
             ['label' => 'Vimeo', 'pattern' => 'player.vimeo.com', 'category' => 'embed', 'service' => 'Vimeo'],

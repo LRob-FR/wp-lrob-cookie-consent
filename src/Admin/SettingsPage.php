@@ -34,6 +34,18 @@ final class SettingsPage
         add_action('admin_post_lrob_cc_purge_log', [$this, 'handle_purge']);
         add_action('wp_ajax_lrob_cc_scan_targets', [$this, 'handle_scan_targets']);
         add_action('wp_ajax_lrob_cc_scan_url', [$this, 'handle_scan_url']);
+        add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
+    }
+
+    /**
+     * @param array<int|string,string> $links
+     * @return array<int|string,string>
+     */
+    public function action_links(array $links): array
+    {
+        $url = admin_url('options-general.php?page=' . self::SLUG);
+        array_unshift($links, '<a href="' . esc_url($url) . '">' . esc_html__('Configure', 'lrob-cookie-consent') . '</a>');
+        return $links;
     }
 
     public function handle_scan_targets(): void

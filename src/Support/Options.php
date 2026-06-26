@@ -53,6 +53,7 @@ final class Options
             'align_title'        => 'left',     // left|center|right
             'align_text'         => 'left',
             'align_buttons'      => 'left',
+            'align_footer'       => 'center',   // footer links default centred
             'footer_links'       => [],         // [ ['label'=>'', 'url'=>''], ... ]
 
             // Buttons + disclosure

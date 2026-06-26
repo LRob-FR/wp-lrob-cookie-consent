@@ -112,8 +112,21 @@
 
 		preview.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
 		preview.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
+		preview.style.setProperty('--lrob-cc-align-footer', val('align_footer') || 'center');
 		var bmap = { left: 'flex-start', center: 'center', right: 'flex-end' };
 		preview.style.setProperty('--lrob-cc-align-buttons', bmap[val('align_buttons')] || 'flex-start');
+
+		var footerSlot = preview.querySelector('[data-preview="footer"]');
+		if (footerSlot) {
+			var fh = '';
+			document.querySelectorAll('#lrob-cc-links .lrob-cc-link-row').forEach(function (row) {
+				var l = (row.querySelector('.lrob-cc-link-label') || {}).value || '';
+				var u = (row.querySelector('.lrob-cc-link-url') || {}).value || '';
+				if (l && u) { fh += '<a href="#" onclick="return false">' + escapeHtml(l) + '</a> '; }
+			});
+			footerSlot.innerHTML = fh;
+			footerSlot.style.display = fh ? '' : 'none';
+		}
 
 		$('[data-theme-only="custom"]').toggle(val('theme') === 'custom');
 	}
@@ -671,23 +684,62 @@
 		$(this).closest('.lrob-cc-cat-row').remove();
 	});
 
-	// --- Footer-links repeater ------------------------------------------
+	// --- Footer-links repeater + page search ----------------------------
 	var linksWrap = document.getElementById('lrob-cc-links');
-	$('#lrob-cc-link-add').on('click', function () {
+
+	function addLinkRow(label, url) {
 		if (!linksWrap) { return; }
 		var name = linksWrap.getAttribute('data-name');
-		var i = Date.now();
+		var i = Date.now() + Math.floor(Math.random() * 1000);
 		var row = document.createElement('div');
 		row.className = 'lrob-cc-link-row';
 		row.innerHTML =
-			'<input type="text" name="' + name + '[footer_links][' + i + '][label]" placeholder="' + (A.i18n.catLabel || 'Label') + '" />' +
-			'<input type="url" name="' + name + '[footer_links][' + i + '][url]" placeholder="https://…" />' +
+			'<input type="text" class="lrob-cc-link-label" name="' + name + '[footer_links][' + i + '][label]" placeholder="' + (A.i18n.catLabel || 'Label') + '" />' +
+			'<input type="url" class="lrob-cc-link-url" name="' + name + '[footer_links][' + i + '][url]" placeholder="https://…" />' +
 			'<button type="button" class="button lrob-cc-link-remove" aria-label="' + (A.i18n.removeRow || 'Remove') + '">&times;</button>';
 		linksWrap.appendChild(row);
-	});
+		row.querySelector('.lrob-cc-link-label').value = label || '';
+		row.querySelector('.lrob-cc-link-url').value = url || '';
+		update();
+	}
+
+	$('#lrob-cc-link-add').on('click', function () { addLinkRow('', ''); });
 	$(document).on('click', '.lrob-cc-link-remove', function () {
 		$(this).closest('.lrob-cc-link-row').remove();
+		update();
 	});
+	$(document).on('input', '#lrob-cc-links input', update);
+
+	var linkSearch = document.getElementById('lrob-cc-link-search');
+	var linkResults = document.getElementById('lrob-cc-link-search-results');
+	var linkSearchTimer;
+	if (linkSearch && linkResults) {
+		linkSearch.addEventListener('input', function () {
+			var q = this.value.trim();
+			clearTimeout(linkSearchTimer);
+			if (q.length < 2) { linkResults.hidden = true; linkResults.innerHTML = ''; return; }
+			linkSearchTimer = setTimeout(function () {
+				scanAjax('lrob_cc_search_pages', { q: q }).then(function (json) {
+					linkResults.innerHTML = '';
+					var pages = (json.success && json.data && json.data.pages) ? json.data.pages : [];
+					pages.forEach(function (p) {
+						var b = document.createElement('button');
+						b.type = 'button';
+						b.className = 'lrob-cc-link-result';
+						b.textContent = p.title || p.url;
+						b.addEventListener('click', function () {
+							addLinkRow(p.title || '', p.url || '');
+							linkResults.hidden = true;
+							linkResults.innerHTML = '';
+							linkSearch.value = '';
+						});
+						linkResults.appendChild(b);
+					});
+					linkResults.hidden = pages.length === 0;
+				});
+			}, 250);
+		});
+	}
 
 	// --- Inline-script repeater -----------------------------------------
 	var wrap = document.getElementById('lrob-cc-inline-scripts');

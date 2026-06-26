@@ -35,7 +35,26 @@ final class SettingsPage
         add_action('wp_ajax_lrob_cc_scan_targets', [$this, 'handle_scan_targets']);
         add_action('wp_ajax_lrob_cc_scan_url', [$this, 'handle_scan_url']);
         add_action('wp_ajax_lrob_cc_scan_db', [$this, 'handle_scan_db']);
+        add_action('wp_ajax_lrob_cc_search_pages', [$this, 'handle_search_pages']);
         add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
+    }
+
+    public function handle_search_pages(): void
+    {
+        $this->require_scan_access();
+        $q = isset($_POST['q']) ? sanitize_text_field(wp_unslash((string) $_POST['q'])) : '';
+        $posts = get_posts([
+            'post_type'      => ['page', 'post'],
+            'post_status'    => 'publish',
+            'posts_per_page' => 20,
+            's'              => $q,
+            'orderby'        => 'relevance',
+        ]);
+        $out = [];
+        foreach ($posts as $post) {
+            $out[] = ['title' => get_the_title($post), 'url' => (string) get_permalink($post)];
+        }
+        wp_send_json_success(['pages' => $out]);
     }
 
     /**
@@ -301,6 +320,7 @@ final class SettingsPage
         foreach (['align_title', 'align_text', 'align_buttons'] as $key) {
             $out[$key] = in_array($in[$key] ?? '', ['left', 'center', 'right'], true) ? $in[$key] : 'left';
         }
+        $out['align_footer'] = in_array($in['align_footer'] ?? '', ['left', 'center', 'right'], true) ? $in['align_footer'] : 'center';
         $out['footer_links'] = [];
         if (isset($in['footer_links']) && is_array($in['footer_links'])) {
             foreach ($in['footer_links'] as $link) {

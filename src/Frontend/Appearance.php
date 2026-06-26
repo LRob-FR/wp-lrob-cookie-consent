@@ -99,6 +99,7 @@ final class Appearance
 
         $vars['--lrob-cc-align-title'] = self::align((string) Options::get('align_title'));
         $vars['--lrob-cc-align-text'] = self::align((string) Options::get('align_text'));
+        $vars['--lrob-cc-align-footer'] = self::align((string) Options::get('align_footer'), 'center');
         $vars['--lrob-cc-align-buttons'] = self::ALIGN_FLEX[(string) Options::get('align_buttons')] ?? 'flex-start';
 
         $decl = '';
@@ -109,8 +110,8 @@ final class Appearance
         return '#lrob-cc-banner{' . $decl . '}';
     }
 
-    private static function align(string $value): string
+    private static function align(string $value, string $default = 'left'): string
     {
-        return in_array($value, ['left', 'center', 'right'], true) ? $value : 'left';
+        return in_array($value, ['left', 'center', 'right'], true) ? $value : $default;
     }
 }

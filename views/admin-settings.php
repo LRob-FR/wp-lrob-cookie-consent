@@ -175,17 +175,23 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         </label>
                     </p>
 
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Footer links', 'lrob-cookie-consent'); ?> <?php $help(__('Add links shown at the bottom of the banner — e.g. your Privacy Policy. You can add several.', 'lrob-cookie-consent')); ?></p>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Footer links', 'lrob-cookie-consent'); ?> <?php $help(__('Links shown at the bottom of the banner — e.g. your Privacy Policy. Search an existing page or add any URL.', 'lrob-cookie-consent')); ?></p>
+                    <div class="lrob-cc-link-search">
+                        <input type="search" id="lrob-cc-link-search" placeholder="<?php esc_attr_e('Search a page to add…', 'lrob-cookie-consent'); ?>" autocomplete="off" />
+                        <div id="lrob-cc-link-search-results" class="lrob-cc-link-results" hidden></div>
+                    </div>
                     <div id="lrob-cc-links" data-name="<?php echo esc_attr($option); ?>">
                         <?php foreach ((array) $o['footer_links'] as $i => $lnk) : if (!is_array($lnk)) { continue; } ?>
                             <div class="lrob-cc-link-row">
-                                <input type="text" name="<?php echo esc_attr($option); ?>[footer_links][<?php echo (int) $i; ?>][label]" value="<?php echo esc_attr((string) ($lnk['label'] ?? '')); ?>" placeholder="<?php esc_attr_e('Label', 'lrob-cookie-consent'); ?>" />
-                                <input type="url" name="<?php echo esc_attr($option); ?>[footer_links][<?php echo (int) $i; ?>][url]" value="<?php echo esc_attr((string) ($lnk['url'] ?? '')); ?>" placeholder="https://…" />
+                                <input type="text" class="lrob-cc-link-label" name="<?php echo esc_attr($option); ?>[footer_links][<?php echo (int) $i; ?>][label]" value="<?php echo esc_attr((string) ($lnk['label'] ?? '')); ?>" placeholder="<?php esc_attr_e('Label', 'lrob-cookie-consent'); ?>" />
+                                <input type="url" class="lrob-cc-link-url" name="<?php echo esc_attr($option); ?>[footer_links][<?php echo (int) $i; ?>][url]" value="<?php echo esc_attr((string) ($lnk['url'] ?? '')); ?>" placeholder="https://…" />
                                 <button type="button" class="button lrob-cc-link-remove" aria-label="<?php esc_attr_e('Remove', 'lrob-cookie-consent'); ?>">&times;</button>
                             </div>
                         <?php endforeach; ?>
                     </div>
                     <button type="button" class="button" id="lrob-cc-link-add"><?php esc_html_e('Add link', 'lrob-cookie-consent'); ?></button>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Footer links alignment', 'lrob-cookie-consent'); ?></p>
+                    <?php $seg('align_footer', ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Position', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('position', [
@@ -283,6 +289,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                     <button type="button" class="lrob-cc-btn lrob-cc-btn-customize" data-preview="customize"><?php echo esc_html($texts['customize']); ?></button>
                                     <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-preview="save"></button>
                                 </div>
+                                <div class="lrob-cc-footer" data-preview="footer"></div>
                             </div>
                         </div>
                     </div>

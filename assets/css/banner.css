@@ -265,7 +265,7 @@
 .lrob-cc-footer {
 	margin-top: var(--_gap);
 	font-size: 0.85em;
-	text-align: var(--lrob-cc-align-text, left);
+	text-align: var(--lrob-cc-align-footer, center);
 }
 
 .lrob-cc-footer a {

@@ -67,7 +67,8 @@ final class Rules
             $pattern = $parts[0] ?? '';
             $category = $parts[1] ?? '';
             $service = $parts[2] ?? '';
-            if ($pattern === '' || !Categories::is_valid($category) || $category === Categories::FUNCTIONAL) {
+            // functional rules are allowed but only documented (never blocked).
+            if ($pattern === '' || !Categories::is_valid($category)) {
                 continue;
             }
             $out[] = ['pattern' => $pattern, 'category' => $category, 'service' => $service];

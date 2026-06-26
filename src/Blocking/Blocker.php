@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace LRob\CookieConsent\Blocking;
 
 use LRob\CookieConsent\Support\Bots;
+use LRob\CookieConsent\Support\Categories;
 use LRob\CookieConsent\Support\Options;
 use LRob\CookieConsent\Support\Rules;
 
@@ -148,7 +149,7 @@ final class Blocker
     public function filter_loader_tag(string $tag, string $handle, string $src): string
     {
         if ($this->rules === []) {
-            $this->rules = Rules::compiled()['rules'];
+            $this->rules = self::enforceable_rules();
         }
         $rule = $this->match($src);
         if ($rule === null) {
@@ -160,6 +161,20 @@ final class Blocker
     private function between_script_attrs(string $tag): string
     {
         return preg_match('/<script\b([^>]*)>/i', $tag, $m) ? $m[1] : '';
+    }
+
+    /**
+     * Rules actually enforced: everything except functional, which is only
+     * referenced for transparency (necessary cookies are never blocked).
+     *
+     * @return list<array{pattern:string,category:string,service:string}>
+     */
+    private static function enforceable_rules(): array
+    {
+        return array_values(array_filter(
+            Rules::compiled()['rules'],
+            static fn (array $r): bool => $r['category'] !== Categories::FUNCTIONAL
+        ));
     }
 
     /** @return array{pattern:string,category:string,service:string}|null */

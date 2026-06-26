@@ -63,10 +63,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
     <?php endif; ?>
 
     <h2 class="nav-tab-wrapper lrob-cc-tabs">
-        <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
-        <a href="#banner" class="nav-tab" data-tab="banner"><?php esc_html_e('Banner', 'lrob-cookie-consent'); ?></a>
-        <a href="#cookies" class="nav-tab" data-tab="cookies"><?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?></a>
-        <a href="#log" class="nav-tab" data-tab="log"><?php esc_html_e('Log', 'lrob-cookie-consent'); ?></a>
+        <a href="#general" class="nav-tab nav-tab-active" data-tab="general"><span class="dashicons dashicons-admin-settings"></span> <?php esc_html_e('General', 'lrob-cookie-consent'); ?></a>
+        <a href="#banner" class="nav-tab" data-tab="banner"><span class="dashicons dashicons-format-image"></span> <?php esc_html_e('Banner', 'lrob-cookie-consent'); ?></a>
+        <a href="#cookies" class="nav-tab" data-tab="cookies"><span class="dashicons dashicons-shield"></span> <?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?></a>
+        <a href="#log" class="nav-tab" data-tab="log"><span class="dashicons dashicons-list-view"></span> <?php esc_html_e('Log', 'lrob-cookie-consent'); ?></a>
     </h2>
 
     <form method="post" action="options.php">
@@ -323,12 +323,13 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
             <div class="lrob-cc-scan">
 
-                <p class="lrob-cc-field-label"><?php esc_html_e('Scan depth', 'lrob-cookie-consent'); ?></p>
+                <p class="lrob-cc-field-label"><?php esc_html_e('Scan method', 'lrob-cookie-consent'); ?></p>
                 <div class="lrob-cc-segmented" role="radiogroup">
-                    <label class="lrob-cc-seg is-active"><input type="radio" name="lrob-cc-scan-mode" value="simple" checked /><span><?php esc_html_e('Simple — home + a few pages', 'lrob-cookie-consent'); ?></span></label>
-                    <label class="lrob-cc-seg"><input type="radio" name="lrob-cc-scan-mode" value="deep" /><span><?php esc_html_e('Deep — more pages', 'lrob-cookie-consent'); ?></span></label>
+                    <label class="lrob-cc-seg is-active"><input type="radio" name="lrob-cc-scan-method" value="database" checked /><span><?php esc_html_e('Site content (database)', 'lrob-cookie-consent'); ?></span></label>
+                    <label class="lrob-cc-seg"><input type="radio" name="lrob-cc-scan-method" value="pages" /><span><?php esc_html_e('Visit pages (rendered)', 'lrob-cookie-consent'); ?></span></label>
                 </div>
-                <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-deep-warn" hidden><?php esc_html_e('Deep scan requests many pages from your own server, one after another. On a heavy or poorly-optimised site this adds load — use it sparingly.', 'lrob-cookie-consent'); ?></p>
+                <p class="lrob-cc-hint" id="lrob-cc-scan-db-note"><?php esc_html_e('Reads the content of every published page and post — fast, no HTTP, and predictable (nothing is missed in your content). It cannot see embeds injected by your theme/plugins or auto-embeds rendered at request time — use “Visit pages” for those.', 'lrob-cookie-consent'); ?></p>
+                <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-pages-warn" hidden><?php esc_html_e('Fetches your home page plus published pages/posts (most recent first, up to 50), one at a time — the exact list scanned is shown with the results. On a heavy site this adds load.', 'lrob-cookie-consent'); ?></p>
 
                 <p><button type="button" class="button button-secondary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button></p>
                 <div id="lrob-cc-scan-progress" hidden><progress id="lrob-cc-scan-bar" max="100" value="0"></progress> <span id="lrob-cc-scan-progress-text"></span></div>
@@ -350,24 +351,43 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 $rule_rows[] = ['pattern' => $p[0] ?? '', 'category' => $p[1] ?? '', 'service' => $p[2] ?? ''];
             }
             $cat_options = static function (string $selected) use ($optional, $labels): void {
-                foreach ($optional as $cat) {
-                    printf('<option value="%s" %s>%s</option>', esc_attr($cat), selected($selected, $cat, false), esc_html($labels[$cat]['title']));
+                // functional is offered so admins can reference necessary cookies
+                // (own site, payment gateways) — documented but never blocked.
+                foreach (array_merge(['functional'], $optional) as $cat) {
+                    $label = $labels[$cat]['title'] ?? $cat;
+                    if ($cat === 'functional') {
+                        $label .= ' — ' . __('necessary, not blocked', 'lrob-cookie-consent');
+                    }
+                    printf('<option value="%s" %s>%s</option>', esc_attr($cat), selected($selected, $cat, false), esc_html($label));
                 }
             };
             ?>
 
             <div class="lrob-cc-rules-structured" data-rules-panel="structured"<?php echo $o['rules_mode'] === 'raw' ? ' hidden' : ''; ?>>
                 <p class="description"><?php esc_html_e('Click a common service to add it, or add a custom rule. The pattern is matched against script/iframe URLs and inline script bodies.', 'lrob-cookie-consent'); ?></p>
-                <div class="lrob-cc-services">
-                    <?php foreach ($services as $svc) : ?>
-                        <button type="button" class="button lrob-cc-service"
-                                data-pattern="<?php echo esc_attr($svc['pattern']); ?>"
-                                data-category="<?php echo esc_attr($svc['category']); ?>"
-                                data-service="<?php echo esc_attr($svc['service']); ?>">
-                            + <?php echo esc_html($svc['label']); ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
+                <?php
+                $svc_groups = [];
+                foreach ($services as $svc) {
+                    $svc_groups[$svc['category']][] = $svc;
+                }
+                foreach (array_merge($optional, ['functional']) as $gcat) :
+                    if (empty($svc_groups[$gcat])) {
+                        continue;
+                    } ?>
+                    <div class="lrob-cc-service-group">
+                        <span><?php echo esc_html($labels[$gcat]['title'] ?? $gcat); ?></span>
+                        <div class="lrob-cc-services">
+                            <?php foreach ($svc_groups[$gcat] as $svc) : ?>
+                                <button type="button" class="button lrob-cc-service"
+                                        data-pattern="<?php echo esc_attr($svc['pattern']); ?>"
+                                        data-category="<?php echo esc_attr($svc['category']); ?>"
+                                        data-service="<?php echo esc_attr($svc['service']); ?>">
+                                    + <?php echo esc_html($svc['label']); ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
                 <div id="lrob-cc-rule-rows">
                     <?php foreach ($rule_rows as $r) : ?>
                         <div class="lrob-cc-rule-row">
@@ -413,7 +433,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             <button type="button" class="button" id="lrob-cc-inline-add"><?php esc_html_e('Add inline script', 'lrob-cookie-consent'); ?></button>
         </section>
 
-        <?php submit_button(); ?>
+        <div class="lrob-cc-savebar">
+            <?php submit_button(__('Save all settings', 'lrob-cookie-consent'), 'primary', 'submit', false); ?>
+            <span class="description"><?php esc_html_e('One save applies to the General, Banner and Cookies tabs together.', 'lrob-cookie-consent'); ?></span>
+        </div>
     </form>
 
     <!-- LOG -->

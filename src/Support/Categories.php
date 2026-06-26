@@ -13,7 +13,7 @@ final class Categories
 {
     public const FUNCTIONAL = 'functional';
 
-    private const DEFAULTS = ['preferences', 'statistics', 'marketing', 'security'];
+    private const DEFAULTS = ['preferences', 'statistics', 'marketing', 'embed', 'security'];
 
     public static function default_label(string $slug): string
     {
@@ -22,6 +22,7 @@ final class Categories
             'preferences' => __('Preferences', 'lrob-cookie-consent'),
             'statistics'  => __('Statistics', 'lrob-cookie-consent'),
             'marketing'   => __('Marketing', 'lrob-cookie-consent'),
+            'embed'       => __('External content', 'lrob-cookie-consent'),
             'security'    => __('Security', 'lrob-cookie-consent'),
             default       => ucfirst(str_replace(['-', '_'], ' ', $slug)),
         };
@@ -34,6 +35,7 @@ final class Categories
             'preferences' => __('Remembers choices you make (language, region, layout).', 'lrob-cookie-consent'),
             'statistics'  => __('Anonymous measurement of how the site is used.', 'lrob-cookie-consent'),
             'marketing'   => __('Used to track visitors for advertising.', 'lrob-cookie-consent'),
+            'embed'       => __('Embedded videos and social posts from other sites (YouTube, Vimeo, etc.).', 'lrob-cookie-consent'),
             'security'    => __('Spam protection, CAPTCHAs and firewalls.', 'lrob-cookie-consent'),
             default       => '',
         };

@@ -243,7 +243,44 @@
 	display: flex;
 	flex-wrap: wrap;
 	gap: 6px;
-	margin-bottom: 12px;
+	margin-bottom: 6px;
+}
+
+.lrob-cc-service-group {
+	margin-bottom: 10px;
+}
+
+.lrob-cc-service-group > span {
+	display: block;
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #646970;
+	margin-bottom: 4px;
+}
+
+/* Sticky save bar — always reachable; one save covers all settings tabs. */
+.lrob-cc-savebar {
+	position: sticky;
+	bottom: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin-top: 24px;
+	padding: 12px 0;
+	background: #f0f0f1;
+	border-top: 1px solid #c3c4c7;
+}
+
+.lrob-cc-savebar .button {
+	margin: 0;
+}
+
+.lrob-cc-tabs .nav-tab .dashicons {
+	vertical-align: text-bottom;
+	margin-right: 2px;
 }
 
 .lrob-cc-rule-row {

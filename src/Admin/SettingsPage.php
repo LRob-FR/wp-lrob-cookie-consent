@@ -34,6 +34,7 @@ final class SettingsPage
         add_action('admin_post_lrob_cc_purge_log', [$this, 'handle_purge']);
         add_action('wp_ajax_lrob_cc_scan_targets', [$this, 'handle_scan_targets']);
         add_action('wp_ajax_lrob_cc_scan_url', [$this, 'handle_scan_url']);
+        add_action('wp_ajax_lrob_cc_scan_db', [$this, 'handle_scan_db']);
         add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
     }
 
@@ -51,8 +52,17 @@ final class SettingsPage
     public function handle_scan_targets(): void
     {
         $this->require_scan_access();
-        $mode = isset($_POST['mode']) && sanitize_key(wp_unslash((string) $_POST['mode'])) === 'deep' ? 'deep' : 'simple';
-        wp_send_json_success(['urls' => Scanner::targets($mode)]);
+        wp_send_json_success(['urls' => Scanner::targets()]);
+    }
+
+    public function handle_scan_db(): void
+    {
+        $this->require_scan_access();
+        try {
+            wp_send_json_success((new \LRob\CookieConsent\Scanning\LocalScanner())->scan_content());
+        } catch (\Throwable $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function handle_scan_url(): void

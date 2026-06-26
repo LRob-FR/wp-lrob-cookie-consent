@@ -22,17 +22,27 @@ final class Services
             ['label' => 'Hotjar', 'pattern' => 'hotjar.com', 'category' => 'statistics', 'service' => 'Hotjar'],
             ['label' => 'Facebook / Meta Pixel', 'pattern' => 'connect.facebook.net', 'category' => 'marketing', 'service' => 'Facebook'],
             ['label' => 'Google Ads', 'pattern' => 'googleadservices.com', 'category' => 'marketing', 'service' => 'Google Ads'],
-            ['label' => 'YouTube embeds', 'pattern' => 'youtube.com/embed', 'category' => 'marketing', 'service' => 'YouTube'],
-            ['label' => 'Vimeo embeds', 'pattern' => 'player.vimeo.com', 'category' => 'marketing', 'service' => 'Vimeo'],
+            ['label' => 'LinkedIn Insight', 'pattern' => 'snap.licdn.com', 'category' => 'marketing', 'service' => 'LinkedIn'],
             ['label' => 'Google Maps', 'pattern' => 'maps.google.com', 'category' => 'preferences', 'service' => 'Google Maps'],
             ['label' => 'Gravatar', 'pattern' => 'gravatar.com', 'category' => 'preferences', 'service' => 'Gravatar'],
-            ['label' => 'LinkedIn Insight', 'pattern' => 'snap.licdn.com', 'category' => 'marketing', 'service' => 'LinkedIn'],
-            // CAPTCHAs / security → the "security" category. Turnstile/hCaptcha are
-            // privacy-friendly (often cookieless); reCAPTCHA loads Google. Blocking a
-            // CAPTCHA can break protected forms.
+            // Embedded external content → the "external content" category (not
+            // inherently marketing).
+            ['label' => 'YouTube', 'pattern' => 'youtube.com/embed', 'category' => 'embed', 'service' => 'YouTube'],
+            ['label' => 'YouTube (no-cookie)', 'pattern' => 'youtube-nocookie.com', 'category' => 'embed', 'service' => 'YouTube'],
+            ['label' => 'Vimeo', 'pattern' => 'player.vimeo.com', 'category' => 'embed', 'service' => 'Vimeo'],
+            ['label' => 'Dailymotion', 'pattern' => 'dailymotion.com/embed', 'category' => 'embed', 'service' => 'Dailymotion'],
+            ['label' => 'X / Twitter', 'pattern' => 'platform.twitter.com', 'category' => 'embed', 'service' => 'X (Twitter)'],
+            ['label' => 'Instagram', 'pattern' => 'instagram.com/embed', 'category' => 'embed', 'service' => 'Instagram'],
+            ['label' => 'TikTok', 'pattern' => 'tiktok.com/embed', 'category' => 'embed', 'service' => 'TikTok'],
+            ['label' => 'Facebook embeds', 'pattern' => 'facebook.com/plugins', 'category' => 'embed', 'service' => 'Facebook'],
+            // Security / CAPTCHAs. Turnstile/hCaptcha are privacy-friendly (often
+            // cookieless); reCAPTCHA loads Google. Blocking a CAPTCHA can break forms.
             ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'security', 'service' => 'Cloudflare Turnstile'],
             ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'security', 'service' => 'hCaptcha'],
             ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'security', 'service' => 'Google reCAPTCHA'],
+            // Necessary (functional) — referenced for transparency, never blocked.
+            ['label' => 'Stripe (payments)', 'pattern' => 'js.stripe.com', 'category' => 'functional', 'service' => 'Stripe'],
+            ['label' => 'PayPal (payments)', 'pattern' => 'paypal.com', 'category' => 'functional', 'service' => 'PayPal'],
         ];
         return apply_filters('lrob_cc_common_services', $services);
     }
@@ -66,9 +76,9 @@ final class Services
                 'services' => $pick('google-analytics.com', 'googletagmanager.com', 'matomo.js', 'hotjar.com'),
             ],
             [
-                'question' => __('Do you embed videos?', 'lrob-cookie-consent'),
-                'hint'     => __('Embedded players can set tracking cookies before consent.', 'lrob-cookie-consent'),
-                'services' => $pick('youtube.com/embed', 'player.vimeo.com'),
+                'question' => __('Do you embed external content (videos, social posts)?', 'lrob-cookie-consent'),
+                'hint'     => __('Players and social embeds can set cookies before consent — they go under "External content", not marketing.', 'lrob-cookie-consent'),
+                'services' => $pick('youtube.com/embed', 'player.vimeo.com', 'dailymotion.com/embed', 'platform.twitter.com', 'instagram.com/embed', 'tiktok.com/embed', 'facebook.com/plugins'),
             ],
             [
                 'question' => __('Do you run ads or marketing / conversion pixels?', 'lrob-cookie-consent'),
@@ -84,6 +94,11 @@ final class Services
                 'question' => __('Do you use a CAPTCHA?', 'lrob-cookie-consent'),
                 'hint'     => __('Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads Google.', 'lrob-cookie-consent'),
                 'services' => $pick('challenges.cloudflare.com', 'hcaptcha.com', 'recaptcha'),
+            ],
+            [
+                'question' => __('Do you use payment gateways?', 'lrob-cookie-consent'),
+                'hint'     => __('Listed as necessary — referenced for transparency but never blocked, so checkout keeps working.', 'lrob-cookie-consent'),
+                'services' => $pick('js.stripe.com', 'paypal.com'),
             ],
         ];
 

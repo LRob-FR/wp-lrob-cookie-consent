@@ -21,12 +21,12 @@ final class Scanner
     /**
      * @return array{provider:string,urls:list<string>,resources:list<array<string,mixed>>,cookies:list<string>,error:string}
      */
-    public static function run(string $provider_id = 'local', string $mode = 'simple'): array
+    public static function run(string $provider_id = 'local'): array
     {
         $providers = self::providers();
         $provider = $providers[$provider_id] ?? $providers['local'] ?? new LocalScanner();
 
-        $urls = self::targets($mode);
+        $urls = self::targets();
         $result = $provider->scan($urls);
 
         return [
@@ -39,18 +39,18 @@ final class Scanner
     }
 
     /**
-     * URLs to scan. simple = home + a few recent posts/pages (~4); deep = more
-     * pages (capped). The client scans these one at a time with a progress bar.
+     * The exact set of URLs the "visit pages" scan fetches: the home page, then
+     * all published pages and recent posts (most-recently-modified first, capped
+     * at 50). The full list is shown in the UI so the scan is predictable.
      *
      * @return list<string>
      */
-    public static function targets(string $mode = 'simple'): array
+    public static function targets(): array
     {
-        $deep = ($mode === 'deep');
         $urls = [home_url('/')];
         $posts = get_posts([
-            'numberposts' => $deep ? 30 : 3,
-            'post_type'   => ['post', 'page'],
+            'numberposts' => 49,
+            'post_type'   => ['page', 'post'],
             'post_status' => 'publish',
             'orderby'     => 'modified',
             'order'       => 'DESC',
@@ -61,6 +61,6 @@ final class Scanner
                 $urls[] = $link;
             }
         }
-        return array_values(array_slice(array_unique($urls), 0, $deep ? 30 : 4));
+        return array_values(array_slice(array_unique($urls), 0, 50));
     }
 }

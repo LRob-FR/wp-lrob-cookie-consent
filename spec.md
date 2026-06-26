@@ -160,7 +160,7 @@ A settings field to paste an inline script (e.g. GA4, Matomo) + pick a category.
 State machine ported from Complianz `complianz.js` but stripped to the core (target < 15 KB vs 83 KB). Port these functions specifically: `cmplz_has_consent`, `cmplz_set_consent`, `cmplz_accepted_categories`, `cmplz_run_script`, `cmplz_enable_category`, `cmplz_set_category_as_body_class`, `cmplz_trap_focus`.
 
 ### 4.1 Categories (functional fixed; optional admin-managed)
-`functional` is hardcoded, always-on and **force-accepted** (covers WordPress login/cart/CSRF cookies that can't be blocked without breaking the site). The **optional** categories are **admin-managed** (stored in `lrob_cc_options['categories']`), seeded with defaults `preferences`, `statistics`, `marketing`, `security`. Admins can **rename, reorder, remove, or add their own** categories (slug + label + description); default slugs keep translatable labels, custom ones use admin text. No consent-per-service in v1.
+`functional` is hardcoded, always-on and **force-accepted** (covers WordPress login/cart/CSRF cookies that can't be blocked without breaking the site). Admins can also add **functional rules to *reference* necessary cookies** (own site, payment gateways like Stripe/PayPal) — documented in the version snapshot + audit, but **never blocked**. The **optional** categories are **admin-managed** (stored in `lrob_cc_options['categories']`), seeded with defaults `preferences`, `statistics`, `marketing`, `embed` (External content — embeds aren't inherently marketing), `security`. Admins can **rename, reorder, remove, or add their own** categories (slug + label + description); default slugs keep translatable labels, custom ones use admin text. No consent-per-service in v1.
 
 ### 4.2 Storage
 - Cookie `lrob_cc_consent` = JSON `{ functional:true, preferences:bool, statistics:bool, marketing:bool, ts, version }`. `SameSite=Lax`, path `/`, duration configurable (default 365 days).
@@ -270,7 +270,10 @@ Security throughout: nonces on every admin action + AJAX (`check_ajax_referer` +
 ## 9b. Scanning (`src/Scanning/`)
 
 Helps admins discover what to block instead of typing rules blind.
-- **Local crawl (`LocalScanner`, in v1):** fetches a sample of public URLs (home + recent posts/pages) **anonymously** via `wp_remote_get` (no auth cookie → never trips admin/member-only cookies), parses returned HTML for cross-origin `<script>/<iframe>/<img>` sources + reads `Set-Cookie` names, matches against the curated services list, and returns suggestions. **Limitation (stated in the UI):** server-side fetch sees only server-rendered HTML — it misses JS-injected trackers (e.g. via Tag Manager).
+- **Two modes (predictable by design):**
+  - **Database (content)** — default. Reads the `post_content` of **all published posts and pages** (no HTTP) and finds cross-origin embeds/scripts + known provider URLs. Predictable (nothing in your content is missed) and light. Can't see theme/plugin-injected or auto-rendered embeds.
+  - **Visit pages (rendered)** — fetches an **explicit, listed** set (home + published pages/posts, most-recent first, ≤50) **anonymously** via `wp_remote_get`, one at a time with a progress bar; catches theme-injected too. SSL-error → offer "retry ignoring SSL". The exact URLs scanned are shown with the results.
+- The curated services list is **grouped by category** in the quick-add UI; results map to block rules.
 - **Provider seam:** `ScanProvider` interface + `Scanner::providers()` (`lrob_cc_scan_providers` filter) so a **remote LRob headless deep-scan** (renders pages, catches dynamic trackers + actual cookies set) can plug in later as a promoted premium option.
 - **AJAX** `wp_ajax_lrob_cc_scan` (cap + nonce) → results table with per-row checkbox + category; "Add selected" injects rows into the guided rule editor.
 - **Guided wizard:** a "which services do you use?" checklist (services grouped by category) that generates rules — for non-technical admins.

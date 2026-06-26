@@ -350,10 +350,13 @@
 	var scanProgress = document.getElementById('lrob-cc-scan-progress');
 	var scanBar = document.getElementById('lrob-cc-scan-bar');
 	var scanProgressText = document.getElementById('lrob-cc-scan-progress-text');
-	var scanDeepWarn = document.getElementById('lrob-cc-scan-deep-warn');
+	var scanDbNote = document.getElementById('lrob-cc-scan-db-note');
+	var scanPagesWarn = document.getElementById('lrob-cc-scan-pages-warn');
 
-	$(document).on('change', 'input[name="lrob-cc-scan-mode"]', function () {
-		if (scanDeepWarn) { scanDeepWarn.hidden = this.value !== 'deep'; }
+	$(document).on('change', 'input[name="lrob-cc-scan-method"]', function () {
+		var pages = this.value === 'pages';
+		if (scanDbNote) { scanDbNote.hidden = pages; }
+		if (scanPagesWarn) { scanPagesWarn.hidden = !pages; }
 	});
 
 	function scanAjax(action, params) {
@@ -419,12 +422,25 @@
 
 	if (scanBtn) {
 		scanBtn.addEventListener('click', function () {
-			var mode = (document.querySelector('input[name="lrob-cc-scan-mode"]:checked') || {}).value || 'simple';
+			var method = (document.querySelector('input[name="lrob-cc-scan-method"]:checked') || {}).value || 'database';
 			scanBtn.disabled = true;
 			scanBtn.textContent = A.i18n.scanning || 'Scanning…';
 			scanResults.innerHTML = '';
+
+			if (method === 'database') {
+				scanAjax('lrob_cc_scan_db', {}).then(function (json) {
+					scanEnd();
+					if (!json.success || !json.data) {
+						scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
+						return;
+					}
+					renderScan({ urls: [], resources: json.data.resources || [], cookies: json.data.cookies || [] });
+				});
+				return;
+			}
+
 			if (scanProgress) { scanProgress.hidden = false; }
-			scanAjax('lrob_cc_scan_targets', { mode: mode }).then(function (json) {
+			scanAjax('lrob_cc_scan_targets', {}).then(function (json) {
 				if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
 					scanEnd();
 					scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');

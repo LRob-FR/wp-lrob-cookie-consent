@@ -118,6 +118,73 @@ final class LocalScanner implements ScanProvider
     }
 
     /**
+     * Database scan: read the post_content of all published posts and pages and
+     * find external embeds/scripts. Predictable (covers every published item, no
+     * HTTP) but only sees what's in the content — not theme/plugin-injected
+     * scripts or auto-embeds that render only at request time.
+     *
+     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string, scanned: int}
+     */
+    public function scan_content(): array
+    {
+        $site_host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
+        $services = Services::common();
+        $resources = [];
+
+        $ids = get_posts([
+            'post_type'   => ['post', 'page'],
+            'post_status' => 'publish',
+            'numberposts' => 1000,
+            'fields'      => 'ids',
+            'orderby'     => 'modified',
+            'order'       => 'DESC',
+        ]);
+
+        foreach ($ids as $pid) {
+            $content = (string) get_post_field('post_content', (int) $pid);
+            if ($content === '') {
+                continue;
+            }
+            $sample = (string) get_permalink((int) $pid);
+
+            if (preg_match_all('/<(script|iframe|img)\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']/i', $content, $matches, PREG_SET_ORDER)) {
+                foreach ($matches as $m) {
+                    $src = html_entity_decode($m[2]);
+                    $host = (string) wp_parse_url($src, PHP_URL_HOST);
+                    if ($host === '' || $host === $site_host) {
+                        continue;
+                    }
+                    $key = $this->match_service($src, $services);
+                    $pattern = $key['pattern'] ?? $host;
+                    if (!isset($resources[$pattern])) {
+                        $resources[$pattern] = [
+                            'pattern' => $pattern, 'host' => $host, 'type' => strtolower($m[1]),
+                            'category' => $key['category'] ?? '', 'service' => $key['service'] ?? $host,
+                            'known' => $key !== null, 'sample' => $sample,
+                        ];
+                    }
+                }
+            }
+
+            // Known provider URLs anywhere in content (e.g. oEmbed-by-URL).
+            foreach ($services as $svc) {
+                if ($svc['category'] === 'functional' || isset($resources[$svc['pattern']])) {
+                    continue;
+                }
+                if (str_contains($content, $svc['pattern'])) {
+                    $resources[$svc['pattern']] = [
+                        'pattern' => $svc['pattern'], 'host' => '', 'type' => 'embed',
+                        'category' => $svc['category'], 'service' => $svc['service'],
+                        'known' => true, 'sample' => $sample,
+                    ];
+                }
+            }
+        }
+
+        return ['resources' => array_values($resources), 'cookies' => [], 'error' => '', 'scanned' => count($ids)];
+    }
+
+    /**
      * @param list<array{label:string,pattern:string,category:string,service:string}> $services
      * @return array{pattern:string,category:string,service:string}|null
      */

@@ -447,24 +447,44 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             <?php $log_table->display(); ?>
         </form>
 
-        <h3><?php esc_html_e('Information-text versions', 'lrob-cookie-consent'); ?> <?php $help(__('Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given. The full text (and what each category covers) is stored and included in the CSV export.', 'lrob-cookie-consent')); ?></h3>
+        <h3><?php esc_html_e('Cookie consent versions', 'lrob-cookie-consent'); ?> <?php $help(__('Each consent record links to the exact context shown then: banner text, what each category covers, AND what was blocked under each. Editing any of these creates a new version; older records keep their version. The full snapshot is stored and included in the CSV export, and a version is removed once no record references it.', 'lrob-cookie-consent')); ?></h3>
         <?php if (empty($banner_versions)) : ?>
             <p><?php esc_html_e('No versions recorded yet.', 'lrob-cookie-consent'); ?></p>
         <?php else : foreach ($banner_versions as $v) :
             $snap = is_array($v['snapshot'] ?? null) ? $v['snapshot'] : [];
             $st = is_array($snap['texts'] ?? null) ? $snap['texts'] : [];
             $sc = is_array($snap['categories'] ?? null) ? $snap['categories'] : [];
+            $sb = is_array($snap['blocking'] ?? null) ? $snap['blocking'] : [];
             ?>
-            <details class="lrob-cc-version">
+            <details class="lrob-cc-version" id="lrob-cc-ver-<?php echo esc_attr((string) $v['version_hash']); ?>">
                 <summary><code><?php echo esc_html(substr((string) $v['version_hash'], 0, 12)); ?></code> — <?php echo esc_html((string) $v['created_at']); ?> <?php esc_html_e('UTC', 'lrob-cookie-consent'); ?></summary>
                 <div class="lrob-cc-version-body">
                     <p><strong><?php esc_html_e('Header', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['header'] ?? '')); ?></p>
                     <p><strong><?php esc_html_e('Message', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['message'] ?? '')); ?></p>
                     <p><strong><?php esc_html_e('Buttons', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html(trim(($st['accept'] ?? '') . ' / ' . ($st['deny'] ?? '') . ' / ' . ($st['save'] ?? ''), ' /')); ?></p>
-                    <p><strong><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?>:</strong></p>
+                    <p><strong><?php esc_html_e('Categories & what was blocked', 'lrob-cookie-consent'); ?>:</strong></p>
                     <ul class="lrob-cc-version-cats">
-                        <?php foreach ($sc as $slug => $cat) : ?>
-                            <li><strong><?php echo esc_html((string) ($cat['title'] ?? $slug)); ?></strong> — <?php echo esc_html((string) ($cat['desc'] ?? '')); ?></li>
+                        <?php foreach ($sc as $slug => $cat) :
+                            if ($slug === 'functional') {
+                                continue;
+                            }
+                            $blocked = is_array($sb[$slug] ?? null) ? $sb[$slug] : [];
+                            ?>
+                            <li>
+                                <strong><?php echo esc_html((string) ($cat['title'] ?? $slug)); ?></strong> — <?php echo esc_html((string) ($cat['desc'] ?? '')); ?>
+                                <?php if ($blocked) : ?>
+                                    <span class="lrob-cc-version-blocked">
+                                        <?php
+                                        $labels_b = array_map(static function (array $b): string {
+                                            $svc = (string) ($b['service'] ?? '');
+                                            $pat = (string) ($b['pattern'] ?? '');
+                                            return $svc !== '' ? $svc . ' (' . $pat . ')' : $pat;
+                                        }, $blocked);
+                                        echo esc_html(implode(', ', $labels_b));
+                                        ?>
+                                    </span>
+                                <?php endif; ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

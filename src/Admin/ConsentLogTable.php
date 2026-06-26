@@ -26,7 +26,7 @@ final class ConsentLogTable extends \WP_List_Table
             'event_type'     => __('Event', 'lrob-cookie-consent'),
             'method'         => __('Act', 'lrob-cookie-consent'),
             'choices'        => __('Choices', 'lrob-cookie-consent'),
-            'banner_version' => __('Text version', 'lrob-cookie-consent'),
+            'banner_version' => __('Cookie consent version', 'lrob-cookie-consent'),
             'expires_at'     => __('Renew by', 'lrob-cookie-consent'),
         ];
     }
@@ -81,13 +81,27 @@ final class ConsentLogTable extends \WP_List_Table
         return implode(' ', $parts);
     }
 
+    /** @param array<string,mixed> $item */
+    protected function column_banner_version($item): string
+    {
+        $hash = (string) ($item['banner_version'] ?? '');
+        if ($hash === '') {
+            return '—';
+        }
+        return sprintf(
+            '<a href="#lrob-cc-ver-%1$s" class="lrob-cc-ver-link"><code>%2$s</code></a>',
+            esc_attr($hash),
+            esc_html(substr($hash, 0, 12))
+        );
+    }
+
     /**
      * @param array<string,mixed> $item
      * @param string $column_name
      */
     protected function column_default($item, $column_name): string
     {
-        if ($column_name === 'consent_id' || $column_name === 'banner_version') {
+        if ($column_name === 'consent_id') {
             return '<code>' . esc_html(substr((string) ($item[$column_name] ?? ''), 0, 12)) . '</code>';
         }
         return esc_html((string) ($item[$column_name] ?? ''));

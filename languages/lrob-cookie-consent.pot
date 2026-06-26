@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-26T21:53:40+00:00\n"
+"POT-Creation-Date: 2026-06-26T22:06:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -55,7 +55,7 @@ msgid "Choices"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:29
-msgid "Text version"
+msgid "Cookie consent version"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:30
@@ -685,12 +685,12 @@ msgid "Presets"
 msgstr ""
 
 #: views/admin-settings.php:144
-#: views/admin-settings.php:461
+#: views/admin-settings.php:462
 msgid "Header"
 msgstr ""
 
 #: views/admin-settings.php:146
-#: views/admin-settings.php:462
+#: views/admin-settings.php:463
 msgid "Message"
 msgstr ""
 
@@ -883,7 +883,6 @@ msgid "Live preview"
 msgstr ""
 
 #: views/admin-settings.php:295
-#: views/admin-settings.php:464
 msgid "Categories"
 msgstr ""
 
@@ -1043,23 +1042,27 @@ msgid "Delete all"
 msgstr ""
 
 #: views/admin-settings.php:450
-msgid "Information-text versions"
+msgid "Cookie consent versions"
 msgstr ""
 
 #: views/admin-settings.php:450
-msgid "Each consent record links to the exact banner text shown at that moment. Editing the text creates a new version; older records keep pointing to the version they were given. The full text (and what each category covers) is stored and included in the CSV export."
+msgid "Each consent record links to the exact context shown then: banner text, what each category covers, AND what was blocked under each. Editing any of these creates a new version; older records keep their version. The full snapshot is stored and included in the CSV export, and a version is removed once no record references it."
 msgstr ""
 
 #: views/admin-settings.php:452
 msgid "No versions recorded yet."
 msgstr ""
 
-#: views/admin-settings.php:459
+#: views/admin-settings.php:460
 msgid "UTC"
 msgstr ""
 
-#: views/admin-settings.php:463
+#: views/admin-settings.php:464
 msgid "Buttons"
+msgstr ""
+
+#: views/admin-settings.php:465
+msgid "Categories & what was blocked"
 msgstr ""
 
 #. translators: %s: cookie category name.

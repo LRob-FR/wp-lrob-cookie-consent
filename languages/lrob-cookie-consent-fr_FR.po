@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-26T21:51:07+00:00\n"
+"POT-Creation-Date: 2026-06-26T22:02:54+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -63,8 +63,8 @@ msgid "Choices"
 msgstr "Choix"
 
 #: src/Admin/ConsentLogTable.php:29
-msgid "Text version"
-msgstr "Version du texte"
+msgid "Cookie consent version"
+msgstr "Version du consentement"
 
 #: src/Admin/ConsentLogTable.php:30
 msgid "Renew by"
@@ -743,11 +743,11 @@ msgstr "Texte"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: views/admin-settings.php:144 views/admin-settings.php:461
+#: views/admin-settings.php:144 views/admin-settings.php:462
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:146 views/admin-settings.php:462
+#: views/admin-settings.php:146 views/admin-settings.php:463
 msgid "Message"
 msgstr "Message"
 
@@ -947,7 +947,7 @@ msgstr "Alignement des boutons"
 msgid "Live preview"
 msgstr "Aperçu en direct"
 
-#: views/admin-settings.php:295 views/admin-settings.php:464
+#: views/admin-settings.php:295
 msgid "Categories"
 msgstr "Catégories"
 
@@ -1157,33 +1157,39 @@ msgid "Delete all"
 msgstr "Tout supprimer"
 
 #: views/admin-settings.php:450
-msgid "Information-text versions"
-msgstr "Versions du texte d’information"
+msgid "Cookie consent versions"
+msgstr "Versions du consentement"
 
 #: views/admin-settings.php:450
 msgid ""
-"Each consent record links to the exact banner text shown at that moment. "
-"Editing the text creates a new version; older records keep pointing to the "
-"version they were given. The full text (and what each category covers) is "
-"stored and included in the CSV export."
+"Each consent record links to the exact context shown then: banner text, what "
+"each category covers, AND what was blocked under each. Editing any of these "
+"creates a new version; older records keep their version. The full snapshot "
+"is stored and included in the CSV export, and a version is removed once no "
+"record references it."
 msgstr ""
-"Chaque enregistrement de consentement est lié au texte exact de la bannière "
-"affiché à ce moment-là. Modifier le texte crée une nouvelle version ; les "
-"anciens enregistrements continuent de pointer vers la version qui leur a été "
-"présentée. Le texte complet (et ce que couvre chaque catégorie) est conservé "
-"et inclus dans l’export CSV."
+"Chaque enregistrement de consentement est lié au contexte exact affiché à ce "
+"moment-là : le texte de la bannière, ce que couvre chaque catégorie ET ce qui "
+"était bloqué sous chacune. Modifier l’un de ces éléments crée une nouvelle "
+"version ; les anciens enregistrements conservent la leur. Le cliché complet "
+"est conservé et inclus dans l’export CSV, et une version est supprimée dès "
+"qu’aucun enregistrement ne s’y rattache."
 
 #: views/admin-settings.php:452
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
 
-#: views/admin-settings.php:459
+#: views/admin-settings.php:460
 msgid "UTC"
 msgstr "UTC"
 
-#: views/admin-settings.php:463
+#: views/admin-settings.php:464
 msgid "Buttons"
 msgstr "Boutons"
+
+#: views/admin-settings.php:465
+msgid "Categories & what was blocked"
+msgstr "Catégories et ce qui était bloqué"
 
 #. translators: %s: cookie category name.
 #: views/banner.php:51

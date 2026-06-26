@@ -86,6 +86,7 @@ final class LogRepository
     {
         global $wpdb;
         $wpdb->delete(Schema::table_name(), ['id' => $id], ['%d']);
+        BannerVersion::prune_orphans();
     }
 
     /** @param list<int> $ids */
@@ -98,12 +99,14 @@ final class LogRepository
         global $wpdb;
         $placeholders = implode(',', array_fill(0, count($ids), '%d'));
         $wpdb->query($wpdb->prepare('DELETE FROM ' . Schema::table_name() . " WHERE id IN ({$placeholders})", $ids));
+        BannerVersion::prune_orphans();
     }
 
     public function purge_all(): void
     {
         global $wpdb;
         $wpdb->query('TRUNCATE TABLE ' . Schema::table_name());
+        BannerVersion::prune_orphans();
     }
 
     public function purge_expired(): void
@@ -117,6 +120,7 @@ final class LogRepository
         $wpdb->query(
             $wpdb->prepare('DELETE FROM ' . Schema::table_name() . ' WHERE created_at < %s', $cutoff)
         );
+        BannerVersion::prune_orphans();
     }
 
     /** Streams a CSV of the whole log to the browser and exits. */
@@ -132,7 +136,7 @@ final class LogRepository
         $out = fopen('php://output', 'w');
         // Each row carries the exact information text shown and what every
         // category covered, so a proof line is self-contained for audit.
-        fputcsv($out, ['id', 'created_at_utc', 'expires_at_utc', 'visitor_id', 'user_id', 'username', 'event', 'method', 'choices', 'banner_version', 'info_header', 'info_message', 'categories_shown', 'config_version', 'ip', 'user_agent']);
+        fputcsv($out, ['id', 'created_at_utc', 'expires_at_utc', 'visitor_id', 'user_id', 'username', 'event', 'method', 'choices', 'cookie_consent_version', 'info_header', 'info_message', 'categories_shown', 'blocked_by_category', 'config_version', 'ip', 'user_agent']);
 
         $batch = 1000;
         $offset = 0;
@@ -147,11 +151,13 @@ final class LogRepository
                 $snap = $versions[(string) ($r['banner_version'] ?? '')] ?? [];
                 $texts = is_array($snap['texts'] ?? null) ? $snap['texts'] : [];
                 $cats = is_array($snap['categories'] ?? null) ? $snap['categories'] : [];
+                $blocking = is_array($snap['blocking'] ?? null) ? $snap['blocking'] : [];
                 fputcsv($out, [
                     $r['id'], $r['created_at'], $r['expires_at'], $r['consent_id'], $user, $username,
                     $r['event_type'], $r['method'], $r['choices'], $r['banner_version'],
                     (string) ($texts['header'] ?? ''), (string) ($texts['message'] ?? ''),
-                    (string) wp_json_encode($cats), $r['config_version'], $r['ip_anon'], $r['user_agent'],
+                    (string) wp_json_encode($cats), (string) wp_json_encode($blocking),
+                    $r['config_version'], $r['ip_anon'], $r['user_agent'],
                 ]);
             }
             $offset += $batch;

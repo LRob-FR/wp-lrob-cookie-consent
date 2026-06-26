@@ -237,7 +237,7 @@ The burden of proof is on the data controller: a click is not enough — we must
 - Skip logging for bots; only when "Store proof of consent" is on (default on).
 
 ### 6b. Versioning, retention, audit
-- **Information text is versioned** (`Consent\BannerVersion` + `{prefix}lrob_cc_banner_versions`): the current snapshot (header/message/buttons/category labels) is hashed; the hash shown is recorded with each consent; editing the text yields a new hash, and old records keep pointing to the version they were given. Admin lists versions.
+- **Cookie-consent version** (`Consent\BannerVersion` + `{prefix}lrob_cc_banner_versions`): the full snapshot — header/message/buttons, every category's label+description, **and what each category blocks** (rules + inline scripts) — is hashed; the hash in force is recorded with each consent; editing any of it yields a new hash, and old records keep theirs. The admin lists versions and can click a record's version to view its complete snapshot; the snapshot is included in the CSV export. A version is **pruned once no record references it** (`prune_orphans()`, run after every log deletion).
 - **Retention**: configurable purge (daily cron) — proof is not kept indefinitely (minimisation).
 - **Audit view**: `Admin\ConsentLogTable` (a `WP_List_Table`) — sortable/paginated, **per-row + bulk delete**, CSV export, for CNIL inspection.
 

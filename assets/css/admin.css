@@ -494,6 +494,21 @@
 	list-style: disc;
 }
 
+.lrob-cc-version-blocked {
+	display: block;
+	margin-left: 4px;
+	color: #50575e;
+	font-size: 12px;
+}
+
+.lrob-cc-version-blocked::before {
+	content: "⛔ ";
+}
+
+:target.lrob-cc-version {
+	box-shadow: 0 0 0 2px #2271b1;
+}
+
 /* Confirm dialog. */
 .lrob-cc-confirm-overlay {
 	position: fixed;

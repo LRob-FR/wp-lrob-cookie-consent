@@ -6,19 +6,32 @@ namespace LRob\CookieConsent\Consent;
 
 use LRob\CookieConsent\Frontend\Banner;
 use LRob\CookieConsent\Support\Categories;
+use LRob\CookieConsent\Support\Rules;
 
 /**
- * Versions the information text shown in the banner. Each distinct snapshot
- * (header/message/buttons/category labels) gets a stable hash recorded once;
- * consent records store the hash of the text actually displayed, and editing
- * the text simply yields a new hash — old records keep pointing to the old one.
+ * Versions the whole cookie-consent context shown to the visitor: the banner
+ * text, the category labels/descriptions, AND what is actually blocked under
+ * each category. Each distinct snapshot gets a stable hash recorded once;
+ * consent records store the hash in force when they consented. Editing the
+ * text or the block rules yields a new hash — old records keep the old one.
  */
 final class BannerVersion
 {
-    /** @return array{texts:array<string,string>,categories:array<string,array{title:string,desc:string}>} */
+    /** @return array{texts:array<string,string>,categories:array<string,array{title:string,desc:string}>,blocking:array<string,list<array{pattern:string,service:string}>>} */
     public static function snapshot(): array
     {
         $t = Banner::texts();
+
+        // What each category blocks at this moment (rules + inline scripts).
+        $compiled = Rules::compiled();
+        $blocking = [];
+        foreach ($compiled['rules'] as $r) {
+            $blocking[$r['category']][] = ['pattern' => $r['pattern'], 'service' => $r['service']];
+        }
+        foreach ($compiled['inline'] as $i) {
+            $blocking[$i['category']][] = ['pattern' => '(inline script)', 'service' => ''];
+        }
+
         return [
             'texts' => [
                 'header'  => $t['header'],
@@ -28,6 +41,7 @@ final class BannerVersion
                 'save'    => $t['save'],
             ],
             'categories' => Categories::labels(),
+            'blocking'   => $blocking,
         ];
     }
 
@@ -90,5 +104,14 @@ final class BannerVersion
             $out[(string) $row['version_hash']] = is_array($row['snapshot']) ? $row['snapshot'] : [];
         }
         return $out;
+    }
+
+    /** Drop version snapshots no longer referenced by any consent record. */
+    public static function prune_orphans(): void
+    {
+        global $wpdb;
+        $versions = Schema::versions_table();
+        $log = Schema::table_name();
+        $wpdb->query("DELETE FROM {$versions} WHERE version_hash NOT IN (SELECT DISTINCT banner_version FROM {$log})");
     }
 }

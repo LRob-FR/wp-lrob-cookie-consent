@@ -135,6 +135,12 @@
 	$('[data-toggle-text]').each(function () { syncTextToggle(this); });
 	$(document).on('change', '[data-toggle-text]', function () { syncTextToggle(this); });
 
+	// Clicking a consent-version link opens that version's full detail.
+	$(document).on('click', '.lrob-cc-ver-link', function () {
+		var det = document.querySelector(this.getAttribute('href'));
+		if (det) { det.open = true; }
+	});
+
 	// --- Colour pickers --------------------------------------------------
 	$('.lrob-cc-color').wpColorPicker({
 		change: function () { setTimeout(update, 50); },

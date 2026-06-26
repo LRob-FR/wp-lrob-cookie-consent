@@ -38,6 +38,11 @@ if (!defined('ABSPATH')) {
                     <span class="lrob-cc-cat-always"><?php echo esc_html($texts['always']); ?></span>
                 </div>
                 <div class="lrob-cc-cat-desc"><?php echo esc_html($labels['functional']['desc']); ?></div>
+                <?php if (!empty($show_sources) && !empty($sources['functional'])) : ?>
+                    <details class="lrob-cc-cat-sources"><summary><?php esc_html_e('What this includes', 'lrob-cookie-consent'); ?></summary>
+                        <ul><?php foreach ($sources['functional'] as $s) : ?><li><?php echo esc_html($s); ?></li><?php endforeach; ?></ul>
+                    </details>
+                <?php endif; ?>
             </div>
 
             <?php foreach ($optional as $cat) : ?>
@@ -54,6 +59,11 @@ if (!defined('ABSPATH')) {
                         </span>
                     </label>
                     <div class="lrob-cc-cat-desc"><?php echo esc_html($labels[$cat]['desc']); ?></div>
+                    <?php if (!empty($show_sources) && !empty($sources[$cat])) : ?>
+                        <details class="lrob-cc-cat-sources"><summary><?php esc_html_e('What this blocks', 'lrob-cookie-consent'); ?></summary>
+                            <ul><?php foreach ($sources[$cat] as $s) : ?><li><?php echo esc_html($s); ?></li><?php endforeach; ?></ul>
+                        </details>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -79,11 +89,14 @@ if (!defined('ABSPATH')) {
             </button>
         </div>
 
-        <?php if (!empty($footer_links)) : ?>
+        <?php if (!empty($footer_links) || !empty($watermark)) : ?>
             <div class="lrob-cc-footer">
                 <?php foreach ($footer_links as $link) : ?>
                     <a href="<?php echo esc_url((string) $link['url']); ?>"><?php echo esc_html((string) $link['label']); ?></a>
                 <?php endforeach; ?>
+                <?php if (!empty($watermark)) : ?>
+                    <a class="lrob-cc-watermark" href="https://www.lrob.fr/" target="_blank" rel="noopener"><?php esc_html_e('Cookie Consent by LRob', 'lrob-cookie-consent'); ?></a>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>

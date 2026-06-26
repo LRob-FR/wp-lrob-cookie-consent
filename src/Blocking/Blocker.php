@@ -26,11 +26,6 @@ final class Blocker
             return;
         }
 
-        if ((string) Options::get('block_method') === 'enqueued') {
-            add_filter('script_loader_tag', [$this, 'filter_loader_tag'], 10, 3);
-            return;
-        }
-
         add_action('template_redirect', [$this, 'maybe_start_buffer'], 0);
     }
 
@@ -39,7 +34,7 @@ final class Blocker
         if (!$this->should_buffer()) {
             return;
         }
-        $this->rules = Rules::compiled()['rules'];
+        $this->rules = self::enforceable_rules();
         if ($this->rules === []) {
             return;
         }
@@ -144,23 +139,6 @@ final class Blocker
         }
 
         return '<iframe' . $extra . ' ' . trim($attrs) . '>';
-    }
-
-    public function filter_loader_tag(string $tag, string $handle, string $src): string
-    {
-        if ($this->rules === []) {
-            $this->rules = self::enforceable_rules();
-        }
-        $rule = $this->match($src);
-        if ($rule === null) {
-            return $tag;
-        }
-        return $this->transform_script([$tag, $this->between_script_attrs($tag), '']);
-    }
-
-    private function between_script_attrs(string $tag): string
-    {
-        return preg_match('/<script\b([^>]*)>/i', $tag, $m) ? $m[1] : '';
     }
 
     /**

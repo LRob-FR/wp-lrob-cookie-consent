@@ -288,7 +288,7 @@ final class SettingsPage
 
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
             'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_deny',
-            'show_save', 'categories_collapsed', 'revisit_button'];
+            'show_save', 'categories_collapsed', 'revisit_button', 'show_sources', 'watermark'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }
@@ -300,8 +300,7 @@ final class SettingsPage
         $out['cookie_days'] = $cd === '' ? $d['cookie_days'] : max(1, (int) $cd);
         $lr = (string) ($in['log_retention_days'] ?? '');
         $out['log_retention_days'] = $lr === '' ? $d['log_retention_days'] : max(0, (int) $lr);
-        $out['block_method'] = in_array($in['block_method'] ?? '', ['full', 'enqueued'], true) ? $in['block_method'] : 'full';
-        $out['rules_mode'] = in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';
+        $out['rules_mode'] =in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';
 
         $out['categories'] = [];
         if (isset($in['categories']) && is_array($in['categories'])) {

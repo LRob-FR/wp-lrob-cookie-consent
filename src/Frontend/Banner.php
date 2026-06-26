@@ -60,6 +60,23 @@ final class Banner
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];
+        $watermark = (int) Options::get('watermark') === 1;
+
+        // What each category blocks, for the optional "show sources" disclosure.
+        $show_sources = (int) Options::get('show_sources') === 1;
+        $sources = [];
+        if ($show_sources) {
+            $compiled = \LRob\CookieConsent\Support\Rules::compiled();
+            foreach ($compiled['rules'] as $r) {
+                $sources[$r['category']][] = $r['service'] !== '' ? $r['service'] : $r['pattern'];
+            }
+            foreach ($compiled['inline'] as $in) {
+                $sources[$in['category']][] = __('Inline script', 'lrob-cookie-consent');
+            }
+            foreach ($sources as $cat => $list) {
+                $sources[$cat] = array_values(array_unique($list));
+            }
+        }
 
         ob_start();
         include LROB_CC_PATH . 'views/banner.php';

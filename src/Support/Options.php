@@ -26,7 +26,6 @@ final class Options
             'show_to_logged_in'  => 1,          // banner behaves the same for admins
 
             // Blocking engine
-            'block_method'       => 'full',     // 'full' (page scan) | 'enqueued'
             'block_iframes'      => 1,          // off = GDPR risk (warned in UI)
             'categories'         => [],         // optional category defs [{slug,label,desc}]; empty = built-in defaults
             'block_rules'        => '',         // one per line: pattern | category | service
@@ -62,6 +61,8 @@ final class Options
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")
+            'show_sources'       => 1,          // show visitors what each category blocks
+            'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
 
             // Custom-theme colors (applied only when theme = custom)
             'color_bg'             => '#ffffff',

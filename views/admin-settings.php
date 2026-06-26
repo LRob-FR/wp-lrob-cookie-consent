@@ -168,6 +168,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <p>
                         <label class="lrob-cc-check"><input type="checkbox" data-field="categories_collapsed" name="<?php echo $name('categories_collapsed'); ?>" value="1" <?php echo $checked('categories_collapsed'); ?> /> <?php esc_html_e('Hide category options behind a “Customize” button (simpler banner)', 'lrob-cookie-consent'); ?></label>
                         <label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('revisit_button'); ?>" value="1" <?php echo $checked('revisit_button'); ?> /> <?php esc_html_e('Show a floating “Manage cookies” button after a decision', 'lrob-cookie-consent'); ?></label>
+                        <label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('show_sources'); ?>" value="1" <?php echo $checked('show_sources'); ?> /> <?php esc_html_e('Let visitors expand each category to see exactly what it blocks', 'lrob-cookie-consent'); ?></label>
                     </p>
                     <p>
                         <label><?php esc_html_e('“Manage cookies” button label', 'lrob-cookie-consent'); ?>
@@ -190,6 +191,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <?php endforeach; ?>
                     </div>
                     <button type="button" class="button" id="lrob-cc-link-add"><?php esc_html_e('Add link', 'lrob-cookie-consent'); ?></button>
+                    <p><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('watermark'); ?>" value="1" <?php echo $checked('watermark'); ?> /> <?php esc_html_e('Show a small “Cookie Consent by LRob” credit in the footer', 'lrob-cookie-consent'); ?></label></p>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Footer links alignment', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('align_footer', ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?>
 
@@ -360,12 +362,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
             <h3><?php esc_html_e('Blocking', 'lrob-cookie-consent'); ?></h3>
             <table class="form-table" role="presentation">
-                <tr><th><?php esc_html_e('Block method', 'lrob-cookie-consent'); ?> <?php $help(__('Full-page scan catches hardcoded scripts and iframes too; enqueued-only is lighter but misses them.', 'lrob-cookie-consent')); ?></th>
-                    <td><?php $seg('block_method', ['full' => __('Full-page scan', 'lrob-cookie-consent'), 'enqueued' => __('Enqueued only', 'lrob-cookie-consent')]); ?></td></tr>
-                <tr><th><?php esc_html_e('Block iframes', 'lrob-cookie-consent'); ?> <?php $help(__('Turning this off may load third-party cookies before consent — a GDPR risk.', 'lrob-cookie-consent')); ?></th>
+                <tr><th><?php esc_html_e('Block iframes', 'lrob-cookie-consent'); ?> <?php $help(__('Embedded iframes (YouTube, Maps…) can set third-party cookies before consent. Turning this off loads them immediately — a GDPR risk. Leave on.', 'lrob-cookie-consent')); ?></th>
                     <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('block_iframes'); ?>" value="1" <?php echo $checked('block_iframes'); ?> /> <?php esc_html_e('Neutralise matching iframes until consent', 'lrob-cookie-consent'); ?></label></td></tr>
-                <tr><th><?php esc_html_e('Re-prompt on change', 'lrob-cookie-consent'); ?> <?php $help(__('Default: only re-ask when the set of active categories changes. Enable to re-ask on any block-rule edit.', 'lrob-cookie-consent')); ?></th>
-                    <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('reprompt_on_rule_change'); ?>" value="1" <?php echo $checked('reprompt_on_rule_change'); ?> /> <?php esc_html_e('Re-ask on any rule change', 'lrob-cookie-consent'); ?></label></td></tr>
+                <tr><th><?php esc_html_e('Behavior on change', 'lrob-cookie-consent'); ?> <?php $help(__('When you start blocking a brand-new category of cookies, returning visitors are re-asked so their consent stays accurate. Enable this to also re-ask on smaller changes (e.g. adding another service to a category they already decided on).', 'lrob-cookie-consent')); ?></th>
+                    <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('reprompt_on_rule_change'); ?>" value="1" <?php echo $checked('reprompt_on_rule_change'); ?> /> <?php esc_html_e('Re-prompt on any change to the block list', 'lrob-cookie-consent'); ?></label></td></tr>
             </table>
 
             <h3><?php esc_html_e('Block rules', 'lrob-cookie-consent'); ?> <?php $help(__('The patterns blocked under each category. Use “Auto-detect my cookies” at the top to find them automatically, or add them by hand.', 'lrob-cookie-consent')); ?></h3>

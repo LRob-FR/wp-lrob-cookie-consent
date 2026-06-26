@@ -166,22 +166,48 @@ final class LocalScanner implements ScanProvider
                 }
             }
 
-            // Known provider URLs anywhere in content (e.g. oEmbed-by-URL).
-            foreach ($services as $svc) {
-                if ($svc['category'] === 'functional' || isset($resources[$svc['pattern']])) {
+            // Provider URLs anywhere in content — catches oEmbed-by-URL (e.g. a
+            // bare youtu.be/watch link or a Gutenberg embed block), which never
+            // contains the rendered "/embed" iframe src.
+            $haystack = strtolower($content);
+            foreach (self::detection_map() as $d) {
+                if (isset($resources[$d['pattern']])) {
                     continue;
                 }
-                if (str_contains($content, $svc['pattern'])) {
-                    $resources[$svc['pattern']] = [
-                        'pattern' => $svc['pattern'], 'host' => '', 'type' => 'embed',
-                        'category' => $svc['category'], 'service' => $svc['service'],
-                        'known' => true, 'sample' => $sample,
-                    ];
+                foreach ($d['needles'] as $needle) {
+                    if (str_contains($haystack, $needle)) {
+                        $resources[$d['pattern']] = [
+                            'pattern' => $d['pattern'], 'host' => '', 'type' => 'embed',
+                            'category' => $d['category'], 'service' => $d['service'],
+                            'known' => true, 'sample' => $sample,
+                        ];
+                        break;
+                    }
                 }
             }
         }
 
         return ['resources' => array_values($resources), 'cookies' => [], 'error' => '', 'scanned' => count($ids)];
+    }
+
+    /**
+     * Broad host needles → the precise rule to suggest. Used by the database
+     * scan to catch oEmbeds whose content holds only the provider URL.
+     *
+     * @return list<array{needles:list<string>,pattern:string,category:string,service:string}>
+     */
+    private static function detection_map(): array
+    {
+        return apply_filters('lrob_cc_detection_map', [
+            ['needles' => ['youtube.com', 'youtu.be'], 'pattern' => 'youtube.com/embed', 'category' => 'embed', 'service' => 'YouTube'],
+            ['needles' => ['vimeo.com'], 'pattern' => 'player.vimeo.com', 'category' => 'embed', 'service' => 'Vimeo'],
+            ['needles' => ['dailymotion.com', 'dai.ly'], 'pattern' => 'dailymotion.com/embed', 'category' => 'embed', 'service' => 'Dailymotion'],
+            ['needles' => ['platform.twitter.com', 'twitter.com', 'x.com'], 'pattern' => 'platform.twitter.com', 'category' => 'embed', 'service' => 'X (Twitter)'],
+            ['needles' => ['instagram.com'], 'pattern' => 'instagram.com/embed', 'category' => 'embed', 'service' => 'Instagram'],
+            ['needles' => ['tiktok.com'], 'pattern' => 'tiktok.com/embed', 'category' => 'embed', 'service' => 'TikTok'],
+            ['needles' => ['google.com/maps', 'maps.google.com'], 'pattern' => 'google.com/maps/embed', 'category' => 'embed', 'service' => 'Google Maps'],
+            ['needles' => ['fonts.googleapis.com', 'fonts.gstatic.com'], 'pattern' => 'fonts.googleapis.com', 'category' => 'functional', 'service' => 'Google Fonts'],
+        ]);
     }
 
     /**

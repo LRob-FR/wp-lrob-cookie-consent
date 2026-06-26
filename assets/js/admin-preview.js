@@ -776,8 +776,8 @@
 		if (!wrap) { return; }
 		var name = wrap.getAttribute('data-name');
 		var i = Date.now();
-		var opts = (A.optional || []).map(function (c) {
-			return '<option value="' + c + '">' + c + '</option>';
+		var opts = (A.catChoices || (A.optional || []).map(function (s) { return { slug: s, label: s }; })).map(function (c) {
+			return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.label) + '</option>';
 		}).join('');
 		var row = document.createElement('div');
 		row.className = 'lrob-cc-inline-row';

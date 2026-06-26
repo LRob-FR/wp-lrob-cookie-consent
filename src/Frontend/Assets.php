@@ -65,6 +65,7 @@ final class Assets
             'version'       => Rules::version(),
             'categories'    => Categories::all(),
             'optional'      => Categories::optional(),
+            'catLabels'     => array_map(static fn (array $l): string => $l['title'], Categories::labels()),
             'respectDnt'    => (int) Options::get('respect_dnt') === 1,
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,
             'revisitButton' => (int) Options::get('revisit_button') === 1,
@@ -78,7 +79,9 @@ final class Assets
             ],
             'i18n'          => [
                 /* translators: %s: name of the blocked service (e.g. YouTube). */
-                'embedNotice'  => __('This content is blocked. Click to accept %s and load it.', 'lrob-cookie-consent'),
+                'embedTitle'   => __('%s content blocked', 'lrob-cookie-consent'),
+                /* translators: %s: cookie category name (e.g. External content). */
+                'embedNote'    => __('Loads once you accept “%s”.', 'lrob-cookie-consent'),
                 'acceptLoad'   => __('Accept & load', 'lrob-cookie-consent'),
                 'manageCookies' => __('Manage cookies', 'lrob-cookie-consent'),
             ],

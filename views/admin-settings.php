@@ -299,7 +299,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
         <!-- COOKIES -->
         <section class="lrob-cc-panel" data-panel="cookies" hidden>
-            <h3><?php esc_html_e('Auto-detect my cookies', 'lrob-cookie-consent'); ?> <?php $help(__('Finds third-party scripts and embeds so you can block them. Runs as an anonymous visitor — admin/member-only cookies are never touched.', 'lrob-cookie-consent')); ?></h3>
+            <h3><?php esc_html_e('Auto-detect my cookies', 'lrob-cookie-consent'); ?> <?php $help(__('Finds third-party scripts and embeds so you can block them. Runs as an anonymous visitor — admin/member-only cookies are never touched. Note: external fonts (e.g. Google Fonts) also send visitor IPs to a third party — best self-hosted rather than blocked.', 'lrob-cookie-consent')); ?></h3>
             <div class="lrob-cc-scan">
                 <p class="lrob-cc-field-label"><?php esc_html_e('Scan method', 'lrob-cookie-consent'); ?></p>
                 <div class="lrob-cc-segmented" role="radiogroup">
@@ -313,7 +313,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <label for="lrob-cc-scan-scope"><?php esc_html_e('What to scan', 'lrob-cookie-consent'); ?></label>
                     <select id="lrob-cc-scan-scope">
                         <?php foreach ($scan_scopes as $sc) : ?>
-                            <option value="<?php echo esc_attr($sc['id']); ?>" data-count="<?php echo (int) $sc['count']; ?>">
+                            <option value="<?php echo esc_attr($sc['id']); ?>" data-count="<?php echo (int) $sc['count']; ?>" <?php selected($sc['id'], 'all'); ?>>
                                 <?php
                                 /* translators: 1: scope label, 2: number of URLs. */
                                 printf(esc_html__('%1$s (%2$d pages)', 'lrob-cookie-consent'), esc_html($sc['label']), (int) $sc['count']);
@@ -453,11 +453,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 $rows = is_array($o['inline_scripts']) ? $o['inline_scripts'] : [];
                 foreach ($rows as $i => $row) : ?>
                     <div class="lrob-cc-inline-row">
-                        <select name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][category]">
-                            <?php foreach ($optional as $cat) : ?>
-                                <option value="<?php echo esc_attr($cat); ?>" <?php selected($row['category'] ?? '', $cat); ?>><?php echo esc_html($labels[$cat]['title']); ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <select name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][category]"><?php $cat_options((string) ($row['category'] ?? '')); ?></select>
                         <textarea rows="3" class="large-text code" name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][code]"><?php echo esc_textarea((string) ($row['code'] ?? '')); ?></textarea>
                         <button type="button" class="button lrob-cc-inline-remove"><?php esc_html_e('Remove', 'lrob-cookie-consent'); ?></button>
                     </div>

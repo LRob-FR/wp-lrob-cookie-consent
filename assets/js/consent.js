@@ -125,23 +125,35 @@
 			if (el.parentNode.querySelector('.lrob-cc-placeholder[data-category="' + category + '"]')) { return; }
 
 			var service = el.getAttribute('data-service') || '';
+			var catLabel = (D.catLabels && D.catLabels[category]) || category;
+			var src = el.getAttribute('data-src') || '';
+			var host = '';
+			try { host = src ? new URL(src, location.href).hostname : ''; } catch (e) { host = src; }
+
 			var ph = document.createElement('div');
 			ph.className = 'lrob-cc-placeholder';
 			ph.setAttribute('data-category', category);
-			ph.setAttribute('role', 'button');
-			ph.setAttribute('tabindex', '0');
-			var label = (D.i18n && D.i18n.embedNotice) || 'This content is blocked. Click to accept %s and load it.';
-			ph.innerHTML = '<span class="lrob-cc-placeholder-text"></span>' +
-				'<button type="button" class="lrob-cc-placeholder-btn"></button>';
-			ph.querySelector('.lrob-cc-placeholder-text').textContent =
-				label.replace('%s', service || category);
-			ph.querySelector('.lrob-cc-placeholder-btn').textContent =
-				(D.i18n && D.i18n.acceptLoad) || 'Accept & load';
+			// Match the blocked iframe's footprint so it doesn't leave a larger void.
+			var w = el.getAttribute('width');
+			var h = el.getAttribute('height');
+			if (w && /^\d+$/.test(w)) { ph.style.maxWidth = w + 'px'; }
+			if (h && /^\d+$/.test(h)) { ph.style.minHeight = Math.min(parseInt(h, 10), 240) + 'px'; }
 
-			var accept = function () { setConsent(category, 'allow'); };
-			ph.addEventListener('click', accept);
-			ph.addEventListener('keydown', function (e) {
-				if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); accept(); }
+			ph.innerHTML =
+				'<span class="lrob-cc-ph-title"></span>' +
+				'<span class="lrob-cc-ph-url"></span>' +
+				'<button type="button" class="lrob-cc-placeholder-btn"></button>' +
+				'<span class="lrob-cc-ph-note"></span>';
+			ph.querySelector('.lrob-cc-ph-title').textContent =
+				((D.i18n && D.i18n.embedTitle) || '%s content blocked').replace('%s', service || catLabel);
+			ph.querySelector('.lrob-cc-ph-url').textContent = host;
+			ph.querySelector('.lrob-cc-placeholder-btn').textContent = (D.i18n && D.i18n.acceptLoad) || 'Accept & load';
+			ph.querySelector('.lrob-cc-ph-note').textContent =
+				((D.i18n && D.i18n.embedNote) || 'Loads once you accept “%s”.').replace('%s', catLabel);
+
+			// Only the button accepts — not the whole placeholder area.
+			ph.querySelector('.lrob-cc-placeholder-btn').addEventListener('click', function () {
+				setConsent(category, 'allow');
 			});
 			el.parentNode.insertBefore(ph, el);
 		});

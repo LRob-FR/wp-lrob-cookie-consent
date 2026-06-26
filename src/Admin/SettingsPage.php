@@ -39,6 +39,25 @@ final class SettingsPage
         add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
     }
 
+    /**
+     * Category choices for rule + inline-script dropdowns: functional first
+     * (referenced, never blocked), then the optional categories.
+     *
+     * @return list<array{slug:string,label:string}>
+     */
+    public static function category_choices(): array
+    {
+        $labels = Categories::labels();
+        $out = [[
+            'slug'  => 'functional',
+            'label' => ($labels['functional']['title'] ?? 'Functional') . ' — ' . __('necessary, not blocked', 'lrob-cookie-consent'),
+        ]];
+        foreach (Categories::optional() as $slug) {
+            $out[] = ['slug' => $slug, 'label' => $labels[$slug]['title'] ?? $slug];
+        }
+        return $out;
+    }
+
     public function handle_search_pages(): void
     {
         $this->require_scan_access();
@@ -153,6 +172,7 @@ final class SettingsPage
             'optionName' => Options::OPTION_KEY,
             'optional'   => Categories::optional(),
             'catList'    => array_map(static fn (string $s): array => ['slug' => $s, 'label' => Categories::labels()[$s]['title'] ?? $s], Categories::optional()),
+            'catChoices' => self::category_choices(),
             'palettes'   => Appearance::palettes(),
             'scales'     => Appearance::scales(),
             'colorPresets' => Presets::styles()['colors'] ?? [],

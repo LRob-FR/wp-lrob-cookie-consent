@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-26T22:51:19+00:00\n"
+"POT-Creation-Date: 2026-06-26T23:14:20+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -74,245 +74,249 @@ msgstr "À renouveler avant"
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/Admin/SettingsPage.php:67
+#: src/Admin/SettingsPage.php:53 views/admin-settings.php:392
+msgid "necessary, not blocked"
+msgstr "nécessaire, non bloqué"
+
+#: src/Admin/SettingsPage.php:86
 msgid "Configure"
 msgstr "Configurer"
 
-#: src/Admin/SettingsPage.php:97
+#: src/Admin/SettingsPage.php:116
 msgid "Only this site's own pages can be scanned."
 msgstr "Seules les pages de ce site peuvent être analysées."
 
-#: src/Admin/SettingsPage.php:110
+#: src/Admin/SettingsPage.php:129
 msgid "Not allowed."
 msgstr "Non autorisé."
 
-#: src/Admin/SettingsPage.php:118 views/admin-settings.php:59
+#: src/Admin/SettingsPage.php:137 views/admin-settings.php:59
 msgid "LRob Cookie Consent"
 msgstr "LRob Cookie Consent"
 
-#: src/Admin/SettingsPage.php:119
+#: src/Admin/SettingsPage.php:138
 msgid "Cookie Consent"
 msgstr "Consentement aux cookies"
 
-#: src/Admin/SettingsPage.php:164
+#: src/Admin/SettingsPage.php:184
 msgid "Pick a tone for your banner text"
 msgstr "Choisissez un ton pour le texte de votre bannière"
 
-#: src/Admin/SettingsPage.php:165
+#: src/Admin/SettingsPage.php:185
 msgid "You can fine-tune the wording afterwards."
 msgstr "Vous pourrez peaufiner la formulation par la suite."
 
-#: src/Admin/SettingsPage.php:168
+#: src/Admin/SettingsPage.php:188
 msgid "Choose how the banner looks"
 msgstr "Choisissez l’apparence de la bannière"
 
-#: src/Admin/SettingsPage.php:170
+#: src/Admin/SettingsPage.php:190
 msgid "Auto (follow theme)"
 msgstr "Auto (suivre le thème)"
 
-#: src/Admin/SettingsPage.php:171 views/admin-settings.php:211
+#: src/Admin/SettingsPage.php:191 views/admin-settings.php:211
 msgid "Light"
 msgstr "Clair"
 
-#: src/Admin/SettingsPage.php:172 views/admin-settings.php:212
+#: src/Admin/SettingsPage.php:192 views/admin-settings.php:212
 msgid "Dark"
 msgstr "Sombre"
 
-#: src/Admin/SettingsPage.php:173 views/admin-settings.php:213
+#: src/Admin/SettingsPage.php:193 views/admin-settings.php:213
 msgid "Midnight"
 msgstr "Minuit"
 
-#: src/Admin/SettingsPage.php:174 views/admin-settings.php:214
+#: src/Admin/SettingsPage.php:194 views/admin-settings.php:214
 msgid "Ocean"
 msgstr "Océan"
 
-#: src/Admin/SettingsPage.php:175 views/admin-settings.php:215
+#: src/Admin/SettingsPage.php:195 views/admin-settings.php:215
 msgid "Sand"
 msgstr "Sable"
 
-#: src/Admin/SettingsPage.php:178 views/admin-settings.php:203
+#: src/Admin/SettingsPage.php:198 views/admin-settings.php:203
 msgid "Bottom"
 msgstr "En bas"
 
-#: src/Admin/SettingsPage.php:179 views/admin-settings.php:204
+#: src/Admin/SettingsPage.php:199 views/admin-settings.php:204
 msgid "Bottom right"
 msgstr "En bas à droite"
 
-#: src/Admin/SettingsPage.php:180 views/admin-settings.php:202
+#: src/Admin/SettingsPage.php:200 views/admin-settings.php:202
 msgid "Bottom left"
 msgstr "En bas à gauche"
 
-#: src/Admin/SettingsPage.php:181 views/admin-settings.php:194
+#: src/Admin/SettingsPage.php:201 views/admin-settings.php:194
 #: views/admin-settings.php:201 views/admin-settings.php:262
 msgid "Center"
 msgstr "Centre"
 
-#: src/Admin/SettingsPage.php:183 views/admin-settings.php:208
+#: src/Admin/SettingsPage.php:203 views/admin-settings.php:208
 msgid "Colors"
 msgstr "Couleurs"
 
-#: src/Admin/SettingsPage.php:184 views/admin-settings.php:196
+#: src/Admin/SettingsPage.php:204 views/admin-settings.php:196
 msgid "Position"
 msgstr "Position"
 
-#: src/Admin/SettingsPage.php:187
+#: src/Admin/SettingsPage.php:207
 msgid "Keep a record of consent decisions?"
 msgstr "Conserver un enregistrement des décisions de consentement ?"
 
-#: src/Admin/SettingsPage.php:188
+#: src/Admin/SettingsPage.php:208
 msgid "Recommended for GDPR accountability. Stored locally, IP anonymised."
 msgstr ""
 "Recommandé pour la responsabilité RGPD. Stocké localement, IP anonymisée."
 
-#: src/Admin/SettingsPage.php:194
+#: src/Admin/SettingsPage.php:214
 msgid "Delete all consent log entries? This cannot be undone."
 msgstr ""
 "Supprimer toutes les entrées du journal de consentement ? Cette action est "
 "irréversible."
 
-#: src/Admin/SettingsPage.php:195
+#: src/Admin/SettingsPage.php:215
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: src/Admin/SettingsPage.php:196
+#: src/Admin/SettingsPage.php:216
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/Admin/SettingsPage.php:197 views/admin-settings.php:162
+#: src/Admin/SettingsPage.php:217 views/admin-settings.php:162
 #: views/admin-settings.php:188 views/admin-settings.php:355
 #: views/admin-settings.php:430 views/admin-settings.php:440
-#: views/admin-settings.php:462
+#: views/admin-settings.php:458
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/Admin/SettingsPage.php:198 views/admin-settings.php:352
+#: src/Admin/SettingsPage.php:218 views/admin-settings.php:352
 msgid "slug"
 msgstr "slug"
 
-#: src/Admin/SettingsPage.php:199 views/admin-settings.php:186
+#: src/Admin/SettingsPage.php:219 views/admin-settings.php:186
 #: views/admin-settings.php:353
 msgid "Label"
 msgstr "Libellé"
 
-#: src/Admin/SettingsPage.php:200 views/admin-settings.php:354
+#: src/Admin/SettingsPage.php:220 views/admin-settings.php:354
 msgid "Description"
 msgstr "Description"
 
-#: src/Admin/SettingsPage.php:201 views/admin-settings.php:161
+#: src/Admin/SettingsPage.php:221 views/admin-settings.php:161
 msgid "Select logo"
 msgstr "Sélectionner un logo"
 
-#: src/Admin/SettingsPage.php:202
+#: src/Admin/SettingsPage.php:222
 msgid "You already have block rules. How do you want to run the wizard?"
 msgstr ""
 "Vous avez déjà des règles de blocage. Comment souhaitez-vous lancer "
 "l’assistant ?"
 
-#: src/Admin/SettingsPage.php:203
+#: src/Admin/SettingsPage.php:223
 msgid "Add to my current rules"
 msgstr "Ajouter à mes règles actuelles"
 
-#: src/Admin/SettingsPage.php:204
+#: src/Admin/SettingsPage.php:224
 msgid "Clear them and start fresh"
 msgstr "Les effacer et repartir de zéro"
 
-#: src/Admin/SettingsPage.php:205
+#: src/Admin/SettingsPage.php:225
 msgid "Yes"
 msgstr "Oui"
 
-#: src/Admin/SettingsPage.php:206
+#: src/Admin/SettingsPage.php:226
 msgid "No / skip"
 msgstr "Non / ignorer"
 
-#: src/Admin/SettingsPage.php:207
+#: src/Admin/SettingsPage.php:227
 msgid "Back"
 msgstr "Précédent"
 
-#: src/Admin/SettingsPage.php:208
+#: src/Admin/SettingsPage.php:228
 msgid "Next"
 msgstr "Suivant"
 
-#: src/Admin/SettingsPage.php:209
+#: src/Admin/SettingsPage.php:229
 msgid "Finish & save"
 msgstr "Terminer et enregistrer"
 
-#: src/Admin/SettingsPage.php:210 src/Frontend/Banner.php:40
+#: src/Admin/SettingsPage.php:230 src/Frontend/Banner.php:40
 msgid "Close"
 msgstr "Fermer"
 
-#: src/Admin/SettingsPage.php:211
+#: src/Admin/SettingsPage.php:231
 msgid "Yes, keep proof"
 msgstr "Oui, conserver la preuve"
 
-#: src/Admin/SettingsPage.php:212
+#: src/Admin/SettingsPage.php:232
 msgid "No"
 msgstr "Non"
 
-#: src/Admin/SettingsPage.php:213
+#: src/Admin/SettingsPage.php:233
 msgid "Keep current"
 msgstr "Conserver l’existant"
 
 #. translators: %1$d: current step number, %2$d: total steps.
-#: src/Admin/SettingsPage.php:215
+#: src/Admin/SettingsPage.php:235
 msgid "Step %1$d of %2$d"
 msgstr "Étape %1$d sur %2$d"
 
-#: src/Admin/SettingsPage.php:216
+#: src/Admin/SettingsPage.php:236
 msgid "Scanning…"
 msgstr "Analyse en cours…"
 
-#: src/Admin/SettingsPage.php:217
+#: src/Admin/SettingsPage.php:237
 msgid "Scan again"
 msgstr "Analyser à nouveau"
 
-#: src/Admin/SettingsPage.php:218
+#: src/Admin/SettingsPage.php:238
 msgid "Scan failed. Try again."
 msgstr "Échec de l’analyse. Veuillez réessayer."
 
-#: src/Admin/SettingsPage.php:219
+#: src/Admin/SettingsPage.php:239
 msgid "No third-party resources found on the scanned pages."
 msgstr "Aucune ressource tierce trouvée sur les pages analysées."
 
-#: src/Admin/SettingsPage.php:220
+#: src/Admin/SettingsPage.php:240
 msgid "Add selected as rules"
 msgstr "Ajouter la sélection comme règles"
 
-#: src/Admin/SettingsPage.php:221
+#: src/Admin/SettingsPage.php:241
 msgid "known"
 msgstr "connu"
 
-#: src/Admin/SettingsPage.php:222
+#: src/Admin/SettingsPage.php:242
 msgid "review"
 msgstr "à vérifier"
 
-#: src/Admin/SettingsPage.php:223
+#: src/Admin/SettingsPage.php:243
 msgid "Cookies set on scanned pages:"
 msgstr "Cookies déposés sur les pages analysées :"
 
-#: src/Admin/SettingsPage.php:224
+#: src/Admin/SettingsPage.php:244
 msgid "Scanned:"
 msgstr "Analysé :"
 
 #. translators: %1$d: current page, %2$d: total pages.
-#: src/Admin/SettingsPage.php:226
+#: src/Admin/SettingsPage.php:246
 msgid "Scanning page %1$d of %2$d…"
 msgstr "Analyse de la page %1$d sur %2$d…"
 
-#: src/Admin/SettingsPage.php:227
+#: src/Admin/SettingsPage.php:247
 msgid "Some pages could not be reached due to an SSL certificate error."
 msgstr ""
 "Certaines pages n’ont pas pu être atteintes en raison d’une erreur de "
 "certificat SSL."
 
-#: src/Admin/SettingsPage.php:228
+#: src/Admin/SettingsPage.php:248
 msgid "Retry ignoring SSL"
 msgstr "Réessayer en ignorant le SSL"
 
-#: src/Admin/SettingsPage.php:236
+#: src/Admin/SettingsPage.php:256
 msgid "You are not allowed to access this page."
 msgstr "Vous n’êtes pas autorisé à accéder à cette page."
 
-#: src/Admin/SettingsPage.php:373 src/Admin/SettingsPage.php:382
+#: src/Admin/SettingsPage.php:393 src/Admin/SettingsPage.php:402
 msgid "You are not allowed to do this."
 msgstr "Vous n’êtes pas autorisé à effectuer cette action."
 
@@ -325,15 +329,20 @@ msgstr ""
 "in, blocage des scripts et iframes, preuve de consentement."
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:81
-msgid "This content is blocked. Click to accept %s and load it."
-msgstr "Ce contenu est bloqué. Cliquez pour accepter %s et le charger."
-
 #: src/Frontend/Assets.php:82
+msgid "%s content blocked"
+msgstr "Contenu %s bloqué"
+
+#. translators: %s: cookie category name (e.g. External content).
+#: src/Frontend/Assets.php:84
+msgid "Loads once you accept “%s”."
+msgstr "Se charge une fois que vous acceptez « %s »."
+
+#: src/Frontend/Assets.php:85
 msgid "Accept & load"
 msgstr "Accepter et charger"
 
-#: src/Frontend/Assets.php:83 views/admin-settings.php:174
+#: src/Frontend/Assets.php:86 views/admin-settings.php:174
 msgid "Manage cookies"
 msgstr "Gérer les cookies"
 
@@ -537,12 +546,12 @@ msgstr "Neutre"
 msgid "High contrast"
 msgstr "Contraste élevé"
 
-#: src/Support/Services.php:75
+#: src/Support/Services.php:79
 msgid "Do you measure visitor statistics or analytics?"
 msgstr ""
 "Mesurez-vous des statistiques de visiteurs ou des analyses d’audience ?"
 
-#: src/Support/Services.php:76
+#: src/Support/Services.php:80
 msgid ""
 "Tools that count visits and analyse behaviour. Note: Matomo can run in a "
 "cookieless mode — if yours does, you may not need to block it."
@@ -551,13 +560,13 @@ msgstr ""
 "Remarque : Matomo peut fonctionner en mode sans cookie — si c’est le cas du "
 "vôtre, vous n’aurez peut-être pas besoin de le bloquer."
 
-#: src/Support/Services.php:80
+#: src/Support/Services.php:84
 msgid "Do you embed external content (videos, social posts)?"
 msgstr ""
 "Intégrez-vous du contenu externe (vidéos, publications sur les réseaux "
 "sociaux) ?"
 
-#: src/Support/Services.php:81
+#: src/Support/Services.php:85
 msgid ""
 "Players and social embeds can set cookies before consent — they go under "
 "\"External content\", not marketing."
@@ -565,27 +574,27 @@ msgstr ""
 "Les lecteurs et intégrations sociales peuvent déposer des cookies avant le "
 "consentement — ils relèvent de « Contenu externe », pas du marketing."
 
-#: src/Support/Services.php:85
+#: src/Support/Services.php:89
 msgid "Do you run ads or marketing / conversion pixels?"
 msgstr "Diffusez-vous des publicités ou des pixels marketing / de conversion ?"
 
-#: src/Support/Services.php:86
+#: src/Support/Services.php:90
 msgid "Advertising and retargeting trackers."
 msgstr "Traceurs publicitaires et de reciblage."
 
-#: src/Support/Services.php:90
+#: src/Support/Services.php:94
 msgid "Do you embed maps?"
 msgstr "Intégrez-vous des cartes ?"
 
-#: src/Support/Services.php:91
+#: src/Support/Services.php:95
 msgid "Map embeds may load third-party scripts."
 msgstr "Les cartes intégrées peuvent charger des scripts tiers."
 
-#: src/Support/Services.php:95
+#: src/Support/Services.php:99
 msgid "Do you use a CAPTCHA?"
 msgstr "Utilisez-vous un CAPTCHA ?"
 
-#: src/Support/Services.php:96
+#: src/Support/Services.php:100
 msgid ""
 "Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile "
 "and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads "
@@ -595,11 +604,11 @@ msgstr ""
 "Cloudflare Turnstile et hCaptcha respectent la vie privée et ne nécessitent "
 "souvent aucun consentement ; reCAPTCHA charge Google."
 
-#: src/Support/Services.php:100
+#: src/Support/Services.php:104
 msgid "Do you use payment gateways?"
 msgstr "Utilisez-vous des passerelles de paiement ?"
 
-#: src/Support/Services.php:101
+#: src/Support/Services.php:105
 msgid ""
 "Listed as necessary — referenced for transparency but never blocked, so "
 "checkout keeps working."
@@ -795,11 +804,11 @@ msgstr "Texte"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: views/admin-settings.php:144 views/admin-settings.php:518
+#: views/admin-settings.php:144 views/admin-settings.php:514
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:146 views/admin-settings.php:519
+#: views/admin-settings.php:146 views/admin-settings.php:515
 msgid "Message"
 msgstr "Message"
 
@@ -1015,11 +1024,15 @@ msgstr "Détecter mes cookies automatiquement"
 #: views/admin-settings.php:302
 msgid ""
 "Finds third-party scripts and embeds so you can block them. Runs as an "
-"anonymous visitor — admin/member-only cookies are never touched."
+"anonymous visitor — admin/member-only cookies are never touched. Note: "
+"external fonts (e.g. Google Fonts) also send visitor IPs to a third party — "
+"best self-hosted rather than blocked."
 msgstr ""
 "Trouve les scripts et intégrations tiers afin que vous puissiez les bloquer. "
 "S’exécute en tant que visiteur anonyme — les cookies réservés aux "
-"administrateurs/membres ne sont jamais touchés."
+"administrateurs/membres ne sont jamais touchés. Remarque : les polices "
+"externes (par ex. Google Fonts) transmettent aussi l’IP du visiteur à un "
+"tiers — mieux vaut les auto-héberger que les bloquer."
 
 #: views/admin-settings.php:304
 msgid "Scan method"
@@ -1186,10 +1199,6 @@ msgstr "Guidé"
 msgid "Raw text"
 msgstr "Texte brut"
 
-#: views/admin-settings.php:392
-msgid "necessary, not blocked"
-msgstr "nécessaire, non bloqué"
-
 #: views/admin-settings.php:400
 msgid ""
 "Click a common service to add it, or add a custom rule. The pattern is "
@@ -1236,50 +1245,50 @@ msgstr ""
 "nécessitent généralement aucun blocage, et bloquer un CAPTCHA peut casser "
 "les formulaires."
 
-#: views/admin-settings.php:466
+#: views/admin-settings.php:462
 msgid "Add inline script"
 msgstr "Ajouter un script inline"
 
-#: views/admin-settings.php:470
+#: views/admin-settings.php:466
 msgid "Save all settings"
 msgstr "Enregistrer tous les réglages"
 
-#: views/admin-settings.php:471
+#: views/admin-settings.php:467
 msgid "One save applies to the General, Banner and Cookies tabs together."
 msgstr ""
 "Un seul enregistrement s’applique conjointement aux onglets Général, "
 "Bannière et Cookies."
 
 #. translators: %s: number of stored consent records.
-#: views/admin-settings.php:480
+#: views/admin-settings.php:476
 msgid "Stored consent records: %s"
 msgstr "Enregistrements de consentement stockés : %s"
 
-#: views/admin-settings.php:483
+#: views/admin-settings.php:479
 msgid "Accepted all"
 msgstr "Tout accepté"
 
-#: views/admin-settings.php:484
+#: views/admin-settings.php:480
 msgid "Denied all"
 msgstr "Tout refusé"
 
-#: views/admin-settings.php:485
+#: views/admin-settings.php:481
 msgid "Customised"
 msgstr "Personnalisé"
 
-#: views/admin-settings.php:492
+#: views/admin-settings.php:488
 msgid "Export CSV"
 msgstr "Exporter en CSV"
 
-#: views/admin-settings.php:497
+#: views/admin-settings.php:493
 msgid "Delete all"
 msgstr "Tout supprimer"
 
-#: views/admin-settings.php:506
+#: views/admin-settings.php:502
 msgid "Cookie consent versions"
 msgstr "Versions du consentement"
 
-#: views/admin-settings.php:506
+#: views/admin-settings.php:502
 msgid ""
 "Each consent record links to the exact context shown then: banner text, what "
 "each category covers, AND what was blocked under each. Editing any of these "
@@ -1294,19 +1303,19 @@ msgstr ""
 "complet est conservé et inclus dans l’export CSV, et une version est "
 "supprimée dès qu’aucun enregistrement ne s’y rattache."
 
-#: views/admin-settings.php:508
+#: views/admin-settings.php:504
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
 
-#: views/admin-settings.php:516
+#: views/admin-settings.php:512
 msgid "UTC"
 msgstr "UTC"
 
-#: views/admin-settings.php:520
+#: views/admin-settings.php:516
 msgid "Buttons"
 msgstr "Boutons"
 
-#: views/admin-settings.php:521
+#: views/admin-settings.php:517
 msgid "Categories & what was blocked"
 msgstr "Catégories et ce qui était bloqué"
 

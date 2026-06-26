@@ -44,6 +44,10 @@ final class Services
             // Necessary (functional) — referenced for transparency, never blocked.
             ['label' => 'Stripe (payments)', 'pattern' => 'js.stripe.com', 'category' => 'functional', 'service' => 'Stripe'],
             ['label' => 'PayPal (payments)', 'pattern' => 'paypal.com', 'category' => 'functional', 'service' => 'PayPal'],
+            // External fonts: loading them from Google sends the visitor's IP to
+            // Google (a GDPR concern). Self-hosting is the fix; blocking breaks
+            // layout. Referenced as functional so admins are aware.
+            ['label' => 'Google Fonts (self-host instead)', 'pattern' => 'fonts.googleapis.com', 'category' => 'functional', 'service' => 'Google Fonts'],
         ];
         return apply_filters('lrob_cc_common_services', $services);
     }

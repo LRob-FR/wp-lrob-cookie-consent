@@ -399,11 +399,12 @@ final class SettingsPage
         $out['logo'] = esc_url_raw((string) ($in['logo'] ?? ''));
         $out['logo_height'] = min(200, max(12, (int) ($in['logo_height'] ?? $d['logo_height'])));
 
-        $out['show_delay'] = min(20000, max(0, (int) ($in['show_delay'] ?? $d['show_delay'])));
+        $sd = (string) ($in['show_delay'] ?? '');
+        $out['show_delay'] = $sd === '' ? $d['show_delay'] : min(20000, max(0, (int) $sd));
         $out['anim_move'] = in_array($in['anim_move'] ?? '', ['none', 'slide', 'zoom'], true) ? $in['anim_move'] : 'none';
         $out['anim_direction'] = in_array($in['anim_direction'] ?? '', ['top', 'bottom', 'left', 'right'], true) ? $in['anim_direction'] : 'bottom';
-        $out['anim_easing'] = in_array($in['anim_easing'] ?? '', ['smooth', 'bounce'], true) ? $in['anim_easing'] : 'smooth';
-        $out['anim_speed'] = min(2000, max(0, (int) ($in['anim_speed'] ?? $d['anim_speed'])));
+        $as = (string) ($in['anim_speed'] ?? '');
+        $out['anim_speed'] = $as === '' ? $d['anim_speed'] : min(2000, max(0, (int) $as));
 
         foreach (['color_bg', 'color_text', 'color_title', 'color_border', 'color_btn_bg',
             'color_btn_text', 'color_btn_deny_bg', 'color_btn_deny_text'] as $key) {

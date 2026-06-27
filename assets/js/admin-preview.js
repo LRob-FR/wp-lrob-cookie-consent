@@ -142,13 +142,12 @@
 
 		// Entrance animation vars (mirror Appearance::inline_css).
 		preview.style.setProperty('--lrob-cc-anim-duration', (parseInt(val('anim_speed'), 10) || 0) + 'ms');
-		preview.style.setProperty('--lrob-cc-anim-ease', val('anim_easing') === 'bounce' ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'ease');
 		preview.style.setProperty('--lrob-cc-anim-opacity', val('anim_fade') ? '0' : '1');
-		var mv = val('anim_move'), ax = '0', ay = '0', asc = '1', dd = '24px';
+		var mv = val('anim_move'), ax = '0', ay = '0', asc = '1', dd = '110%';
 		if (mv === 'slide') {
 			var dir = val('anim_direction');
 			if (dir === 'top') { ay = '-' + dd; } else if (dir === 'left') { ax = '-' + dd; } else if (dir === 'right') { ax = dd; } else { ay = dd; }
-		} else if (mv === 'zoom') { asc = '0.92'; }
+		} else if (mv === 'zoom') { asc = '0.6'; }
 		preview.style.setProperty('--lrob-cc-anim-x', ax);
 		preview.style.setProperty('--lrob-cc-anim-y', ay);
 		preview.style.setProperty('--lrob-cc-anim-scale', asc);

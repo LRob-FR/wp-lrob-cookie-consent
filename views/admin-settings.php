@@ -317,8 +317,6 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             <?php $seg('anim_move', ['none' => __('None', 'lrob-cookie-consent'), 'slide' => __('Slide', 'lrob-cookie-consent'), 'zoom' => __('Zoom', 'lrob-cookie-consent')]); ?></div>
                         <div class="lrob-cc-field" id="lrob-cc-anim-dir-field"<?php echo $o['anim_move'] === 'slide' ? '' : ' hidden'; ?>><p class="lrob-cc-field-label"><?php esc_html_e('Slide from', 'lrob-cookie-consent'); ?></p>
                             <?php $seg('anim_direction', ['top' => __('Top', 'lrob-cookie-consent'), 'bottom' => __('Bottom', 'lrob-cookie-consent'), 'left' => __('Left', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?></div>
-                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Easing', 'lrob-cookie-consent'); ?></p>
-                            <?php $seg('anim_easing', ['smooth' => __('Smooth', 'lrob-cookie-consent'), 'bounce' => __('Bounce', 'lrob-cookie-consent')]); ?></div>
                     </div>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Speed (ms)', 'lrob-cookie-consent'); ?></p>
                     <p><input type="number" min="0" max="2000" step="50" class="small-text lrob-cc-num-default" data-field="anim_speed" data-default="<?php echo esc_attr((string) $defaults['anim_speed']); ?>" name="<?php echo $name('anim_speed'); ?>" value="<?php echo esc_attr((string) $o['anim_speed']); ?>" />

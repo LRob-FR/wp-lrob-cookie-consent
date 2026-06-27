@@ -75,8 +75,7 @@ final class Options
             'anim_fade'          => 1,          // fade in
             'anim_move'          => 'none',     // none | slide | zoom (combines with fade)
             'anim_direction'     => 'bottom',   // slide origin: top | bottom | left | right
-            'anim_easing'        => 'smooth',   // smooth | bounce
-            'anim_speed'         => 300,        // ms animation duration
+            'anim_speed'         => 500,        // ms animation duration
 
             // Custom-theme colors (applied only when theme = custom)
             'color_bg'             => '#ffffff',

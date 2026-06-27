@@ -113,17 +113,16 @@ final class Appearance
         }
         $vars['--lrob-cc-logo-height'] = max(12, (int) Options::get('logo_height')) . 'px';
 
-        // Entrance animation, composed from independent fade / move / easing controls.
+        // Entrance animation, composed from independent fade / move controls.
         $vars['--lrob-cc-anim-duration'] = max(0, (int) Options::get('anim_speed')) . 'ms';
-        $vars['--lrob-cc-anim-ease'] = (string) Options::get('anim_easing') === 'bounce'
-            ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'ease';
         $vars['--lrob-cc-anim-opacity'] = (int) Options::get('anim_fade') === 1 ? '0' : '1';
         $x = '0';
         $y = '0';
         $scale = '1';
         $move = (string) Options::get('anim_move');
         if ($move === 'slide') {
-            $d = '24px';
+            // Travel the popup's own size (+a bit) so the slide is unmistakable.
+            $d = '110%';
             [$x, $y] = match ((string) Options::get('anim_direction')) {
                 'top'   => ['0', '-' . $d],
                 'left'  => ['-' . $d, '0'],
@@ -131,7 +130,7 @@ final class Appearance
                 default => ['0', $d], // bottom
             };
         } elseif ($move === 'zoom') {
-            $scale = '0.92';
+            $scale = '0.6';
         }
         $vars['--lrob-cc-anim-x'] = $x;
         $vars['--lrob-cc-anim-y'] = $y;

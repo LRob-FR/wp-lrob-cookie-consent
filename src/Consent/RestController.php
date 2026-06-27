@@ -55,8 +55,8 @@ final class RestController
             $event_type = 'consent';
         }
 
-        $consent_id = substr(preg_replace('/[^a-z0-9]/', '', strtolower((string) $request->get_param('consent_id'))), 0, 40);
-        $banner_version = substr(preg_replace('/[^a-f0-9]/', '', strtolower((string) $request->get_param('banner_version'))), 0, 40);
+        $consent_id = substr((string) preg_replace('/[^a-z0-9]/', '', strtolower((string) $request->get_param('consent_id'))), 0, 40);
+        $banner_version = substr((string) preg_replace('/[^a-f0-9]/', '', strtolower((string) $request->get_param('banner_version'))), 0, 40);
         $version = substr(sanitize_text_field((string) $request->get_param('version')), 0, 32);
 
         $ip = Ip::client_ip();

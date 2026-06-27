@@ -160,24 +160,38 @@
 	border-radius: 6px;
 	position: relative;
 	aspect-ratio: 1 / 1;
+	max-width: 320px;
 	overflow: hidden;
 }
 
 /* The preview banner is positioned inside the square stage (not fixed to the
-   viewport) so its corner placement and edge margins read accurately. */
+   viewport) so its corner placement + edge margins read accurately. The front
+   rules are #lrob-cc-banner-scoped, so they never reach #lrob-cc-preview —
+   these class-scoped rules do the positioning here. */
 .lrob-cc-preview-stage .lrob-cc-banner {
-	position: absolute !important;
+	position: absolute;
 	width: auto;
 }
 
 .lrob-cc-preview-stage .lrob-cc-inner {
 	width: var(--lrob-cc-width, 340px);
-	max-width: calc(100% - 12px);
+	max-width: calc(100% - 48px);
 	margin: 0;
 }
 
+.lrob-cc-preview-stage .lrob-cc-pos-bottom-right { right: var(--lrob-cc-offset-x, 24px); bottom: var(--lrob-cc-offset-y, 24px); }
+.lrob-cc-preview-stage .lrob-cc-pos-bottom-left { left: var(--lrob-cc-offset-x, 24px); bottom: var(--lrob-cc-offset-y, 24px); }
+.lrob-cc-preview-stage .lrob-cc-pos-top-right { right: var(--lrob-cc-offset-x, 24px); top: var(--lrob-cc-offset-y, 24px); }
+.lrob-cc-preview-stage .lrob-cc-pos-top-left { left: var(--lrob-cc-offset-x, 24px); top: var(--lrob-cc-offset-y, 24px); }
+.lrob-cc-preview-stage .lrob-cc-pos-top { top: 8px; left: 8px; right: 8px; }
+.lrob-cc-preview-stage .lrob-cc-pos-bottom { bottom: 8px; left: 8px; right: 8px; }
+.lrob-cc-preview-stage .lrob-cc-pos-center { inset: 0; display: flex; align-items: center; justify-content: center; }
+
+.lrob-cc-preview-stage .lrob-cc-pos-top .lrob-cc-inner,
+.lrob-cc-preview-stage .lrob-cc-pos-bottom .lrob-cc-inner,
 .lrob-cc-preview-stage .lrob-cc-pos-center .lrob-cc-inner {
 	margin: 0 auto;
+	max-width: calc(100% - 16px);
 }
 
 .lrob-cc-preset-row {

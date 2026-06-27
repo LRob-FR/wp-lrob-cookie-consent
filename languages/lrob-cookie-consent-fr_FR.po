@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T02:23:57+00:00\n"
+"POT-Creation-Date: 2026-06-27T02:38:43+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -580,12 +580,12 @@ msgstr "Neutre"
 msgid "High contrast"
 msgstr "Contraste élevé"
 
-#: src/Support/Services.php:79
+#: src/Support/Services.php:81
 msgid "Do you measure visitor statistics or analytics?"
 msgstr ""
 "Mesurez-vous des statistiques de visiteurs ou des analyses d’audience ?"
 
-#: src/Support/Services.php:80
+#: src/Support/Services.php:82
 msgid ""
 "Tools that count visits and analyse behaviour. Note: Matomo can run in a "
 "cookieless mode — if yours does, you may not need to block it."
@@ -594,13 +594,13 @@ msgstr ""
 "Remarque : Matomo peut fonctionner en mode sans cookie — si c’est le cas du "
 "vôtre, vous n’aurez peut-être pas besoin de le bloquer."
 
-#: src/Support/Services.php:84
+#: src/Support/Services.php:86
 msgid "Do you embed external content (videos, social posts)?"
 msgstr ""
 "Intégrez-vous du contenu externe (vidéos, publications sur les réseaux "
 "sociaux) ?"
 
-#: src/Support/Services.php:85
+#: src/Support/Services.php:87
 msgid ""
 "Players and social embeds can set cookies before consent — they go under "
 "\"External content\", not marketing."
@@ -608,41 +608,43 @@ msgstr ""
 "Les lecteurs et intégrations sociales peuvent déposer des cookies avant le "
 "consentement — ils relèvent de « Contenu externe », pas du marketing."
 
-#: src/Support/Services.php:89
+#: src/Support/Services.php:91
 msgid "Do you run ads or marketing / conversion pixels?"
 msgstr "Diffusez-vous des publicités ou des pixels marketing / de conversion ?"
 
-#: src/Support/Services.php:90
+#: src/Support/Services.php:92
 msgid "Advertising and retargeting trackers."
 msgstr "Traceurs publicitaires et de reciblage."
 
-#: src/Support/Services.php:94
+#: src/Support/Services.php:96
 msgid "Do you embed maps?"
 msgstr "Intégrez-vous des cartes ?"
 
-#: src/Support/Services.php:95
+#: src/Support/Services.php:97
 msgid "Map embeds may load third-party scripts."
 msgstr "Les cartes intégrées peuvent charger des scripts tiers."
 
-#: src/Support/Services.php:99
+#: src/Support/Services.php:101
 msgid "Do you use a CAPTCHA?"
 msgstr "Utilisez-vous un CAPTCHA ?"
 
-#: src/Support/Services.php:100
+#: src/Support/Services.php:102
 msgid ""
-"Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile "
-"and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads "
-"Google."
+"Listed as necessary by default so your forms keep working — a JavaScript-"
+"injected CAPTCHA can't show a click-to-load placeholder, so blocking it just "
+"breaks the form. Turnstile and hCaptcha are privacy-friendly; reCAPTCHA "
+"loads Google."
 msgstr ""
-"Attention : bloquer un CAPTCHA peut casser les formulaires protégés. "
-"Cloudflare Turnstile et hCaptcha respectent la vie privée et ne nécessitent "
-"souvent aucun consentement ; reCAPTCHA charge Google."
+"Classé comme nécessaire par défaut pour que vos formulaires continuent de "
+"fonctionner — un CAPTCHA injecté par JavaScript ne peut pas afficher de "
+"substitut cliquable, donc le bloquer casse simplement le formulaire. "
+"Turnstile et hCaptcha respectent la vie privée ; reCAPTCHA charge Google."
 
-#: src/Support/Services.php:104
+#: src/Support/Services.php:106
 msgid "Do you use payment gateways?"
 msgstr "Utilisez-vous des passerelles de paiement ?"
 
-#: src/Support/Services.php:105
+#: src/Support/Services.php:107
 msgid ""
 "Listed as necessary — referenced for transparency but never blocked, so "
 "checkout keeps working."

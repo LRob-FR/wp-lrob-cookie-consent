@@ -204,7 +204,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <?php endforeach; ?>
                     </div>
                     <button type="button" class="button" id="lrob-cc-link-add"><?php esc_html_e('Add link', 'lrob-cookie-consent'); ?></button>
-                    <p><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('watermark'); ?>" value="1" <?php echo $checked('watermark'); ?> /> <?php esc_html_e('Show a small “Cookie Consent by LRob” credit in the footer', 'lrob-cookie-consent'); ?></label></p>
+                    <p><label class="lrob-cc-check"><input type="checkbox" data-field="watermark" name="<?php echo $name('watermark'); ?>" value="1" <?php echo $checked('watermark'); ?> /> <?php esc_html_e('Show a small “Cookie Consent by LRob” credit in the footer', 'lrob-cookie-consent'); ?></label></p>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Footer links alignment', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('align_footer', ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?>
 

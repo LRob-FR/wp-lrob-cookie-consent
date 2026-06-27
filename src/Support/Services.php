@@ -36,11 +36,13 @@ final class Services
             ['label' => 'Instagram', 'pattern' => 'instagram.com/embed', 'category' => 'embed', 'service' => 'Instagram'],
             ['label' => 'TikTok', 'pattern' => 'tiktok.com/embed', 'category' => 'embed', 'service' => 'TikTok'],
             ['label' => 'Facebook embeds', 'pattern' => 'facebook.com/plugins', 'category' => 'embed', 'service' => 'Facebook'],
-            // Security / CAPTCHAs. Turnstile/hCaptcha are privacy-friendly (often
-            // cookieless); reCAPTCHA loads Google. Blocking a CAPTCHA can break forms.
-            ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'security', 'service' => 'Cloudflare Turnstile'],
-            ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'security', 'service' => 'hCaptcha'],
-            ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'security', 'service' => 'Google reCAPTCHA'],
+            // CAPTCHAs default to necessary (functional): they're injected by JS, so
+            // blocking just silently breaks the form with no placeholder to click.
+            // Turnstile/hCaptcha are privacy-friendly; advanced users can move
+            // reCAPTCHA to a blockable category if they accept the broken-form risk.
+            ['label' => 'Cloudflare Turnstile', 'pattern' => 'challenges.cloudflare.com', 'category' => 'functional', 'service' => 'Cloudflare Turnstile'],
+            ['label' => 'hCaptcha', 'pattern' => 'hcaptcha.com', 'category' => 'functional', 'service' => 'hCaptcha'],
+            ['label' => 'Google reCAPTCHA', 'pattern' => 'recaptcha', 'category' => 'functional', 'service' => 'Google reCAPTCHA'],
             // Necessary (functional) — referenced for transparency, never blocked.
             ['label' => 'Stripe (payments)', 'pattern' => 'js.stripe.com', 'category' => 'functional', 'service' => 'Stripe'],
             ['label' => 'PayPal (payments)', 'pattern' => 'paypal.com', 'category' => 'functional', 'service' => 'PayPal'],
@@ -97,7 +99,7 @@ final class Services
             ],
             [
                 'question' => __('Do you use a CAPTCHA?', 'lrob-cookie-consent'),
-                'hint'     => __('Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads Google.', 'lrob-cookie-consent'),
+                'hint'     => __('Listed as necessary by default so your forms keep working — a JavaScript-injected CAPTCHA can\'t show a click-to-load placeholder, so blocking it just breaks the form. Turnstile and hCaptcha are privacy-friendly; reCAPTCHA loads Google.', 'lrob-cookie-consent'),
                 'services' => $pick('challenges.cloudflare.com', 'hcaptcha.com', 'recaptcha'),
             ],
             [

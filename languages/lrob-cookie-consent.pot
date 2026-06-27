@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T02:23:57+00:00\n"
+"POT-Creation-Date: 2026-06-27T02:39:15+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -571,51 +571,51 @@ msgstr ""
 msgid "High contrast"
 msgstr ""
 
-#: src/Support/Services.php:79
+#: src/Support/Services.php:81
 msgid "Do you measure visitor statistics or analytics?"
 msgstr ""
 
-#: src/Support/Services.php:80
+#: src/Support/Services.php:82
 msgid "Tools that count visits and analyse behaviour. Note: Matomo can run in a cookieless mode — if yours does, you may not need to block it."
 msgstr ""
 
-#: src/Support/Services.php:84
+#: src/Support/Services.php:86
 msgid "Do you embed external content (videos, social posts)?"
 msgstr ""
 
-#: src/Support/Services.php:85
+#: src/Support/Services.php:87
 msgid "Players and social embeds can set cookies before consent — they go under \"External content\", not marketing."
 msgstr ""
 
-#: src/Support/Services.php:89
+#: src/Support/Services.php:91
 msgid "Do you run ads or marketing / conversion pixels?"
 msgstr ""
 
-#: src/Support/Services.php:90
+#: src/Support/Services.php:92
 msgid "Advertising and retargeting trackers."
 msgstr ""
 
-#: src/Support/Services.php:94
+#: src/Support/Services.php:96
 msgid "Do you embed maps?"
 msgstr ""
 
-#: src/Support/Services.php:95
+#: src/Support/Services.php:97
 msgid "Map embeds may load third-party scripts."
 msgstr ""
 
-#: src/Support/Services.php:99
+#: src/Support/Services.php:101
 msgid "Do you use a CAPTCHA?"
 msgstr ""
 
-#: src/Support/Services.php:100
-msgid "Heads up: blocking a CAPTCHA can break protected forms. Cloudflare Turnstile and hCaptcha are privacy-friendly and often need no consent; reCAPTCHA loads Google."
+#: src/Support/Services.php:102
+msgid "Listed as necessary by default so your forms keep working — a JavaScript-injected CAPTCHA can't show a click-to-load placeholder, so blocking it just breaks the form. Turnstile and hCaptcha are privacy-friendly; reCAPTCHA loads Google."
 msgstr ""
 
-#: src/Support/Services.php:104
+#: src/Support/Services.php:106
 msgid "Do you use payment gateways?"
 msgstr ""
 
-#: src/Support/Services.php:105
+#: src/Support/Services.php:107
 msgid "Listed as necessary — referenced for transparency but never blocked, so checkout keeps working."
 msgstr ""
 

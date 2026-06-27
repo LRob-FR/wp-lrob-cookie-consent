@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T03:52:22+00:00\n"
+"POT-Creation-Date: 2026-06-27T09:55:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -469,6 +469,8 @@ msgid "Marketing"
 msgstr ""
 
 #: src/Support/Categories.php:25
+#: src/Support/Presets.php:55
+#: src/Support/Presets.php:65
 msgid "External content"
 msgstr ""
 
@@ -526,6 +528,7 @@ msgid "Accept"
 msgstr ""
 
 #: src/Support/Presets.php:33
+#: src/Support/Presets.php:69
 msgid "Save"
 msgstr ""
 
@@ -550,6 +553,7 @@ msgid "No thanks"
 msgstr ""
 
 #: src/Support/Presets.php:42
+#: src/Support/Presets.php:60
 msgid "Save my choices"
 msgstr ""
 
@@ -566,14 +570,43 @@ msgid "Some cookies keep your cart and checkout working; others help us understa
 msgstr ""
 
 #: src/Support/Presets.php:50
+#: src/Support/Presets.php:68
 msgid "Essential only"
 msgstr ""
 
-#: src/Support/Presets.php:63
+#: src/Support/Presets.php:56
+msgid "External content & your privacy"
+msgstr ""
+
+#: src/Support/Presets.php:57
+msgid "This page can load content from other services — videos, maps, fonts and similar — which may receive your data (such as your IP address). Choose what you allow to load."
+msgstr ""
+
+#: src/Support/Presets.php:58
+msgid "Allow all content"
+msgstr ""
+
+#: src/Support/Presets.php:59
+msgid "Block external content"
+msgstr ""
+
+#: src/Support/Presets.php:64
+msgid "External content (minimal)"
+msgstr ""
+
+#: src/Support/Presets.php:66
+msgid "We load some content from third-party services. Choose what may load."
+msgstr ""
+
+#: src/Support/Presets.php:67
+msgid "Allow all"
+msgstr ""
+
+#: src/Support/Presets.php:81
 msgid "Neutral"
 msgstr ""
 
-#: src/Support/Presets.php:73
+#: src/Support/Presets.php:91
 msgid "High contrast"
 msgstr ""
 

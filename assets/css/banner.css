@@ -383,10 +383,11 @@
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
 
-.lrob-cc-revisit-bottom-left { bottom: 14px; left: 14px; }
-.lrob-cc-revisit-bottom-right { bottom: 14px; right: 14px; }
-.lrob-cc-revisit-top-left { top: 14px; left: 14px; }
-.lrob-cc-revisit-top-right { top: 14px; right: 14px; }
+/* Follow the banner's edge offsets (set on <body> by Appearance::inline_css). */
+.lrob-cc-revisit-bottom-left { bottom: var(--lrob-cc-offset-y, 14px); left: var(--lrob-cc-offset-x, 14px); }
+.lrob-cc-revisit-bottom-right { bottom: var(--lrob-cc-offset-y, 14px); right: var(--lrob-cc-offset-x, 14px); }
+.lrob-cc-revisit-top-left { top: var(--lrob-cc-offset-y, 14px); left: var(--lrob-cc-offset-x, 14px); }
+.lrob-cc-revisit-top-right { top: var(--lrob-cc-offset-y, 14px); right: var(--lrob-cc-offset-x, 14px); }
 
 .lrob-cc-revisit[hidden] {
 	display: none;

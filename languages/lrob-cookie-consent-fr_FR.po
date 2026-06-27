@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T03:46:26+00:00\n"
+"POT-Creation-Date: 2026-06-27T09:54:43+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -459,7 +459,8 @@ msgstr "Statistiques"
 msgid "Marketing"
 msgstr "Marketing"
 
-#: src/Support/Categories.php:25
+#: src/Support/Categories.php:25 src/Support/Presets.php:55
+#: src/Support/Presets.php:65
 msgid "External content"
 msgstr "Contenu externe"
 
@@ -526,7 +527,7 @@ msgstr "Nous utilisons des cookies. Choisissez ce que vous autorisez."
 msgid "Accept"
 msgstr "Accepter"
 
-#: src/Support/Presets.php:33
+#: src/Support/Presets.php:33 src/Support/Presets.php:69
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -555,7 +556,7 @@ msgstr "Oui, volontiers"
 msgid "No thanks"
 msgstr "Non merci"
 
-#: src/Support/Presets.php:42
+#: src/Support/Presets.php:42 src/Support/Presets.php:60
 msgid "Save my choices"
 msgstr "Enregistrer mes choix"
 
@@ -575,15 +576,51 @@ msgstr ""
 "Certains cookies font fonctionner votre panier et votre commande ; d’autres "
 "nous aident à comprendre ce qui se vend. Autorisez ceux qui vous conviennent."
 
-#: src/Support/Presets.php:50
+#: src/Support/Presets.php:50 src/Support/Presets.php:68
 msgid "Essential only"
 msgstr "Essentiels uniquement"
 
-#: src/Support/Presets.php:63
+#: src/Support/Presets.php:56
+msgid "External content & your privacy"
+msgstr "Contenu externe et votre vie privée"
+
+#: src/Support/Presets.php:57
+msgid ""
+"This page can load content from other services — videos, maps, fonts and "
+"similar — which may receive your data (such as your IP address). Choose what "
+"you allow to load."
+msgstr ""
+"Cette page peut charger du contenu provenant d’autres services — vidéos, "
+"cartes, polices et similaires — qui peuvent recevoir vos données (comme votre "
+"adresse IP). Choisissez ce que vous autorisez à charger."
+
+#: src/Support/Presets.php:58
+msgid "Allow all content"
+msgstr "Tout autoriser"
+
+#: src/Support/Presets.php:59
+msgid "Block external content"
+msgstr "Bloquer le contenu externe"
+
+#: src/Support/Presets.php:64
+msgid "External content (minimal)"
+msgstr "Contenu externe (minimal)"
+
+#: src/Support/Presets.php:66
+msgid "We load some content from third-party services. Choose what may load."
+msgstr ""
+"Nous chargeons du contenu provenant de services tiers. Choisissez ce qui peut "
+"être chargé."
+
+#: src/Support/Presets.php:67
+msgid "Allow all"
+msgstr "Tout autoriser"
+
+#: src/Support/Presets.php:81
 msgid "Neutral"
 msgstr "Neutre"
 
-#: src/Support/Presets.php:73
+#: src/Support/Presets.php:91
 msgid "High contrast"
 msgstr "Contraste élevé"
 

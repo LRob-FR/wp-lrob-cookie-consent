@@ -50,6 +50,24 @@ final class Presets
                 'deny'    => __('Essential only', 'lrob-cookie-consent'),
                 'save'    => __('Save preferences', 'lrob-cookie-consent'),
             ],
+            [
+                'id'      => 'embeds',
+                'label'   => __('External content', 'lrob-cookie-consent'),
+                'header'  => __('External content & your privacy', 'lrob-cookie-consent'),
+                'message' => __('This page can load content from other services — videos, maps, fonts and similar — which may receive your data (such as your IP address). Choose what you allow to load.', 'lrob-cookie-consent'),
+                'accept'  => __('Allow all content', 'lrob-cookie-consent'),
+                'deny'    => __('Block external content', 'lrob-cookie-consent'),
+                'save'    => __('Save my choices', 'lrob-cookie-consent'),
+            ],
+            [
+                'id'      => 'embeds-minimal',
+                'label'   => __('External content (minimal)', 'lrob-cookie-consent'),
+                'header'  => __('External content', 'lrob-cookie-consent'),
+                'message' => __('We load some content from third-party services. Choose what may load.', 'lrob-cookie-consent'),
+                'accept'  => __('Allow all', 'lrob-cookie-consent'),
+                'deny'    => __('Essential only', 'lrob-cookie-consent'),
+                'save'    => __('Save', 'lrob-cookie-consent'),
+            ],
         ]);
     }
 

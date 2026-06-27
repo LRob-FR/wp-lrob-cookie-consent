@@ -63,7 +63,10 @@
 		var node = preview.querySelector('[data-preview="' + slot + '"]');
 		if (!node) { return; }
 		var ph = fallbackEl ? fallbackEl.getAttribute('placeholder') : '';
-		node.textContent = value || ph || '';
+		var text = value || ph || '';
+		// The message keeps line breaks (the front runs it through wpautop).
+		if (slot === 'message') { node.innerHTML = escapeHtml(text).replace(/\n/g, '<br>'); }
+		else { node.textContent = text; }
 	}
 
 	function show(slot, on) {

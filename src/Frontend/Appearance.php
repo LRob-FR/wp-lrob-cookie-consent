@@ -146,7 +146,11 @@ final class Appearance
             $decl .= $name . ':' . $value . ';';
         }
 
-        return '#lrob-cc-banner{' . $decl . '}';
+        // Expose the edge offsets on <body> too, so the floating "Manage cookies"
+        // button (which lives outside the banner) can follow the same margins.
+        $offsets = '--lrob-cc-offset-x:' . $vars['--lrob-cc-offset-x'] . ';--lrob-cc-offset-y:' . $vars['--lrob-cc-offset-y'] . ';';
+
+        return '#lrob-cc-banner{' . $decl . '}body{' . $offsets . '}';
     }
 
     private static function align(string $value, string $default = 'left'): string

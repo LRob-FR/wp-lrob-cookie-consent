@@ -28,7 +28,7 @@ final class Assets
             printf(
                 '<script type="text/plain" data-category="%s" data-service="%s">%s</script>' . "\n",
                 esc_attr($script['category']),
-                esc_attr('inline-' . $i),
+                esc_attr($script['name'] !== '' ? $script['name'] : 'inline-' . $i),
                 $script['code'] // Trusted (manage_lrob_cc) input; inert until consent.
             );
         }

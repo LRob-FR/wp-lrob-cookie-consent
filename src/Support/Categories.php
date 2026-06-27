@@ -35,7 +35,7 @@ final class Categories
             'preferences' => __('Remembers choices you make (language, region, layout).', 'lrob-cookie-consent'),
             'statistics'  => __('Anonymous measurement of how the site is used.', 'lrob-cookie-consent'),
             'marketing'   => __('Used to track visitors for advertising.', 'lrob-cookie-consent'),
-            'embed'       => __('Embedded videos and social posts from other sites (YouTube, Vimeo, etc.).', 'lrob-cookie-consent'),
+            'embed'       => __('Content loaded from other sites — videos, maps, social posts, images, 3D views and similar embeds (YouTube, Google Maps, etc.).', 'lrob-cookie-consent'),
             'security'    => __('Spam protection, CAPTCHAs and firewalls.', 'lrob-cookie-consent'),
             default       => '',
         };
@@ -103,11 +103,24 @@ final class Categories
      *
      * @return array<string,array{title:string,desc:string}>
      */
+    /**
+     * Admin description overrides for built-in categories (names stay fixed).
+     *
+     * @return array<string,string> slug => description
+     */
+    public static function desc_overrides(): array
+    {
+        $opt = Options::get('cat_desc_overrides');
+        return is_array($opt) ? $opt : [];
+    }
+
     public static function labels(): array
     {
+        $overrides = self::desc_overrides();
         $out = [];
         foreach (array_merge([self::FUNCTIONAL], self::DEFAULTS) as $slug) {
-            $out[$slug] = ['title' => self::default_label($slug), 'desc' => self::default_desc($slug)];
+            $desc = isset($overrides[$slug]) && (string) $overrides[$slug] !== '' ? (string) $overrides[$slug] : self::default_desc($slug);
+            $out[$slug] = ['title' => self::default_label($slug), 'desc' => $desc];
         }
         foreach (self::custom() as $c) {
             $out[$c['slug']] = [

@@ -370,20 +370,34 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             </div>
 
             <h3><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?> <?php $help(__('Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed. The built-in categories below are fixed; rename their wording via translation. You can add your own custom categories.', 'lrob-cookie-consent')); ?></h3>
+            <?php
+            $cat_overrides = is_array($o['cat_desc_overrides'] ?? null) ? $o['cat_desc_overrides'] : [];
+            $cat_desc_field = static function (string $slug) use ($option, $cat_overrides): void {
+                printf(
+                    '<input type="text" class="lrob-cc-cat-card-desc-input" name="%s[cat_desc_overrides][%s]" value="%s" placeholder="%s" aria-label="%s" />',
+                    esc_attr($option),
+                    esc_attr($slug),
+                    esc_attr((string) ($cat_overrides[$slug] ?? '')),
+                    esc_attr(\LRob\CookieConsent\Support\Categories::default_desc($slug)),
+                    esc_attr__('Description shown to visitors', 'lrob-cookie-consent')
+                );
+            };
+            ?>
             <div class="lrob-cc-cat-grid">
                 <div class="lrob-cc-cat-card is-locked">
                     <strong><?php echo esc_html($labels['functional']['title']); ?></strong>
                     <span class="lrob-cc-cat-badge"><?php esc_html_e('always on', 'lrob-cookie-consent'); ?></span>
-                    <span class="lrob-cc-cat-card-desc"><?php echo esc_html($labels['functional']['desc']); ?></span>
+                    <?php $cat_desc_field('functional'); ?>
                 </div>
                 <?php foreach ($default_categories as $slug) : ?>
                     <div class="lrob-cc-cat-card is-locked">
                         <strong><?php echo esc_html($labels[$slug]['title']); ?></strong>
                         <span class="lrob-cc-cat-badge"><?php esc_html_e('built-in', 'lrob-cookie-consent'); ?></span>
-                        <span class="lrob-cc-cat-card-desc"><?php echo esc_html($labels[$slug]['desc']); ?></span>
+                        <?php $cat_desc_field($slug); ?>
                     </div>
                 <?php endforeach; ?>
             </div>
+            <p class="description"><?php esc_html_e('Built-in category names are fixed; you can customise their descriptions (leave blank for the default).', 'lrob-cookie-consent'); ?></p>
 
             <p class="lrob-cc-field-label"><?php esc_html_e('Custom categories', 'lrob-cookie-consent'); ?></p>
             <div id="lrob-cc-cats" data-name="<?php echo esc_attr($option); ?>">
@@ -498,6 +512,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 foreach ($rows as $i => $row) : ?>
                     <div class="lrob-cc-inline-row">
                         <select name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][category]"><?php $cat_options((string) ($row['category'] ?? '')); ?></select>
+                        <input type="text" class="lrob-cc-inline-name" name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][name]" value="<?php echo esc_attr((string) ($row['name'] ?? '')); ?>" placeholder="<?php esc_attr_e('Service name (shown to visitors)', 'lrob-cookie-consent'); ?>" />
                         <textarea rows="3" class="large-text code" name="<?php echo esc_attr($option); ?>[inline_scripts][<?php echo (int) $i; ?>][code]"><?php echo esc_textarea((string) ($row['code'] ?? '')); ?></textarea>
                         <button type="button" class="button lrob-cc-inline-remove"><?php esc_html_e('Remove', 'lrob-cookie-consent'); ?></button>
                     </div>

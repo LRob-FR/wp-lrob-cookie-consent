@@ -221,6 +221,7 @@ final class SettingsPage
                 'catDesc'      => __('Description', 'lrob-cookie-consent'),
                 'selectLogo'   => __('Select logo', 'lrob-cookie-consent'),
                 'watermark'    => __('Cookie Consent by LRob', 'lrob-cookie-consent'),
+                'serviceName'  => __('Service name (shown to visitors)', 'lrob-cookie-consent'),
                 'wizExisting'  => __('You already have block rules. How do you want to run the wizard?', 'lrob-cookie-consent'),
                 'wizAddTo'     => __('Add to my current rules', 'lrob-cookie-consent'),
                 'wizFresh'     => __('Clear them and start fresh', 'lrob-cookie-consent'),
@@ -331,6 +332,18 @@ final class SettingsPage
                 ];
             }
         }
+        // Description overrides for built-in categories (only descriptions, only defaults).
+        $out['cat_desc_overrides'] = [];
+        if (isset($in['cat_desc_overrides']) && is_array($in['cat_desc_overrides'])) {
+            foreach ($in['cat_desc_overrides'] as $slug => $desc) {
+                $slug = sanitize_key((string) $slug);
+                $desc = sanitize_text_field((string) $desc);
+                if ($slug !== '' && $desc !== '' && Categories::is_default($slug)) {
+                    $out['cat_desc_overrides'][$slug] = $desc;
+                }
+            }
+        }
+
         $out['block_rules'] = sanitize_textarea_field((string) ($in['block_rules'] ?? ''));
 
         $out['inline_scripts'] = [];
@@ -345,7 +358,11 @@ final class SettingsPage
                     continue;
                 }
                 // Trusted (manage_lrob_cc) input, injected as inert text/plain until consent.
-                $out['inline_scripts'][] = ['code' => $code, 'category' => $category];
+                $out['inline_scripts'][] = [
+                    'code' => $code,
+                    'category' => $category,
+                    'name' => sanitize_text_field((string) ($row['name'] ?? '')),
+                ];
             }
         }
 

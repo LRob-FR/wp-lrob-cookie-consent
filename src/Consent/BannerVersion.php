@@ -29,7 +29,7 @@ final class BannerVersion
             $blocking[$r['category']][] = ['pattern' => $r['pattern'], 'service' => $r['service']];
         }
         foreach ($compiled['inline'] as $i) {
-            $blocking[$i['category']][] = ['pattern' => '(inline script)', 'service' => ''];
+            $blocking[$i['category']][] = ['pattern' => '(inline script)', 'service' => $i['name']];
         }
 
         return [

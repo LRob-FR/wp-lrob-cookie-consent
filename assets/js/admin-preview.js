@@ -933,6 +933,7 @@
 		row.className = 'lrob-cc-inline-row';
 		row.innerHTML =
 			'<select name="' + name + '[inline_scripts][' + i + '][category]">' + opts + '</select>' +
+			'<input type="text" class="lrob-cc-inline-name" name="' + name + '[inline_scripts][' + i + '][name]" placeholder="' + (A.i18n.serviceName || 'Service name (shown to visitors)') + '" />' +
 			'<textarea rows="3" class="large-text code" name="' + name + '[inline_scripts][' + i + '][code]"></textarea>' +
 			'<button type="button" class="button lrob-cc-inline-remove">' + (A.i18n.removeRow || 'Remove') + '</button>';
 		wrap.appendChild(row);

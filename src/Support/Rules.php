@@ -78,7 +78,7 @@ final class Rules
 
     /**
      * @param mixed $raw
-     * @return list<array{code:string,category:string}>
+     * @return list<array{code:string,category:string,name:string}>
      */
     private static function parse_inline(mixed $raw): array
     {
@@ -95,7 +95,7 @@ final class Rules
             if ($code === '' || !Categories::is_valid($category) || $category === Categories::FUNCTIONAL) {
                 continue;
             }
-            $out[] = ['code' => $code, 'category' => $category];
+            $out[] = ['code' => $code, 'category' => $category, 'name' => (string) ($item['name'] ?? '')];
         }
         return $out;
     }

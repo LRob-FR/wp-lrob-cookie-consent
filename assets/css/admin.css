@@ -435,6 +435,13 @@
 	color: #50575e;
 }
 
+.lrob-cc-cat-card-desc-input {
+	display: block;
+	width: 100%;
+	margin-top: 6px;
+	font-size: 12px;
+}
+
 .lrob-cc-scan-scope {
 	margin: 8px 0;
 }
@@ -618,6 +625,10 @@
 
 .lrob-cc-inline-row select {
 	flex: none;
+}
+
+.lrob-cc-inline-row .lrob-cc-inline-name {
+	flex: 0 1 200px;
 }
 
 .lrob-cc-inline-row textarea {

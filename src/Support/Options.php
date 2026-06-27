@@ -28,6 +28,7 @@ final class Options
             // Blocking engine
             'block_iframes'      => 1,          // off = GDPR risk (warned in UI)
             'categories'         => [],         // optional category defs [{slug,label,desc}]; empty = built-in defaults
+            'cat_desc_overrides' => [],         // built-in slug => custom description (names stay fixed)
             'block_rules'        => '',         // one per line: pattern | category | service
             'rules_mode'         => 'structured', // structured | raw (admin editor preference)
             'inline_scripts'     => [],         // [ ['code' => '', 'category' => ''], ... ]

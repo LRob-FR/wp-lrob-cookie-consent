@@ -68,7 +68,7 @@ final class Banner
             $sources[$r['category']][] = $r['service'] !== '' ? $r['service'] : $r['pattern'];
         }
         foreach ($compiled['inline'] as $in) {
-            $sources[$in['category']][] = __('Inline script', 'lrob-cookie-consent');
+            $sources[$in['category']][] = $in['name'] !== '' ? $in['name'] : __('Inline script', 'lrob-cookie-consent');
         }
         foreach ($sources as $cat => $list) {
             $sources[$cat] = array_values(array_unique($list));

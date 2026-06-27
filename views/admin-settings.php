@@ -463,7 +463,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
         </section>
 
         <div class="lrob-cc-savebar">
-            <?php submit_button(__('Save all settings', 'lrob-cookie-consent'), 'primary', 'submit', false); ?>
+            <?php submit_button(__('Save all settings', 'lrob-cookie-consent'), 'primary', 'lrob_cc_save', false); ?>
             <span class="description"><?php esc_html_e('One save applies to the General, Banner and Cookies tabs together.', 'lrob-cookie-consent'); ?></span>
         </div>
     </form>

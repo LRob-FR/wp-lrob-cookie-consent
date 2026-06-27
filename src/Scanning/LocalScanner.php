@@ -88,31 +88,7 @@ final class LocalScanner implements ScanProvider
             }
         }
 
-        $body = wp_remote_retrieve_body($response);
-        if ($body !== '' && preg_match_all('/<(script|iframe|img)\b[^>]*\b(?:src)\s*=\s*["\']([^"\']+)["\']/i', $body, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $m) {
-                $type = strtolower($m[1]);
-                $src = html_entity_decode($m[2]);
-                $host = (string) wp_parse_url($src, PHP_URL_HOST);
-                if ($host === '' || $host === $site_host) {
-                    continue; // first-party / relative — not a third-party tracker
-                }
-                $key = $this->match_service($src, $services);
-                $pattern = $key['pattern'] ?? $host;
-                if (isset($resources[$pattern])) {
-                    continue;
-                }
-                $resources[$pattern] = [
-                    'pattern'  => $pattern,
-                    'host'     => $host,
-                    'type'     => $type,
-                    'category' => $key['category'] ?? '',
-                    'service'  => $key['service'] ?? $host,
-                    'known'    => $key !== null,
-                    'sample'   => $src,
-                ];
-            }
-        }
+        $this->collect(wp_remote_retrieve_body($response), '', $services, $site_host, $resources);
 
         return ['resources' => array_values($resources), 'cookies' => $cookies, 'error' => ''];
     }
@@ -123,21 +99,26 @@ final class LocalScanner implements ScanProvider
      * HTTP) but only sees what's in the content — not theme/plugin-injected
      * scripts or auto-embeds that render only at request time.
      *
-     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string, scanned: int}
+     * Paginated so huge sites stay responsive: the admin UI loops batches with a
+     * progress bar, exactly like the visit-pages scan.
+     *
+     * @return array{resources: list<array<string,mixed>>, cookies: list<string>, error: string, total: int, processed: int, done: bool}
      */
-    public function scan_content(): array
+    public function scan_content(int $offset = 0, int $limit = 200): array
     {
         $site_host = (string) wp_parse_url(home_url(), PHP_URL_HOST);
         $services = Services::common();
         $resources = [];
 
+        $total = (int) (wp_count_posts('post')->publish ?? 0) + (int) (wp_count_posts('page')->publish ?? 0);
         $ids = get_posts([
             'post_type'   => ['post', 'page'],
             'post_status' => 'publish',
-            'numberposts' => 1000,
+            'numberposts' => $limit,
+            'offset'      => $offset,
             'fields'      => 'ids',
-            'orderby'     => 'modified',
-            'order'       => 'DESC',
+            'orderby'     => 'ID',
+            'order'       => 'ASC',
         ]);
 
         foreach ($ids as $pid) {
@@ -147,24 +128,7 @@ final class LocalScanner implements ScanProvider
             }
             $sample = (string) get_permalink((int) $pid);
 
-            if (preg_match_all('/<(script|iframe|img)\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']/i', $content, $matches, PREG_SET_ORDER)) {
-                foreach ($matches as $m) {
-                    $src = html_entity_decode($m[2]);
-                    $host = (string) wp_parse_url($src, PHP_URL_HOST);
-                    if ($host === '' || $host === $site_host) {
-                        continue;
-                    }
-                    $key = $this->match_service($src, $services);
-                    $pattern = $key['pattern'] ?? $host;
-                    if (!isset($resources[$pattern])) {
-                        $resources[$pattern] = [
-                            'pattern' => $pattern, 'host' => $host, 'type' => strtolower($m[1]),
-                            'category' => $key['category'] ?? '', 'service' => $key['service'] ?? $host,
-                            'known' => $key !== null, 'sample' => $sample,
-                        ];
-                    }
-                }
-            }
+            $this->collect($content, $sample, $services, $site_host, $resources);
 
             // Provider URLs anywhere in content — catches oEmbed-by-URL (e.g. a
             // bare youtu.be/watch link or a Gutenberg embed block), which never
@@ -187,7 +151,15 @@ final class LocalScanner implements ScanProvider
             }
         }
 
-        return ['resources' => array_values($resources), 'cookies' => [], 'error' => '', 'scanned' => count($ids)];
+        $processed = $offset + count($ids);
+        return [
+            'resources' => array_values($resources),
+            'cookies'   => [],
+            'error'     => '',
+            'total'     => $total,
+            'processed' => $processed,
+            'done'      => count($ids) === 0 || $processed >= $total,
+        ];
     }
 
     /**
@@ -211,14 +183,78 @@ final class LocalScanner implements ScanProvider
     }
 
     /**
+     * Extract cross-origin <script>/<iframe>/<img>/<link> resources from markup
+     * into $resources (keyed by suggested rule pattern). $sample labels where it
+     * was seen; empty → use the resource URL itself.
+     *
      * @param list<array{label:string,pattern:string,category:string,service:string}> $services
-     * @return array{pattern:string,category:string,service:string}|null
+     * @param array<string,array<string,mixed>> $resources
+     */
+    private function collect(string $markup, string $sample, array $services, string $site_host, array &$resources): void
+    {
+        if ($markup === '' || !preg_match_all('/<(script|iframe|img|link)\b[^>]*?\b(?:src|href)\s*=\s*["\']([^"\']+)["\']/i', $markup, $matches, PREG_SET_ORDER)) {
+            return;
+        }
+        foreach ($matches as $m) {
+            $tag = strtolower($m[1]);
+            $src = html_entity_decode($m[2]);
+            $host = (string) wp_parse_url($src, PHP_URL_HOST);
+            if ($host === '' || $host === $site_host) {
+                continue; // first-party / relative — not a third-party resource
+            }
+            if ($tag === 'link' && !preg_match('/font|\.css|css\?|stylesheet/i', $src)) {
+                continue; // ignore preconnect/icon/etc. links — only fonts & stylesheets
+            }
+            $key = $this->match_service($src, $services);
+            $pattern = $key === null ? $host : (($key['use_host'] ?? false) ? $host : $key['pattern']);
+            if ($pattern === '') {
+                $pattern = $host;
+            }
+            if (isset($resources[$pattern])) {
+                continue;
+            }
+            $resources[$pattern] = [
+                'pattern'  => $pattern,
+                'host'     => $host,
+                'type'     => $this->friendly_type($tag, $src, $key),
+                'category' => $key['category'] ?? '',
+                'service'  => $key['service'] ?? $host,
+                'known'    => $key !== null,
+                'sample'   => $sample !== '' ? $sample : $src,
+            ];
+        }
+    }
+
+    /** Human-readable resource kind for the scan results column. */
+    private function friendly_type(string $tag, string $src, ?array $key): string
+    {
+        if (($key['use_host'] ?? false) || ($key['category'] ?? '') === 'statistics') {
+            return 'tracker';
+        }
+        return match ($tag) {
+            'iframe' => 'embed',
+            'img'    => 'image',
+            'link'   => preg_match('/font/i', $src) ? 'font' : 'stylesheet',
+            default  => 'script',
+        };
+    }
+
+    /**
+     * @param list<array{label:string,pattern:string,category:string,service:string}> $services
+     * @return array{pattern:string,category:string,service:string,use_host:bool}|null
      */
     private function match_service(string $src, array $services): ?array
     {
         foreach ($services as $svc) {
             if (str_contains($src, $svc['pattern'])) {
-                return ['pattern' => $svc['pattern'], 'category' => $svc['category'], 'service' => $svc['service']];
+                return ['pattern' => $svc['pattern'], 'category' => $svc['category'], 'service' => $svc['service'], 'use_host' => false];
+            }
+        }
+        // Self-hosted analytics on a custom domain (e.g. mm01.example.net): identify
+        // by path, but suggest blocking the whole host.
+        foreach (['matomo.php', 'matomo.js', 'piwik.php', 'piwik.js'] as $needle) {
+            if (str_contains($src, $needle)) {
+                return ['pattern' => '', 'category' => 'statistics', 'service' => 'Matomo', 'use_host' => true];
             }
         }
         return null;

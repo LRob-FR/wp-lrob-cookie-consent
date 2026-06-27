@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-26T23:32:54+00:00\n"
+"POT-Creation-Date: 2026-06-27T00:03:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -76,117 +76,117 @@ msgstr ""
 msgid "Configure"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:116
+#: src/Admin/SettingsPage.php:117
 msgid "Only this site's own pages can be scanned."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:129
+#: src/Admin/SettingsPage.php:130
 msgid "Not allowed."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:137
+#: src/Admin/SettingsPage.php:138
 #: views/admin-settings.php:59
 msgid "LRob Cookie Consent"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:138
+#: src/Admin/SettingsPage.php:139
 msgid "Cookie Consent"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:184
+#: src/Admin/SettingsPage.php:185
 msgid "Pick a tone for your banner text"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:185
+#: src/Admin/SettingsPage.php:186
 msgid "You can fine-tune the wording afterwards."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:188
+#: src/Admin/SettingsPage.php:189
 msgid "Choose how the banner looks"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:190
+#: src/Admin/SettingsPage.php:191
 msgid "Auto (follow theme)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:191
+#: src/Admin/SettingsPage.php:192
 #: views/admin-settings.php:213
 msgid "Light"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:192
+#: src/Admin/SettingsPage.php:193
 #: views/admin-settings.php:214
 msgid "Dark"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:193
+#: src/Admin/SettingsPage.php:194
 #: views/admin-settings.php:215
 msgid "Midnight"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:194
+#: src/Admin/SettingsPage.php:195
 #: views/admin-settings.php:216
 msgid "Ocean"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:195
+#: src/Admin/SettingsPage.php:196
 #: views/admin-settings.php:217
 msgid "Sand"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:198
+#: src/Admin/SettingsPage.php:199
 #: views/admin-settings.php:205
 msgid "Bottom"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:199
+#: src/Admin/SettingsPage.php:200
 #: views/admin-settings.php:206
 msgid "Bottom right"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:200
+#: src/Admin/SettingsPage.php:201
 #: views/admin-settings.php:204
 msgid "Bottom left"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:201
+#: src/Admin/SettingsPage.php:202
 #: views/admin-settings.php:196
 #: views/admin-settings.php:203
 #: views/admin-settings.php:264
 msgid "Center"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:203
+#: src/Admin/SettingsPage.php:204
 #: views/admin-settings.php:210
 msgid "Colors"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:204
+#: src/Admin/SettingsPage.php:205
 #: views/admin-settings.php:198
 msgid "Position"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:207
+#: src/Admin/SettingsPage.php:208
 msgid "Keep a record of consent decisions?"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:208
+#: src/Admin/SettingsPage.php:209
 msgid "Recommended for GDPR accountability. Stored locally, IP anonymised."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:214
+#: src/Admin/SettingsPage.php:215
 msgid "Delete all consent log entries? This cannot be undone."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:215
+#: src/Admin/SettingsPage.php:216
 msgid "Confirm"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:216
+#: src/Admin/SettingsPage.php:217
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:217
+#: src/Admin/SettingsPage.php:218
 #: views/admin-settings.php:162
 #: views/admin-settings.php:189
 #: views/admin-settings.php:357
@@ -196,136 +196,145 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:218
+#: src/Admin/SettingsPage.php:219
 #: views/admin-settings.php:354
 msgid "slug"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:219
+#: src/Admin/SettingsPage.php:220
 #: views/admin-settings.php:187
 #: views/admin-settings.php:355
 msgid "Label"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:220
+#: src/Admin/SettingsPage.php:221
 #: views/admin-settings.php:356
 msgid "Description"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:221
+#: src/Admin/SettingsPage.php:222
 #: views/admin-settings.php:161
 msgid "Select logo"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:222
+#: src/Admin/SettingsPage.php:223
 msgid "You already have block rules. How do you want to run the wizard?"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:223
+#: src/Admin/SettingsPage.php:224
 msgid "Add to my current rules"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:224
+#: src/Admin/SettingsPage.php:225
 msgid "Clear them and start fresh"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:225
+#: src/Admin/SettingsPage.php:226
 msgid "Yes"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:226
+#: src/Admin/SettingsPage.php:227
 msgid "No / skip"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:227
+#: src/Admin/SettingsPage.php:228
 msgid "Back"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:228
+#: src/Admin/SettingsPage.php:229
 msgid "Next"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:229
+#: src/Admin/SettingsPage.php:230
 msgid "Finish & save"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:230
+#: src/Admin/SettingsPage.php:231
 #: src/Frontend/Banner.php:40
 msgid "Close"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:231
+#: src/Admin/SettingsPage.php:232
 msgid "Yes, keep proof"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:232
+#: src/Admin/SettingsPage.php:233
 msgid "No"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:233
+#: src/Admin/SettingsPage.php:234
 msgid "Keep current"
 msgstr ""
 
 #. translators: %1$d: current step number, %2$d: total steps.
-#: src/Admin/SettingsPage.php:235
+#: src/Admin/SettingsPage.php:236
 msgid "Step %1$d of %2$d"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:236
+#: src/Admin/SettingsPage.php:237
 msgid "Scanning…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:237
+#: src/Admin/SettingsPage.php:238
 msgid "Scan again"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:238
+#: src/Admin/SettingsPage.php:239
 msgid "Scan failed. Try again."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:239
+#: src/Admin/SettingsPage.php:240
 msgid "No third-party resources found on the scanned pages."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:240
+#: src/Admin/SettingsPage.php:241
 msgid "Add selected as rules"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:241
+#: src/Admin/SettingsPage.php:242
 msgid "known"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:242
+#: src/Admin/SettingsPage.php:243
 msgid "review"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:243
+#: src/Admin/SettingsPage.php:244
 msgid "Cookies set on scanned pages:"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:244
+#: src/Admin/SettingsPage.php:245
 msgid "Scanned:"
 msgstr ""
 
-#. translators: %1$d: current page, %2$d: total pages.
 #: src/Admin/SettingsPage.php:246
+msgid "Select all"
+msgstr ""
+
+#. translators: %d: number of pages scanned.
+#: src/Admin/SettingsPage.php:248
+msgid "Scanned %d pages."
+msgstr ""
+
+#. translators: %1$d: current page, %2$d: total pages.
+#: src/Admin/SettingsPage.php:250
 msgid "Scanning page %1$d of %2$d…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:247
+#: src/Admin/SettingsPage.php:251
 msgid "Some pages could not be reached due to an SSL certificate error."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:248
+#: src/Admin/SettingsPage.php:252
 msgid "Retry ignoring SSL"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:256
+#: src/Admin/SettingsPage.php:260
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:392
-#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:396
+#: src/Admin/SettingsPage.php:405
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -408,7 +417,7 @@ msgid "Home + all pages"
 msgstr ""
 
 #: src/Scanning/Scanner.php:67
-msgid "Home + recent posts"
+msgid "Home + all posts"
 msgstr ""
 
 #: src/Scanning/Scanner.php:68

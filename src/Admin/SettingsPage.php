@@ -98,7 +98,8 @@ final class SettingsPage
     {
         $this->require_scan_access();
         try {
-            wp_send_json_success((new \LRob\CookieConsent\Scanning\LocalScanner())->scan_content());
+            $offset = isset($_POST['offset']) ? max(0, (int) $_POST['offset']) : 0;
+            wp_send_json_success((new \LRob\CookieConsent\Scanning\LocalScanner())->scan_content($offset));
         } catch (\Throwable $e) {
             wp_send_json_error(['message' => $e->getMessage()], 500);
         }
@@ -242,6 +243,9 @@ final class SettingsPage
                 'unknown'      => __('review', 'lrob-cookie-consent'),
                 'cookiesSeen'  => __('Cookies set on scanned pages:', 'lrob-cookie-consent'),
                 'scannedUrls'  => __('Scanned:', 'lrob-cookie-consent'),
+                'selectAll'    => __('Select all', 'lrob-cookie-consent'),
+                /* translators: %d: number of pages scanned. */
+                'scannedCount' => __('Scanned %d pages.', 'lrob-cookie-consent'),
                 /* translators: %1$d: current page, %2$d: total pages. */
                 'scanProgress' => __('Scanning page %1$d of %2$d…', 'lrob-cookie-consent'),
                 'sslFailed'    => __('Some pages could not be reached due to an SSL certificate error.', 'lrob-cookie-consent'),

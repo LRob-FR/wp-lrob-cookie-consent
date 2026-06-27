@@ -63,15 +63,16 @@ final class Scanner
         }
         return [
             ['id' => 'home', 'label' => __('Home page only', 'lrob-cookie-consent'), 'count' => 1],
-            ['id' => 'pages', 'label' => __('Home + all pages', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('page'))],
-            ['id' => 'posts', 'label' => __('Home + recent posts', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('post'))],
-            ['id' => 'all', 'label' => __('Everything (pages, posts, custom types)', 'lrob-cookie-consent'), 'count' => min(50, 1 + $count('page') + $count('post') + $cpt)],
+            ['id' => 'pages', 'label' => __('Home + all pages', 'lrob-cookie-consent'), 'count' => 1 + $count('page')],
+            ['id' => 'posts', 'label' => __('Home + all posts', 'lrob-cookie-consent'), 'count' => 1 + $count('post')],
+            ['id' => 'all', 'label' => __('Everything (pages, posts, custom types)', 'lrob-cookie-consent'), 'count' => 1 + $count('page') + $count('post') + $cpt],
         ];
     }
 
     /**
      * The exact URLs the "visit pages" scan fetches for a scope — home page
-     * first, then the matching published content (most-recent first, ≤50).
+     * first, then ALL matching published content (newest first). No cap: the
+     * admin chose the scope and the UI fetches one page at a time with progress.
      *
      * @return list<string>
      */
@@ -87,7 +88,7 @@ final class Scanner
             default => self::public_post_types(),
         };
         $posts = get_posts([
-            'numberposts' => 49,
+            'numberposts' => -1,
             'post_type'   => $types,
             'post_status' => 'publish',
             'fields'      => 'ids',
@@ -100,6 +101,6 @@ final class Scanner
                 $urls[] = $link;
             }
         }
-        return array_values(array_slice(array_unique($urls), 0, 50));
+        return array_values(array_unique($urls));
     }
 }

@@ -9,6 +9,12 @@
 	var A = window.lrobCcAdmin || {};
 	var preview = document.getElementById('lrob-cc-preview');
 
+	// A submit <input name="submit"> shadows form.submit(); always submit safely.
+	function submitForm(form) {
+		if (form.requestSubmit) { form.requestSubmit(); }
+		else { HTMLFormElement.prototype.submit.call(form); }
+	}
+
 	function val(name) {
 		var els = document.querySelectorAll('[data-field="' + name + '"]');
 		if (!els.length) { return ''; }
@@ -310,7 +316,9 @@
 		if (data.urls && data.urls.length) {
 			var u = document.createElement('p');
 			u.className = 'description';
-			u.textContent = (A.i18n.scannedUrls || 'Scanned:') + ' ' + data.urls.join(', ');
+			u.textContent = data.urls.length > 25
+				? (A.i18n.scannedCount || 'Scanned %d pages.').replace('%d', data.urls.length)
+				: (A.i18n.scannedUrls || 'Scanned:') + ' ' + data.urls.join(', ');
 			scanResults.appendChild(u);
 		}
 
@@ -320,12 +328,13 @@
 			none.textContent = A.i18n.noneFound || 'Nothing found.';
 			scanResults.appendChild(none);
 		} else {
-			var catList = A.catList || (A.optional || []).map(function (s) { return { slug: s, label: s }; });
+			// Include functional so payment/necessary services (Stripe…) keep their category.
+			var catList = A.catChoices || A.catList || (A.optional || []).map(function (s) { return { slug: s, label: s }; });
 			var optionsHtml = catList.map(function (c) { return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.label) + '</option>'; }).join('');
 			var rowsHtml = '';
 			res.forEach(function (r, idx) {
 				rowsHtml += '<tr>' +
-					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '"' + (r.known ? ' checked' : '') + '/></td>' +
+					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '" checked/></td>' +
 					'<td><code>' + escapeHtml(r.pattern) + '</code></td>' +
 					'<td>' + escapeHtml(r.type) + '</td>' +
 					'<td><select class="lrob-cc-scan-cat" data-i="' + idx + '">' + optionsHtml + '</select></td>' +
@@ -337,12 +346,18 @@
 			});
 			var table = document.createElement('table');
 			table.className = 'widefat striped lrob-cc-scan-table';
-			table.innerHTML = '<thead><tr><th></th><th>pattern</th><th>type</th><th>category</th><th>service</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody>';
+			table.innerHTML = '<thead><tr><th><input type="checkbox" class="lrob-cc-scan-all" checked title="' + escapeHtml(A.i18n.selectAll || 'Select all') + '"/></th><th>pattern</th><th>type</th><th>category</th><th>service</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody>';
 			scanResults.appendChild(table);
 			res.forEach(function (r, idx) {
 				var sel = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + idx + '"]');
 				if (sel && r.category) { sel.value = r.category; }
 			});
+			var master = scanResults.querySelector('.lrob-cc-scan-all');
+			if (master) {
+				master.addEventListener('change', function () {
+					scanResults.querySelectorAll('.lrob-cc-scan-pick').forEach(function (cb) { cb.checked = master.checked; });
+				});
+			}
 
 			var add = document.createElement('button');
 			add.type = 'button';
@@ -462,6 +477,27 @@
 		next();
 	}
 
+	// Database scan, batched with a progress bar (mirrors the visit-pages loop).
+	function scanDb(offset, agg) {
+		scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
+			if (!json.success || !json.data) {
+				scanEnd();
+				scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
+				return;
+			}
+			var d = json.data;
+			(d.resources || []).forEach(function (r) { agg[r.pattern] = r; });
+			if (scanBar) { scanBar.max = d.total || 1; scanBar.value = Math.min(d.processed || 0, d.total || 0); }
+			if (scanProgressText) {
+				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
+					.replace('%1$d', Math.min(d.processed || 0, d.total || 0)).replace('%2$d', d.total || 0);
+			}
+			if (!d.done) { scanDb(d.processed, agg); return; }
+			scanEnd();
+			renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [] });
+		});
+	}
+
 	if (scanBtn) {
 		scanBtn.addEventListener('click', function () {
 			var method = (document.querySelector('input[name="lrob-cc-scan-method"]:checked') || {}).value || 'database';
@@ -470,14 +506,8 @@
 			scanResults.innerHTML = '';
 
 			if (method === 'database') {
-				scanAjax('lrob_cc_scan_db', {}).then(function (json) {
-					scanEnd();
-					if (!json.success || !json.data) {
-						scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
-						return;
-					}
-					renderScan({ urls: [], resources: json.data.resources || [], cookies: json.data.cookies || [] });
-				});
+				if (scanProgress) { scanProgress.hidden = false; }
+				scanDb(0, {});
 				return;
 			}
 
@@ -556,9 +586,12 @@
 		if (WS.tone && (A.texts || []).length) {
 			var presetIds = (A.texts || []).map(function (p) { return p.id; });
 			var current = val('text_preset');
-			var toneChoices = [{ v: '__keep', l: A.i18n.wizKeepCurrent || 'Keep current' }]
-				.concat((A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }));
-			var tone = { choice: presetIds.indexOf(current) !== -1 ? current : '__keep' };
+			// First run = no preset chosen and no custom wording yet → there is
+			// nothing to "keep", so default to the first preset instead.
+			var firstRun = !current && !val('text_header') && !val('text_message');
+			var toneChoices = (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; });
+			if (!firstRun) { toneChoices.unshift({ v: '__keep', l: A.i18n.wizKeepCurrent || 'Keep current' }); }
+			var tone = { choice: presetIds.indexOf(current) !== -1 ? current : (firstRun ? (presetIds[0] || '') : '__keep') };
 			screens.push({
 				title: WS.tone.question, hint: WS.tone.hint,
 				render: function (b) { b.innerHTML = radioGroup('tone', toneChoices, tone.choice); bindRadio(b, 'tone', function (v) { tone.choice = v; }); },
@@ -688,7 +721,7 @@
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');
 			close();
-			if (form) { form.submit(); } else { toStructuredMode(); }
+			if (form) { submitForm(form); } else { toStructuredMode(); }
 		}
 
 		render();
@@ -817,7 +850,7 @@
 		});
 		overlay.querySelector('.lrob-cc-confirm-ok').addEventListener('click', function () {
 			form.dataset.confirmed = '1';
-			form.submit();
+			submitForm(form);
 		});
 	});
 

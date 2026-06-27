@@ -173,7 +173,14 @@ final class Blocker
     {
         $pattern = '/(?<![-\w])' . preg_quote($name, '/') . '\s*=\s*("([^"]*)"|\'([^\']*)\'|([^\s>]+))/i';
         if (preg_match($pattern, $attrs, $m)) {
-            return $m[2] !== '' ? $m[2] : ($m[3] !== '' ? $m[3] : ($m[4] ?? ''));
+            // Return the first populated capture group. Unmatched alternation
+            // groups are absent (not ''), so an empty quoted value like src=""
+            // must coalesce to '' rather than read an undefined key.
+            foreach ([2, 3, 4] as $group) {
+                if (isset($m[$group]) && $m[$group] !== '') {
+                    return $m[$group];
+                }
+            }
         }
         return '';
     }

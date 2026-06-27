@@ -300,7 +300,8 @@ final class SettingsPage
 
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
             'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_deny',
-            'show_save', 'categories_collapsed', 'revisit_button', 'show_sources', 'watermark', 'anim_fade'];
+            'show_save', 'categories_collapsed', 'revisit_button', 'show_sources', 'watermark', 'anim_fade',
+            'keep_data_on_uninstall'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }

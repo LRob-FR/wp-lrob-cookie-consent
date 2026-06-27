@@ -11,10 +11,25 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 
 global $wpdb;
 
+// Opt-in: keep the consent-proof tables (log + banner versions) for legal
+// accountability. Read before the options are deleted below.
+$keep_proof = false;
+$opts = get_option('lrob_cc_options');
+if (is_array($opts) && !empty($opts['keep_data_on_uninstall'])) {
+    $keep_proof = true;
+}
+$proof_tables = [
+    $wpdb->prefix . 'lrob_cc_consent_log',
+    $wpdb->prefix . 'lrob_cc_banner_versions',
+];
+
 // Tables: {prefix}lrob_cc_*
 $like = $wpdb->esc_like($wpdb->prefix . 'lrob_cc_') . '%';
 $tables = $wpdb->get_col($wpdb->prepare('SHOW TABLES LIKE %s', $like));
 foreach ((array) $tables as $table) {
+    if ($keep_proof && in_array($table, $proof_tables, true)) {
+        continue;
+    }
     $wpdb->query('DROP TABLE IF EXISTS `' . str_replace('`', '', $table) . '`');
 }
 

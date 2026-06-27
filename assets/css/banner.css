@@ -418,6 +418,20 @@ iframe.lrob-cc-blocked {
 	font-size: 0.9em;
 }
 
+/* Responsive oEmbeds (.wp-block-embed with a reserved aspect ratio) keep their
+   space via the wrapper; fill it with the placeholder so no gap remains. */
+.wp-has-aspect-ratio .wp-block-embed__wrapper {
+	position: relative;
+}
+
+.wp-has-aspect-ratio .wp-block-embed__wrapper .lrob-cc-placeholder {
+	position: absolute;
+	inset: 0;
+	height: 100%;
+	min-height: 0;
+	margin: 0;
+}
+
 .lrob-cc-ph-title {
 	font-weight: 600;
 }

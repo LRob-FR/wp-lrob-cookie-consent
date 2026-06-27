@@ -134,6 +134,9 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 <tr><th><?php esc_html_e('Log retention (days)', 'lrob-cookie-consent'); ?></th>
                     <td><input type="number" min="0" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['log_retention_days']); ?>" name="<?php echo $name('log_retention_days'); ?>" value="<?php echo esc_attr((string) $o['log_retention_days']); ?>" /> <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('log_retention_days'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button> <span class="description"><?php esc_html_e('0 = keep forever', 'lrob-cookie-consent'); ?></span>
                         <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-retention-warn" hidden><?php esc_html_e('Proof of consent should be kept at least as long as the consent lasts (the consent duration above) — otherwise you may delete evidence for consents that are still valid.', 'lrob-cookie-consent'); ?></p></td></tr>
+
+                <tr><th><?php esc_html_e('On uninstall', 'lrob-cookie-consent'); ?> <?php $help(__('Deleting the plugin normally removes everything, including the consent log. Keep it if you may need the proof of consent after uninstalling (legal accountability) — re-installing later will reuse it.', 'lrob-cookie-consent')); ?></th>
+                    <td><label><input type="checkbox" name="<?php echo $name('keep_data_on_uninstall'); ?>" value="1" <?php echo $checked('keep_data_on_uninstall'); ?> /> <?php esc_html_e('Keep the consent log (proof of consent) when uninstalling', 'lrob-cookie-consent'); ?></label></td></tr>
             </table>
         </section>
 

@@ -40,6 +40,7 @@ final class Options
             'store_user_agent'   => 0,
             'store_wp_user'      => 1,          // record the logged-in WP user id
             'log_retention_days' => 395,        // proof kept ≥ consent lifetime (warned if below)
+            'keep_data_on_uninstall' => 0,      // preserve the consent-proof tables on uninstall
 
             // Appearance
             'position'           => 'bottom-right', // top-left|top|top-right|center|bottom-left|bottom|bottom-right

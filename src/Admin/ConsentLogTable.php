@@ -23,6 +23,7 @@ final class ConsentLogTable extends \WP_List_Table
             'cb'             => '<input type="checkbox" />',
             'created_at'     => __('Date (UTC)', 'lrob-cookie-consent'),
             'consent_id'     => __('Visitor ID', 'lrob-cookie-consent'),
+            'ip_anon'        => __('IP', 'lrob-cookie-consent'),
             'event_type'     => __('Event', 'lrob-cookie-consent'),
             'method'         => __('Act', 'lrob-cookie-consent'),
             'choices'        => __('Choices', 'lrob-cookie-consent'),
@@ -64,6 +65,20 @@ final class ConsentLogTable extends \WP_List_Table
         ], admin_url('options-general.php'));
         $actions = ['delete' => sprintf('<a href="%s" class="submitdelete">%s</a>', esc_url($url), esc_html__('Delete', 'lrob-cookie-consent'))];
         return esc_html((string) $item['created_at']) . $this->row_actions($actions);
+    }
+
+    /** @param array<string,mixed> $item */
+    protected function column_ip_anon($item): string
+    {
+        $ip = (string) ($item['ip_anon'] ?? '');
+        if ($ip === '') {
+            return '—';
+        }
+        // Full IP shows as-is; a stored hash is shown truncated.
+        if (filter_var($ip, FILTER_VALIDATE_IP)) {
+            return esc_html($ip);
+        }
+        return '<code title="' . esc_attr__('Stored as a salted hash', 'lrob-cookie-consent') . '">' . esc_html(substr($ip, 0, 12)) . '…</code>';
     }
 
     /** @param array<string,mixed> $item */

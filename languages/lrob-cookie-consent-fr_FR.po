@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T09:54:43+00:00\n"
+"POT-Creation-Date: 2026-06-27T10:06:15+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -51,28 +51,36 @@ msgid "Visitor ID"
 msgstr "ID visiteur"
 
 #: src/Admin/ConsentLogTable.php:26
+msgid "IP"
+msgstr "IP"
+
+#: src/Admin/ConsentLogTable.php:27
 msgid "Event"
 msgstr "Événement"
 
-#: src/Admin/ConsentLogTable.php:27
+#: src/Admin/ConsentLogTable.php:28
 msgid "Act"
 msgstr "Action"
 
-#: src/Admin/ConsentLogTable.php:28
+#: src/Admin/ConsentLogTable.php:29
 msgid "Choices"
 msgstr "Choix"
 
-#: src/Admin/ConsentLogTable.php:29
+#: src/Admin/ConsentLogTable.php:30
 msgid "Cookie consent version"
 msgstr "Version du consentement"
 
-#: src/Admin/ConsentLogTable.php:30
+#: src/Admin/ConsentLogTable.php:31
 msgid "Renew by"
 msgstr "À renouveler avant"
 
-#: src/Admin/ConsentLogTable.php:46 src/Admin/ConsentLogTable.php:65
+#: src/Admin/ConsentLogTable.php:47 src/Admin/ConsentLogTable.php:66
 msgid "Delete"
 msgstr "Supprimer"
+
+#: src/Admin/ConsentLogTable.php:81
+msgid "Stored as a salted hash"
+msgstr "Stocké sous forme de hachage salé"
 
 #: src/Admin/SettingsPage.php:53 views/admin-settings.php:469
 msgid "necessary, not blocked"
@@ -591,8 +599,8 @@ msgid ""
 "you allow to load."
 msgstr ""
 "Cette page peut charger du contenu provenant d’autres services — vidéos, "
-"cartes, polices et similaires — qui peuvent recevoir vos données (comme votre "
-"adresse IP). Choisissez ce que vous autorisez à charger."
+"cartes, polices et similaires — qui peuvent recevoir vos données (comme "
+"votre adresse IP). Choisissez ce que vous autorisez à charger."
 
 #: src/Support/Presets.php:58
 msgid "Allow all content"
@@ -609,8 +617,8 @@ msgstr "Contenu externe (minimal)"
 #: src/Support/Presets.php:66
 msgid "We load some content from third-party services. Choose what may load."
 msgstr ""
-"Nous chargeons du contenu provenant de services tiers. Choisissez ce qui peut "
-"être chargé."
+"Nous chargeons du contenu provenant de services tiers. Choisissez ce qui "
+"peut être chargé."
 
 #: src/Support/Presets.php:67
 msgid "Allow all"

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T09:55:40+00:00\n"
+"POT-Creation-Date: 2026-06-27T10:06:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -43,28 +43,36 @@ msgid "Visitor ID"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:26
-msgid "Event"
+msgid "IP"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:27
-msgid "Act"
+msgid "Event"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:28
-msgid "Choices"
+msgid "Act"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:29
-msgid "Cookie consent version"
+msgid "Choices"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:30
+msgid "Cookie consent version"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:31
 msgid "Renew by"
 msgstr ""
 
-#: src/Admin/ConsentLogTable.php:46
-#: src/Admin/ConsentLogTable.php:65
+#: src/Admin/ConsentLogTable.php:47
+#: src/Admin/ConsentLogTable.php:66
 msgid "Delete"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:81
+msgid "Stored as a salted hash"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:53

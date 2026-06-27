@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T10:15:23+00:00\n"
+"POT-Creation-Date: 2026-06-27T10:21:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -63,19 +63,23 @@ msgid "Choices"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:31
-msgid "Cookie consent version"
+msgid "User agent"
 msgstr ""
 
 #: src/Admin/ConsentLogTable.php:32
+msgid "Cookie consent version"
+msgstr ""
+
+#: src/Admin/ConsentLogTable.php:33
 msgid "Renew by"
 msgstr ""
 
-#: src/Admin/ConsentLogTable.php:48
-#: src/Admin/ConsentLogTable.php:67
+#: src/Admin/ConsentLogTable.php:49
+#: src/Admin/ConsentLogTable.php:68
 msgid "Delete"
 msgstr ""
 
-#: src/Admin/ConsentLogTable.php:82
+#: src/Admin/ConsentLogTable.php:83
 msgid "Stored as a salted hash"
 msgstr ""
 
@@ -273,7 +277,7 @@ msgid "Finish & save"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:233
-#: src/Frontend/Banner.php:40
+#: src/Frontend/Banner.php:42
 msgid "Close"
 msgstr ""
 
@@ -373,8 +377,8 @@ msgstr ""
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:438
-#: src/Admin/SettingsPage.php:447
+#: src/Admin/SettingsPage.php:439
+#: src/Admin/SettingsPage.php:448
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -383,20 +387,20 @@ msgid "Lean, opinionated GDPR / ePrivacy cookie consent — opt-in banner, scrip
 msgstr ""
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:83
+#: src/Frontend/Assets.php:85
 msgid "%s content blocked"
 msgstr ""
 
 #. translators: %s: cookie category name (e.g. External content).
-#: src/Frontend/Assets.php:85
+#: src/Frontend/Assets.php:87
 msgid "Loads once you accept “%s”."
 msgstr ""
 
-#: src/Frontend/Assets.php:86
+#: src/Frontend/Assets.php:88
 msgid "Accept & load"
 msgstr ""
 
-#: src/Frontend/Assets.php:87
+#: src/Frontend/Assets.php:89
 #: views/admin-settings.php:188
 msgid "Manage cookies"
 msgstr ""
@@ -405,42 +409,42 @@ msgstr ""
 msgid "Manage cookie preferences"
 msgstr ""
 
-#: src/Frontend/Banner.php:35
+#: src/Frontend/Banner.php:37
 #: src/Support/Presets.php:20
 msgid "We value your privacy"
 msgstr ""
 
-#: src/Frontend/Banner.php:36
+#: src/Frontend/Banner.php:38
 msgid "We use cookies to improve your experience. Choose which categories you allow."
 msgstr ""
 
-#: src/Frontend/Banner.php:37
+#: src/Frontend/Banner.php:39
 #: src/Support/Presets.php:22
 #: src/Support/Presets.php:49
 msgid "Accept all"
 msgstr ""
 
-#: src/Frontend/Banner.php:38
+#: src/Frontend/Banner.php:40
 #: src/Support/Presets.php:23
 #: src/Support/Presets.php:32
 msgid "Deny"
 msgstr ""
 
-#: src/Frontend/Banner.php:39
+#: src/Frontend/Banner.php:41
 #: src/Support/Presets.php:24
 #: src/Support/Presets.php:51
 msgid "Save preferences"
 msgstr ""
 
-#: src/Frontend/Banner.php:41
+#: src/Frontend/Banner.php:43
 msgid "Always active"
 msgstr ""
 
-#: src/Frontend/Banner.php:42
+#: src/Frontend/Banner.php:44
 msgid "Customize"
 msgstr ""
 
-#: src/Frontend/Banner.php:71
+#: src/Frontend/Banner.php:93
 msgid "Inline script"
 msgstr ""
 

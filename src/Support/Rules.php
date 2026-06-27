@@ -53,6 +53,26 @@ final class Rules
     }
 
     /**
+     * Optional categories actually proposed to the visitor — those that block at
+     * least one resource or inline script. A category with nothing to block isn't
+     * offered, so consent should be neither asked nor recorded for it.
+     *
+     * @return list<string>
+     */
+    public static function active_categories(): array
+    {
+        $compiled = self::compiled();
+        $has = [];
+        foreach ($compiled['rules'] as $r) {
+            $has[$r['category']] = true;
+        }
+        foreach ($compiled['inline'] as $i) {
+            $has[$i['category']] = true;
+        }
+        return array_values(array_filter(Categories::optional(), static fn (string $c): bool => !empty($has[$c])));
+    }
+
+    /**
      * @return list<array{pattern:string,category:string,service:string}>
      */
     private static function parse_rules(string $text): array

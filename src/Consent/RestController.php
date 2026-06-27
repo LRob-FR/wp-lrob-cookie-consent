@@ -42,7 +42,7 @@ final class RestController
         // never a single blanket flag). functional is implicit, never a choice.
         $raw_choices = (array) $request->get_param('choices');
         $choices = [];
-        foreach (Categories::optional() as $cat) {
+        foreach (\LRob\CookieConsent\Support\Rules::active_categories() as $cat) {
             $choices[$cat] = !empty($raw_choices[$cat]) ? 1 : 0;
         }
 

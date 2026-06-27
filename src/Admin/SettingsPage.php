@@ -270,6 +270,7 @@ final class SettingsPage
         $o = Options::all();
         $defaults = Options::defaults();
         $texts = Banner::texts();
+        $text_defaults = Banner::default_texts();
         $labels = Banner::category_labels();
         $optional = Categories::optional();
         $default_categories = Categories::defaults();

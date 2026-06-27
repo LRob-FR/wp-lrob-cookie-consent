@@ -24,22 +24,44 @@ final class Banner
         return (string) ob_get_clean();
     }
 
+    /**
+     * The translated default texts (the fallbacks used when a field is empty).
+     * Used for admin placeholders so they show the real default, not whatever is
+     * currently saved.
+     *
+     * @return array<string,string>
+     */
+    public static function default_texts(): array
+    {
+        return [
+            'header'    => __('We value your privacy', 'lrob-cookie-consent'),
+            'message'   => __('We use cookies to improve your experience. Choose which categories you allow.', 'lrob-cookie-consent'),
+            'accept'    => __('Accept all', 'lrob-cookie-consent'),
+            'deny'      => __('Deny', 'lrob-cookie-consent'),
+            'save'      => __('Save preferences', 'lrob-cookie-consent'),
+            'close'     => __('Close', 'lrob-cookie-consent'),
+            'always'    => __('Always active', 'lrob-cookie-consent'),
+            'customize' => __('Customize', 'lrob-cookie-consent'),
+        ];
+    }
+
     public static function texts(): array
     {
+        $d = self::default_texts();
         $get = static function (string $opt, string $fallback): string {
             $value = trim((string) Options::get($opt));
             return $value !== '' ? $value : $fallback;
         };
 
         return [
-            'header'  => $get('text_header', __('We value your privacy', 'lrob-cookie-consent')),
-            'message' => $get('text_message', __('We use cookies to improve your experience. Choose which categories you allow.', 'lrob-cookie-consent')),
-            'accept'  => $get('text_accept', __('Accept all', 'lrob-cookie-consent')),
-            'deny'    => $get('text_deny', __('Deny', 'lrob-cookie-consent')),
-            'save'    => $get('text_save', __('Save preferences', 'lrob-cookie-consent')),
-            'close'   => __('Close', 'lrob-cookie-consent'),
-            'always'  => __('Always active', 'lrob-cookie-consent'),
-            'customize' => $get('text_customize', __('Customize', 'lrob-cookie-consent')),
+            'header'    => $get('text_header', $d['header']),
+            'message'   => $get('text_message', $d['message']),
+            'accept'    => $get('text_accept', $d['accept']),
+            'deny'      => $get('text_deny', $d['deny']),
+            'save'      => $get('text_save', $d['save']),
+            'close'     => $d['close'],
+            'always'    => $d['always'],
+            'customize' => $get('text_customize', $d['customize']),
         ];
     }
 
@@ -76,10 +98,7 @@ final class Banner
 
         // Only offer optional categories that actually block something — an empty
         // category is meaningless to consent to and just adds clutter.
-        $optional = array_values(array_filter(
-            Categories::optional(),
-            static fn (string $cat): bool => !empty($sources[$cat])
-        ));
+        $optional = \LRob\CookieConsent\Support\Rules::active_categories();
 
         $show_sources = (int) Options::get('show_sources') === 1;
 

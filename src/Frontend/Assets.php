@@ -63,8 +63,10 @@ final class Assets
             'statusCookie'  => 'lrob_cc_status',
             'cookieDays'    => (int) Options::get('cookie_days'),
             'version'       => Rules::version(),
-            'categories'    => Categories::all(),
-            'optional'      => Categories::optional(),
+            // Only categories actually proposed (that block something) are tracked,
+            // so consent isn't asked or recorded for empty categories.
+            'categories'    => array_merge(['functional'], Rules::active_categories()),
+            'optional'      => Rules::active_categories(),
             'catLabels'     => array_map(static fn (array $l): string => $l['title'], Categories::labels()),
             'respectDnt'    => (int) Options::get('respect_dnt') === 1,
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T10:14:55+00:00\n"
+"POT-Creation-Date: 2026-06-27T10:20:51+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -71,18 +71,22 @@ msgid "Choices"
 msgstr "Choix"
 
 #: src/Admin/ConsentLogTable.php:31
+msgid "User agent"
+msgstr "User-agent"
+
+#: src/Admin/ConsentLogTable.php:32
 msgid "Cookie consent version"
 msgstr "Version du consentement"
 
-#: src/Admin/ConsentLogTable.php:32
+#: src/Admin/ConsentLogTable.php:33
 msgid "Renew by"
 msgstr "À renouveler avant"
 
-#: src/Admin/ConsentLogTable.php:48 src/Admin/ConsentLogTable.php:67
+#: src/Admin/ConsentLogTable.php:49 src/Admin/ConsentLogTable.php:68
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/Admin/ConsentLogTable.php:82
+#: src/Admin/ConsentLogTable.php:83
 msgid "Stored as a salted hash"
 msgstr "Stocké sous forme de hachage salé"
 
@@ -261,7 +265,7 @@ msgstr "Suivant"
 msgid "Finish & save"
 msgstr "Terminer et enregistrer"
 
-#: src/Admin/SettingsPage.php:233 src/Frontend/Banner.php:40
+#: src/Admin/SettingsPage.php:233 src/Frontend/Banner.php:42
 msgid "Close"
 msgstr "Fermer"
 
@@ -363,7 +367,7 @@ msgstr "Réessayer en ignorant le SSL"
 msgid "You are not allowed to access this page."
 msgstr "Vous n’êtes pas autorisé à accéder à cette page."
 
-#: src/Admin/SettingsPage.php:438 src/Admin/SettingsPage.php:447
+#: src/Admin/SettingsPage.php:439 src/Admin/SettingsPage.php:448
 msgid "You are not allowed to do this."
 msgstr "Vous n’êtes pas autorisé à effectuer cette action."
 
@@ -376,20 +380,20 @@ msgstr ""
 "in, blocage des scripts et iframes, preuve de consentement."
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:83
+#: src/Frontend/Assets.php:85
 msgid "%s content blocked"
 msgstr "Contenu %s bloqué"
 
 #. translators: %s: cookie category name (e.g. External content).
-#: src/Frontend/Assets.php:85
+#: src/Frontend/Assets.php:87
 msgid "Loads once you accept “%s”."
 msgstr "Se charge une fois que vous acceptez « %s »."
 
-#: src/Frontend/Assets.php:86
+#: src/Frontend/Assets.php:88
 msgid "Accept & load"
 msgstr "Accepter et charger"
 
-#: src/Frontend/Assets.php:87 views/admin-settings.php:188
+#: src/Frontend/Assets.php:89 views/admin-settings.php:188
 msgid "Manage cookies"
 msgstr "Gérer les cookies"
 
@@ -397,41 +401,41 @@ msgstr "Gérer les cookies"
 msgid "Manage cookie preferences"
 msgstr "Gérer les préférences de cookies"
 
-#: src/Frontend/Banner.php:35 src/Support/Presets.php:20
+#: src/Frontend/Banner.php:37 src/Support/Presets.php:20
 msgid "We value your privacy"
 msgstr "Nous respectons votre vie privée"
 
-#: src/Frontend/Banner.php:36
+#: src/Frontend/Banner.php:38
 msgid ""
 "We use cookies to improve your experience. Choose which categories you allow."
 msgstr ""
 "Nous utilisons des cookies pour améliorer votre expérience. Choisissez les "
 "catégories que vous autorisez."
 
-#: src/Frontend/Banner.php:37 src/Support/Presets.php:22
+#: src/Frontend/Banner.php:39 src/Support/Presets.php:22
 #: src/Support/Presets.php:49
 msgid "Accept all"
 msgstr "Tout accepter"
 
-#: src/Frontend/Banner.php:38 src/Support/Presets.php:23
+#: src/Frontend/Banner.php:40 src/Support/Presets.php:23
 #: src/Support/Presets.php:32
 msgid "Deny"
 msgstr "Tout refuser"
 
-#: src/Frontend/Banner.php:39 src/Support/Presets.php:24
+#: src/Frontend/Banner.php:41 src/Support/Presets.php:24
 #: src/Support/Presets.php:51
 msgid "Save preferences"
 msgstr "Enregistrer les préférences"
 
-#: src/Frontend/Banner.php:41
+#: src/Frontend/Banner.php:43
 msgid "Always active"
 msgstr "Toujours actif"
 
-#: src/Frontend/Banner.php:42
+#: src/Frontend/Banner.php:44
 msgid "Customize"
 msgstr "Personnaliser"
 
-#: src/Frontend/Banner.php:71
+#: src/Frontend/Banner.php:93
 msgid "Inline script"
 msgstr "Script inline"
 

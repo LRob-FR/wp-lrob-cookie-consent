@@ -28,6 +28,7 @@ final class ConsentLogTable extends \WP_List_Table
             'event_type'     => __('Event', 'lrob-cookie-consent'),
             'method'         => __('Act', 'lrob-cookie-consent'),
             'choices'        => __('Choices', 'lrob-cookie-consent'),
+            'user_agent'     => __('User agent', 'lrob-cookie-consent'),
             'banner_version' => __('Cookie consent version', 'lrob-cookie-consent'),
             'expires_at'     => __('Renew by', 'lrob-cookie-consent'),
         ];
@@ -96,6 +97,17 @@ final class ConsentLogTable extends \WP_List_Table
         $url = get_edit_user_link($uid);
         $name = $user->display_name !== '' ? $user->display_name : $user->user_login;
         return $url ? sprintf('<a href="%s">%s</a>', esc_url($url), esc_html($name)) : esc_html($name);
+    }
+
+    /** @param array<string,mixed> $item */
+    protected function column_user_agent($item): string
+    {
+        $ua = (string) ($item['user_agent'] ?? '');
+        if ($ua === '') {
+            return '—';
+        }
+        $short = mb_strlen($ua) > 38 ? mb_substr($ua, 0, 38) . '…' : $ua;
+        return '<span title="' . esc_attr($ua) . '">' . esc_html($short) . '</span>';
     }
 
     /** @param array<string,mixed> $item */

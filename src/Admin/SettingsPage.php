@@ -299,7 +299,7 @@ final class SettingsPage
 
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
             'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_deny',
-            'show_save', 'categories_collapsed', 'revisit_button', 'show_sources', 'watermark'];
+            'show_save', 'categories_collapsed', 'revisit_button', 'show_sources', 'watermark', 'anim_fade'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }
@@ -399,10 +399,21 @@ final class SettingsPage
         $out['logo'] = esc_url_raw((string) ($in['logo'] ?? ''));
         $out['logo_height'] = min(200, max(12, (int) ($in['logo_height'] ?? $d['logo_height'])));
 
+        $out['show_delay'] = min(20000, max(0, (int) ($in['show_delay'] ?? $d['show_delay'])));
+        $out['anim_move'] = in_array($in['anim_move'] ?? '', ['none', 'slide', 'zoom'], true) ? $in['anim_move'] : 'none';
+        $out['anim_direction'] = in_array($in['anim_direction'] ?? '', ['top', 'bottom', 'left', 'right'], true) ? $in['anim_direction'] : 'bottom';
+        $out['anim_easing'] = in_array($in['anim_easing'] ?? '', ['smooth', 'bounce'], true) ? $in['anim_easing'] : 'smooth';
+        $out['anim_speed'] = min(2000, max(0, (int) ($in['anim_speed'] ?? $d['anim_speed'])));
+
         foreach (['color_bg', 'color_text', 'color_title', 'color_border', 'color_btn_bg',
             'color_btn_text', 'color_btn_deny_bg', 'color_btn_deny_text'] as $key) {
             $color = sanitize_hex_color((string) ($in[$key] ?? ''));
             $out[$key] = $color ?: $d[$key];
+        }
+        // Hover colours may be left empty (= auto-darken default).
+        foreach (['color_btn_hover_bg', 'color_btn_deny_hover_bg'] as $key) {
+            $raw = (string) ($in[$key] ?? '');
+            $out[$key] = $raw === '' ? '' : (sanitize_hex_color($raw) ?: '');
         }
 
         $out['text_header'] = sanitize_text_field((string) ($in['text_header'] ?? ''));

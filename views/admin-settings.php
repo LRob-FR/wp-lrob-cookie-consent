@@ -208,6 +208,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <p class="lrob-cc-field-label"><?php esc_html_e('Footer links alignment', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('align_footer', ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?>
 
+                    <h3><?php esc_html_e('Appearance', 'lrob-cookie-consent'); ?></h3>
+
                     <p class="lrob-cc-field-label"><?php esc_html_e('Position', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('position', [
                         'top-left' => __('Top left', 'lrob-cookie-consent'),
@@ -239,7 +241,6 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             </select></label>
                     </div>
 
-                    <h3><?php esc_html_e('Appearance', 'lrob-cookie-consent'); ?></h3>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Colors', 'lrob-cookie-consent'); ?> <?php $help(__('Auto follows your theme via WordPress global-style tokens. The back-office preview may not match your theme exactly — always check the result on the front end.', 'lrob-cookie-consent')); ?></p>
                     <?php $seg('theme', [
                         'auto' => __('Auto', 'lrob-cookie-consent'),
@@ -271,8 +272,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                 'color_border' => __('Border', 'lrob-cookie-consent'),
                                 'color_btn_bg' => __('Accept button bg', 'lrob-cookie-consent'),
                                 'color_btn_text' => __('Accept button text', 'lrob-cookie-consent'),
+                                'color_btn_hover_bg' => __('Accept button hover', 'lrob-cookie-consent'),
                                 'color_btn_deny_bg' => __('Deny/Save button bg', 'lrob-cookie-consent'),
                                 'color_btn_deny_text' => __('Deny/Save button text', 'lrob-cookie-consent'),
+                                'color_btn_deny_hover_bg' => __('Deny/Save button hover', 'lrob-cookie-consent'),
                             ];
                             foreach ($color_fields as $key => $label) : ?>
                                 <tr><th><?php echo esc_html($label); ?></th>
@@ -306,6 +309,24 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Buttons alignment', 'lrob-cookie-consent'); ?></p>
                             <?php $seg('align_buttons', $align_choices); ?></div>
                     </div>
+
+                    <h3><?php esc_html_e('Animation', 'lrob-cookie-consent'); ?> <?php $help(__('How the banner enters. Fade, movement and easing combine freely. Speed sets the duration; the preview replays whenever you change a setting.', 'lrob-cookie-consent')); ?></h3>
+                    <p><label class="lrob-cc-check"><input type="checkbox" data-field="anim_fade" name="<?php echo $name('anim_fade'); ?>" value="1" <?php echo $checked('anim_fade'); ?> /> <?php esc_html_e('Fade in', 'lrob-cookie-consent'); ?></label></p>
+                    <div class="lrob-cc-fieldgrid">
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Movement', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('anim_move', ['none' => __('None', 'lrob-cookie-consent'), 'slide' => __('Slide', 'lrob-cookie-consent'), 'zoom' => __('Zoom', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field" id="lrob-cc-anim-dir-field"<?php echo $o['anim_move'] === 'slide' ? '' : ' hidden'; ?>><p class="lrob-cc-field-label"><?php esc_html_e('Slide from', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('anim_direction', ['top' => __('Top', 'lrob-cookie-consent'), 'bottom' => __('Bottom', 'lrob-cookie-consent'), 'left' => __('Left', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Easing', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('anim_easing', ['smooth' => __('Smooth', 'lrob-cookie-consent'), 'bounce' => __('Bounce', 'lrob-cookie-consent')]); ?></div>
+                    </div>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Speed (ms)', 'lrob-cookie-consent'); ?></p>
+                    <p><input type="number" min="0" max="2000" step="50" class="small-text lrob-cc-num-default" data-field="anim_speed" data-default="<?php echo esc_attr((string) $defaults['anim_speed']); ?>" name="<?php echo $name('anim_speed'); ?>" value="<?php echo esc_attr((string) $o['anim_speed']); ?>" />
+                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('anim_speed'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button>
+                        <button type="button" class="button" id="lrob-cc-anim-replay"><?php esc_html_e('Replay', 'lrob-cookie-consent'); ?></button></p>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Delay before showing (ms)', 'lrob-cookie-consent'); ?> <?php $help(__('Wait this long after page load before the banner first appears. Reopening it later is always instant.', 'lrob-cookie-consent')); ?></p>
+                    <p><input type="number" min="0" max="20000" step="100" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['show_delay']); ?>" name="<?php echo $name('show_delay'); ?>" value="<?php echo esc_attr((string) $o['show_delay']); ?>" />
+                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('show_delay'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button></p>
                 </div>
 
                 <div class="lrob-cc-banner-preview">

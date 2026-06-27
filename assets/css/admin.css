@@ -176,6 +176,11 @@
 	width: auto;
 }
 
+/* Replays the front entrance animation (keyframe lives in banner.css). */
+.lrob-cc-preview-stage .lrob-cc-banner.is-animating {
+	animation: lrob-cc-in var(--lrob-cc-anim-duration, 300ms) var(--lrob-cc-anim-ease, ease) both;
+}
+
 .lrob-cc-preview-stage .lrob-cc-inner {
 	width: var(--lrob-cc-width, 340px);
 	max-width: 100%;

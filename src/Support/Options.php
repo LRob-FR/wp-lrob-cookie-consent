@@ -70,6 +70,14 @@ final class Options
             'show_sources'       => 1,          // show visitors what each category blocks
             'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
 
+            // Animation + timing
+            'show_delay'         => 1000,       // ms before the banner first appears
+            'anim_fade'          => 1,          // fade in
+            'anim_move'          => 'none',     // none | slide | zoom (combines with fade)
+            'anim_direction'     => 'bottom',   // slide origin: top | bottom | left | right
+            'anim_easing'        => 'smooth',   // smooth | bounce
+            'anim_speed'         => 300,        // ms animation duration
+
             // Custom-theme colors (applied only when theme = custom)
             'color_bg'             => '#ffffff',
             'color_text'           => '#1a1a1a',
@@ -79,6 +87,8 @@ final class Options
             'color_btn_text'       => '#ffffff',
             'color_btn_deny_bg'    => '#f0f0f0',
             'color_btn_deny_text'  => '#1a1a1a',
+            'color_btn_hover_bg'   => '',        // empty → auto (darken on hover)
+            'color_btn_deny_hover_bg' => '',     // empty → auto (darken on hover)
 
             // Texts (empty → translated fallback at render)
             'text_header'        => '',

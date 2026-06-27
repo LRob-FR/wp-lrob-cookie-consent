@@ -385,7 +385,8 @@
 		if (D.respectDnt && isDntOn()) {
 			if (D.dntHideBanner) { denyAll(); return; }
 		}
-		showBanner();
+		var delay = Math.max(0, parseInt(D.showDelay, 10) || 0);
+		if (delay) { setTimeout(showBanner, delay); } else { showBanner(); }
 	}
 
 	// --- Public API ------------------------------------------------------

@@ -35,6 +35,7 @@
 		$('.lrob-cc-tabs .nav-tab[data-tab="' + tab + '"]').addClass('nav-tab-active');
 		$('.lrob-cc-panel').attr('hidden', true);
 		$('.lrob-cc-panel[data-panel="' + tab + '"]').removeAttr('hidden');
+		if (tab === 'banner' && typeof replayPreviewAnim === 'function') { replayPreviewAnim(); }
 	}
 
 	$('.lrob-cc-tabs .nav-tab').on('click', function (e) {
@@ -71,7 +72,7 @@
 	}
 
 	function applyColors() {
-		var keys = ['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text'];
+		var keys = ['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg'];
 		keys.forEach(function (k) { preview.style.removeProperty('--lrob-cc-' + k); });
 
 		var theme = val('theme');
@@ -82,7 +83,8 @@
 			var map = {
 				'bg': 'color_bg', 'text': 'color_text', 'title': 'color_title', 'border': 'color_border',
 				'btn-bg': 'color_btn_bg', 'btn-text': 'color_btn_text',
-				'btn-deny-bg': 'color_btn_deny_bg', 'btn-deny-text': 'color_btn_deny_text'
+				'btn-deny-bg': 'color_btn_deny_bg', 'btn-deny-text': 'color_btn_deny_text',
+				'btn-hover-bg': 'color_btn_hover_bg', 'btn-deny-hover-bg': 'color_btn_deny_hover_bg'
 			};
 			Object.keys(map).forEach(function (k) {
 				var v = val(map[k]);
@@ -137,6 +139,19 @@
 		else { var u = val('offset_unit') || 'px'; ox = (parseInt(val('offset_x'), 10) || 0) + u; oy = (parseInt(val('offset_y'), 10) || 0) + u; }
 		preview.style.setProperty('--lrob-cc-offset-x', ox);
 		preview.style.setProperty('--lrob-cc-offset-y', oy);
+
+		// Entrance animation vars (mirror Appearance::inline_css).
+		preview.style.setProperty('--lrob-cc-anim-duration', (parseInt(val('anim_speed'), 10) || 0) + 'ms');
+		preview.style.setProperty('--lrob-cc-anim-ease', val('anim_easing') === 'bounce' ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'ease');
+		preview.style.setProperty('--lrob-cc-anim-opacity', val('anim_fade') ? '0' : '1');
+		var mv = val('anim_move'), ax = '0', ay = '0', asc = '1', dd = '24px';
+		if (mv === 'slide') {
+			var dir = val('anim_direction');
+			if (dir === 'top') { ay = '-' + dd; } else if (dir === 'left') { ax = '-' + dd; } else if (dir === 'right') { ax = dd; } else { ay = dd; }
+		} else if (mv === 'zoom') { asc = '0.92'; }
+		preview.style.setProperty('--lrob-cc-anim-x', ax);
+		preview.style.setProperty('--lrob-cc-anim-y', ay);
+		preview.style.setProperty('--lrob-cc-anim-scale', asc);
 
 		preview.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
 		preview.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
@@ -211,6 +226,26 @@
 	}
 	$(document).on('change', '[name="' + A.optionName + '[offset_preset]"]', updateOffsetCustom);
 	updateOffsetCustom();
+
+	// "Slide from" only matters for the Slide movement.
+	function updateAnimDir() {
+		var el = document.getElementById('lrob-cc-anim-dir-field');
+		if (!el) { return; }
+		var v = (document.querySelector('[name="' + A.optionName + '[anim_move]"]:checked') || {}).value;
+		el.hidden = v !== 'slide';
+	}
+	$(document).on('change', '[name="' + A.optionName + '[anim_move]"]', updateAnimDir);
+	updateAnimDir();
+
+	// Replay the entrance animation in the preview (button + on any setting change).
+	function replayPreviewAnim() {
+		if (!preview) { return; }
+		preview.classList.remove('is-animating');
+		void preview.offsetWidth; // force reflow so the animation restarts
+		preview.classList.add('is-animating');
+	}
+	$('#lrob-cc-anim-replay').on('click', replayPreviewAnim);
+	$(document).on('change', '[data-field]', replayPreviewAnim);
 
 	// Warn when proof retention is shorter than the consent lifetime.
 	function checkRetention() {

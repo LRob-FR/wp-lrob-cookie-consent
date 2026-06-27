@@ -43,6 +43,30 @@
 	display: none;
 }
 
+/* Entrance animation: a single keyframe whose start state is composed from
+   CSS variables (fade / slide direction / zoom), so the controls combine freely. */
+@keyframes lrob-cc-in {
+	from {
+		opacity: var(--lrob-cc-anim-opacity, 1);
+		transform: translate(var(--lrob-cc-anim-x, 0), var(--lrob-cc-anim-y, 0)) scale(var(--lrob-cc-anim-scale, 1));
+	}
+
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+#lrob-cc-banner:not([hidden]) {
+	animation: lrob-cc-in var(--lrob-cc-anim-duration, 300ms) var(--lrob-cc-anim-ease, ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#lrob-cc-banner:not([hidden]) {
+		animation: none;
+	}
+}
+
 .lrob-cc-backdrop {
 	display: none;
 	position: fixed;
@@ -317,6 +341,18 @@
 .lrob-cc-btn-customize {
 	background: var(--_btn-deny-bg);
 	color: var(--_btn-deny-text);
+}
+
+/* Hover: custom colour if set, else auto-darken the base so every theme gets a
+   sensible hover without configuration. */
+.lrob-cc-btn-accept:hover {
+	background: var(--lrob-cc-btn-hover-bg, color-mix(in srgb, var(--_btn-bg) 88%, #000));
+}
+
+.lrob-cc-btn-save:hover,
+.lrob-cc-btn-deny:hover,
+.lrob-cc-btn-customize:hover {
+	background: var(--lrob-cc-btn-deny-hover-bg, color-mix(in srgb, var(--_btn-deny-bg) 92%, #000));
 }
 
 .lrob-cc-btn[hidden] {

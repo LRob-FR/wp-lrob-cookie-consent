@@ -71,6 +71,7 @@ final class Assets
             'revisitButton' => (int) Options::get('revisit_button') === 1,
             'revisitText'   => (string) Options::get('revisit_text'),
             'position'      => (string) Options::get('position'),
+            'showDelay'     => (int) Options::get('show_delay'),
             'bannerVersion' => \LRob\CookieConsent\Consent\BannerVersion::ensure(),
             'rest'          => [
                 'url'        => esc_url_raw(rest_url('lrob-cc/v1/log')),

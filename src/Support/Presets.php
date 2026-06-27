@@ -65,6 +65,7 @@ final class Presets
                         'theme' => 'custom', 'color_bg' => '#ffffff', 'color_text' => '#3c3c3c',
                         'color_title' => '#1a1a1a', 'color_border' => '#e2e2e2', 'color_btn_bg' => '#2563eb',
                         'color_btn_text' => '#ffffff', 'color_btn_deny_bg' => '#f1f1f1', 'color_btn_deny_text' => '#1a1a1a',
+                        'color_btn_hover_bg' => '#1d4ed8', 'color_btn_deny_hover_bg' => '#e2e2e2',
                     ],
                 ],
                 [
@@ -74,6 +75,7 @@ final class Presets
                         'theme' => 'custom', 'color_bg' => '#000000', 'color_text' => '#ffffff',
                         'color_title' => '#ffffff', 'color_border' => '#ffffff', 'color_btn_bg' => '#ffff00',
                         'color_btn_text' => '#000000', 'color_btn_deny_bg' => '#222222', 'color_btn_deny_text' => '#ffffff',
+                        'color_btn_hover_bg' => '#e6e600', 'color_btn_deny_hover_bg' => '#333333',
                     ],
                 ],
             ],

@@ -179,15 +179,18 @@
 	$('[data-toggle-text]').each(function () { syncTextToggle(this); });
 	$(document).on('change', '[data-toggle-text]', function () { syncTextToggle(this); });
 
-	// Pencil reveals the built-in category's description editor.
+	// Pencil toggles the built-in category's description editor (click again to exit).
 	$(document).on('click', '.lrob-cc-cat-edit', function () {
 		var body = this.closest('.lrob-cc-cat-card-body');
 		if (!body) { return; }
 		var ta = body.querySelector('.lrob-cc-cat-card-desc-input');
 		var desc = body.querySelector('.lrob-cc-cat-card-desc');
-		if (ta) { ta.hidden = false; ta.focus(); }
-		if (desc) { desc.hidden = true; }
-		this.hidden = true;
+		if (!ta) { return; }
+		var show = ta.hidden; // currently hidden → reveal it
+		ta.hidden = !show;
+		if (desc) { desc.hidden = show; }
+		this.classList.toggle('is-active', show);
+		if (show) { ta.focus(); }
 	});
 
 	// Duration "Default" buttons + restore default when a field is emptied.

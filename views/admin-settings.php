@@ -381,7 +381,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         . '<div class="lrob-cc-cat-card-head"><strong>%1$s</strong><span class="lrob-cc-cat-badge">%2$s</span></div>'
                         . '<div class="lrob-cc-cat-card-body">'
                             . '<span class="lrob-cc-cat-card-desc">%3$s</span>'
-                            . '<button type="button" class="lrob-cc-cat-edit" aria-label="%4$s" title="%4$s">%5$s</button>'
+                            . '<button type="button" class="button lrob-cc-cat-edit" aria-label="%4$s" title="%4$s">%5$s</button>'
                             . '<textarea class="lrob-cc-cat-card-desc-input" rows="3" hidden name="%6$s[cat_desc_overrides][%7$s]" placeholder="%8$s">%9$s</textarea>'
                         . '</div>'
                     . '</div>',

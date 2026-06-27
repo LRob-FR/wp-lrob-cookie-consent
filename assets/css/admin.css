@@ -178,23 +178,23 @@
 
 .lrob-cc-preview-stage .lrob-cc-inner {
 	width: var(--lrob-cc-width, 340px);
-	max-width: calc(100% - 48px);
+	max-width: 100%;
 	margin: 0;
 }
 
+/* Gap from the edge = the user's offset only, nothing forced — so the preview
+   matches the front exactly. Full-width top/bottom are flush like the front. */
 .lrob-cc-preview-stage .lrob-cc-pos-bottom-right { right: var(--lrob-cc-offset-x, 24px); bottom: var(--lrob-cc-offset-y, 24px); }
 .lrob-cc-preview-stage .lrob-cc-pos-bottom-left { left: var(--lrob-cc-offset-x, 24px); bottom: var(--lrob-cc-offset-y, 24px); }
 .lrob-cc-preview-stage .lrob-cc-pos-top-right { right: var(--lrob-cc-offset-x, 24px); top: var(--lrob-cc-offset-y, 24px); }
 .lrob-cc-preview-stage .lrob-cc-pos-top-left { left: var(--lrob-cc-offset-x, 24px); top: var(--lrob-cc-offset-y, 24px); }
-.lrob-cc-preview-stage .lrob-cc-pos-top { top: 8px; left: 8px; right: 8px; }
-.lrob-cc-preview-stage .lrob-cc-pos-bottom { bottom: 8px; left: 8px; right: 8px; }
+.lrob-cc-preview-stage .lrob-cc-pos-top { top: 0; left: 0; right: 0; }
+.lrob-cc-preview-stage .lrob-cc-pos-bottom { bottom: 0; left: 0; right: 0; }
 .lrob-cc-preview-stage .lrob-cc-pos-center { inset: 0; display: flex; align-items: center; justify-content: center; }
 
 .lrob-cc-preview-stage .lrob-cc-pos-top .lrob-cc-inner,
-.lrob-cc-preview-stage .lrob-cc-pos-bottom .lrob-cc-inner,
-.lrob-cc-preview-stage .lrob-cc-pos-center .lrob-cc-inner {
+.lrob-cc-preview-stage .lrob-cc-pos-bottom .lrob-cc-inner {
 	margin: 0 auto;
-	max-width: calc(100% - 16px);
 }
 
 .lrob-cc-preset-row {
@@ -361,11 +361,6 @@
 	vertical-align: middle;
 }
 
-.lrob-cc-offsets .button {
-	margin-right: 16px;
-	vertical-align: baseline;
-}
-
 .lrob-cc-rule-head {
 	font-size: 11px;
 	font-weight: 600;
@@ -437,36 +432,46 @@
 
 .lrob-cc-cat-card-body {
 	margin-top: 6px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 6px;
 }
 
 .lrob-cc-cat-card-desc {
+	flex: 1;
 	font-size: 12px;
 	color: #50575e;
 }
 
-.lrob-cc-cat-edit {
-	background: none;
-	border: 0;
-	padding: 0 2px;
-	margin-left: 4px;
-	cursor: pointer;
-	color: #2271b1;
+/* Small square WP-style icon button. */
+.lrob-cc-cat-edit.button {
+	flex: none;
+	min-width: 28px;
+	min-height: 28px;
+	padding: 0 6px;
 	line-height: 1;
-	vertical-align: baseline;
 }
 
-.lrob-cc-cat-edit:hover {
-	color: #135e96;
+.lrob-cc-cat-edit.button.is-active {
+	background: #f0f0f1;
+}
+
+.lrob-cc-cat-edit svg {
+	vertical-align: middle;
 }
 
 .lrob-cc-cat-card-desc-input {
-	display: block;
+	flex-basis: 100%;
 	width: 100%;
-	margin-top: 6px;
 	font-size: 12px;
 	line-height: 1.4;
 	min-height: 60px;
 	resize: vertical;
+}
+
+.lrob-cc-cat-card-desc-input[hidden] {
+	display: none;
 }
 
 .lrob-cc-scan-scope {

@@ -21,15 +21,16 @@ $name = static fn (string $key): string => esc_attr($option . '[' . $key . ']');
 $checked = static fn (string $key) => checked(!empty($o[$key]), true, false);
 
 /** Segmented radio button group. */
-// A choice value is either a plain label string, or ['label'=>…, 'icon'=>dashicon].
+// A choice value is either a plain label string, or ['label'=>…, 'svg'=>inline SVG].
 $seg = static function (string $key, array $choices) use ($o, $option, $name): void {
     echo '<div class="lrob-cc-segmented" role="radiogroup">';
     foreach ($choices as $value => $label) {
         $is = (string) $o[$key] === (string) $value;
-        $icon = is_array($label) ? (string) ($label['icon'] ?? '') : '';
+        $svg = is_array($label) ? (string) ($label['svg'] ?? '') : '';
         $text = is_array($label) ? (string) ($label['label'] ?? '') : (string) $label;
-        $inner = $icon !== ''
-            ? sprintf('<span class="dashicons %s" aria-hidden="true"></span><span class="screen-reader-text">%s</span>', esc_attr($icon), esc_html($text))
+        // $svg is hardcoded, trusted markup (no user input) — output as-is.
+        $inner = $svg !== ''
+            ? $svg . sprintf('<span class="screen-reader-text">%s</span>', esc_html($text))
             : esc_html($text);
         printf(
             '<label class="lrob-cc-seg%s" title="%s"><input type="radio" name="%s" value="%s" data-field="%s" %s /><span>%s</span></label>',
@@ -227,11 +228,11 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     ]); ?>
                     <div class="lrob-cc-offsets" id="lrob-cc-offset-custom"<?php echo $o['offset_preset'] === 'custom' ? '' : ' hidden'; ?>>
                         <label><?php esc_html_e('Horizontal', 'lrob-cookie-consent'); ?>
-                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_x']); ?>" name="<?php echo $name('offset_x'); ?>" value="<?php echo esc_attr((string) $o['offset_x']); ?>" /></label>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-field="offset_x" data-default="<?php echo esc_attr((string) $defaults['offset_x']); ?>" name="<?php echo $name('offset_x'); ?>" value="<?php echo esc_attr((string) $o['offset_x']); ?>" /></label>
                         <label><?php esc_html_e('Vertical', 'lrob-cookie-consent'); ?>
-                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_y']); ?>" name="<?php echo $name('offset_y'); ?>" value="<?php echo esc_attr((string) $o['offset_y']); ?>" /></label>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-field="offset_y" data-default="<?php echo esc_attr((string) $defaults['offset_y']); ?>" name="<?php echo $name('offset_y'); ?>" value="<?php echo esc_attr((string) $o['offset_y']); ?>" /></label>
                         <label><?php esc_html_e('Unit', 'lrob-cookie-consent'); ?>
-                            <select name="<?php echo $name('offset_unit'); ?>">
+                            <select name="<?php echo $name('offset_unit'); ?>" data-field="offset_unit">
                                 <?php foreach (['px', 'rem', 'em', 'vw', '%'] as $u) : ?>
                                     <option value="<?php echo esc_attr($u); ?>" <?php selected($o['offset_unit'], $u); ?>><?php echo esc_html($u); ?></option>
                                 <?php endforeach; ?>
@@ -281,10 +282,12 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     </div>
 
                     <?php
+                    $align_svg = static fn (array $rects): string => '<svg class="lrob-cc-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">'
+                        . implode('', array_map(static fn (array $r): string => sprintf('<rect x="%d" y="%d" width="%d" height="2" rx="1"/>', $r[0], $r[1], $r[2]), $rects)) . '</svg>';
                     $align_choices = [
-                        'left'   => ['label' => __('Left', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-alignleft'],
-                        'center' => ['label' => __('Center', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-aligncenter'],
-                        'right'  => ['label' => __('Right', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-alignright'],
+                        'left'   => ['label' => __('Left', 'lrob-cookie-consent'), 'svg' => $align_svg([[2, 3, 12], [2, 7, 8], [2, 11, 11]])],
+                        'center' => ['label' => __('Center', 'lrob-cookie-consent'), 'svg' => $align_svg([[2, 3, 12], [4, 7, 8], [3, 11, 10]])],
+                        'right'  => ['label' => __('Right', 'lrob-cookie-consent'), 'svg' => $align_svg([[2, 3, 12], [6, 7, 8], [3, 11, 11]])],
                     ];
                     ?>
                     <div class="lrob-cc-fieldgrid">

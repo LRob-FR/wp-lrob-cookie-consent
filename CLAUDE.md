@@ -19,6 +19,9 @@ Functionally complete and shipping from `main` at **v0.0.1** (not yet smoke-test
 - **Safe mode** — optional "block ALL cross-origin resources by default; unknown/unauthorised → placeholder advising the visitor to contact the site owner via an admin-set contact page." Needs a `safe_mode` option, a block-everything path in `Blocking\Blocker`, an "unknown" placeholder, and a `contact_page_id` option + UI.
 - **Granular scan UI** — replace the scope dropdown with per-type checkboxes (home forced, pages, posts, each CPT) + per-type limit + newest/oldest order.
 - **Responsive-embed void** — for oEmbeds in a `.wp-block-embed` wrapper, the theme reserves aspect-ratio space, so a thin gap can remain around the (correctly-sized) placeholder; needs wrapper-targeted CSS.
+- **Scan inside the wizard** — the setup wizard still asks yes/no per service instead of actually scanning. Run the real scan (reuse `scanUrls`/`scanDb`/`renderScan` — refactor them to be reusable, don't duplicate) as a wizard step, with the same scope/warning UI; prefer querying over asking (more reliable, fewer steps).
+- **Scheduled scan + notify** — periodically scan a chosen set of pages (wp-cron) and alert the admin (mechanism TBD: admin notice / email) when new third-party resources appear so they can add rules.
+- **Uninstall data policy** — `uninstall.php` currently drops everything. Decide what should be retained/exportable (esp. the consent-proof log, which may be legally needed after uninstall) and add an opt-in "keep my data on uninstall" setting.
 
 ## Heritage — two sibling plugins, two different things to borrow
 

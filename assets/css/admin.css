@@ -158,17 +158,25 @@
 	background: repeating-conic-gradient(#f0f0f0 0% 25%, #fafafa 0% 50%) 0 / 24px 24px;
 	border: 1px solid #dcdcde;
 	border-radius: 6px;
-	padding: 24px;
-	display: flex;
-	justify-content: center;
+	position: relative;
+	aspect-ratio: 1 / 1;
+	overflow: hidden;
 }
 
+/* The preview banner is positioned inside the square stage (not fixed to the
+   viewport) so its corner placement and edge margins read accurately. */
 .lrob-cc-preview-stage .lrob-cc-banner {
-	position: static;
-	width: 100%;
+	position: absolute !important;
+	width: auto;
 }
 
 .lrob-cc-preview-stage .lrob-cc-inner {
+	width: var(--lrob-cc-width, 340px);
+	max-width: calc(100% - 12px);
+	margin: 0;
+}
+
+.lrob-cc-preview-stage .lrob-cc-pos-center .lrob-cc-inner {
 	margin: 0 auto;
 }
 
@@ -324,8 +332,16 @@
 	gap: 6px 14px;
 }
 
+.lrob-cc-offsets[hidden] {
+	display: none;
+}
+
 .lrob-cc-offsets label {
 	margin-right: 6px;
+}
+
+.lrob-cc-icon {
+	vertical-align: middle;
 }
 
 .lrob-cc-offsets .button {

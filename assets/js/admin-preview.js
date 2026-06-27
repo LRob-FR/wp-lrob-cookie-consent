@@ -75,8 +75,8 @@
 		keys.forEach(function (k) { preview.style.removeProperty('--lrob-cc-' + k); });
 
 		var theme = val('theme');
-		if (theme === 'light' || theme === 'dark') {
-			var pal = A.palettes[theme] || {};
+		if (A.palettes && A.palettes[theme]) {
+			var pal = A.palettes[theme];
 			Object.keys(pal).forEach(function (k) { preview.style.setProperty('--lrob-cc-' + k, pal[k]); });
 		} else if (theme === 'custom') {
 			var map = {
@@ -124,6 +124,19 @@
 		var font = (s.font || {})[val('font_size')] || (s.font || {}).medium;
 		if (font) { preview.style.setProperty('--lrob-cc-font-size', font.font); preview.style.setProperty('--lrob-cc-title-size', font.title); }
 		if (s.radius) { preview.style.setProperty('--lrob-cc-radius', s.radius[val('shape')] || s.radius.rounded); }
+
+		// Reflect position + edge margins in the square preview stage.
+		['top-left', 'top', 'top-right', 'center', 'bottom-left', 'bottom', 'bottom-right'].forEach(function (p) {
+			preview.classList.remove('lrob-cc-pos-' + p);
+		});
+		preview.classList.add('lrob-cc-pos-' + (val('position') || 'bottom-right'));
+		var presets = { snug: '12px', 'default': '24px', spacious: '44px' };
+		var op = val('offset_preset');
+		var ox, oy;
+		if (presets[op]) { ox = oy = presets[op]; }
+		else { var u = val('offset_unit') || 'px'; ox = (parseInt(val('offset_x'), 10) || 0) + u; oy = (parseInt(val('offset_y'), 10) || 0) + u; }
+		preview.style.setProperty('--lrob-cc-offset-x', ox);
+		preview.style.setProperty('--lrob-cc-offset-y', oy);
 
 		preview.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
 		preview.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
@@ -647,6 +660,7 @@
 			if (logoInput) { logoInput.value = url; }
 			if (logoPreview) { logoPreview.src = url; logoPreview.hidden = false; }
 			if (logoRemove) { logoRemove.hidden = false; }
+			update();
 		});
 		logoFrame.open();
 	});
@@ -655,6 +669,7 @@
 		if (logoInput) { logoInput.value = ''; }
 		if (logoPreview) { logoPreview.src = ''; logoPreview.hidden = true; }
 		this.hidden = true;
+		update();
 	});
 
 	// --- Guided setup wizard (multi-section) ----------------------------

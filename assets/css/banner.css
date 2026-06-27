@@ -133,7 +133,7 @@
 .lrob-cc-logo {
 	max-height: var(--lrob-cc-logo-height, 36px);
 	width: auto;
-	margin-bottom: 6px;
+	flex: 0 0 auto;
 }
 
 .lrob-cc-title {

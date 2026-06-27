@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T00:25:32+00:00\n"
+"POT-Creation-Date: 2026-06-27T00:34:56+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -849,6 +849,14 @@ msgstr "Bouton Accepter"
 #: views/admin-settings.php:150
 msgid "Deny button"
 msgstr "Bouton Refuser"
+
+#: views/admin-settings.php:150
+msgid ""
+"Refuses every optional category, keeping only strictly-necessary "
+"(functional) cookies. If something is genuinely required — a CAPTCHA, a "
+"payment script — list it under the functional category so it is referenced "
+"but never blocked."
+msgstr "Refuse toutes les catégories optionnelles et ne conserve que les cookies strictement nécessaires (fonctionnels). Si un élément est réellement indispensable — un CAPTCHA, un script de paiement — placez-le dans la catégorie fonctionnelle : il sera référencé mais jamais bloqué."
 
 #: views/admin-settings.php:151 views/admin-settings.php:154
 msgid "Show"

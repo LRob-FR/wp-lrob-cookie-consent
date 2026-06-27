@@ -277,6 +277,19 @@
 		if (save) { save.hidden = false; }
 	}
 
+	// Reset to the collapsed (Customize-button) view. No-op when categories aren't
+	// collapsed (no Customize button rendered), so they always stay visible.
+	function collapseCategories() {
+		var toggle = banner.querySelector('[data-lrob-cc-action="customize"]');
+		if (!toggle) { return; }
+		var cats = document.getElementById('lrob-cc-categories');
+		if (cats) { cats.hidden = true; }
+		toggle.hidden = false;
+		toggle.setAttribute('aria-expanded', 'false');
+		var save = banner.querySelector('[data-lrob-cc-action="save"]');
+		if (save) { save.hidden = true; }
+	}
+
 	function revisitCorner() {
 		var pos = D.position || 'bottom';
 		var v = pos.indexOf('top') === 0 ? 'top' : 'bottom';
@@ -300,6 +313,7 @@
 	function showBanner() {
 		banner = document.getElementById('lrob-cc-banner');
 		if (!banner) { return; }
+		collapseCategories(); // each open starts from the default (collapsed) view
 		var revisit = document.getElementById('lrob-cc-revisit');
 		if (revisit) { revisit.hidden = true; }
 		lastFocus = document.activeElement;

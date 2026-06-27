@@ -158,15 +158,15 @@ final class SettingsPage
         }
 
         wp_enqueue_style('wp-color-picker');
-        wp_enqueue_style('lrob-cc-admin', LROB_CC_URL . 'assets/css/admin.css', [], LROB_CC_VERSION);
-        wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], LROB_CC_VERSION);
+        wp_enqueue_style('lrob-cc-admin', LROB_CC_URL . 'assets/css/admin.css', [], lrob_cc_asset_ver('assets/css/admin.css'));
+        wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], lrob_cc_asset_ver('assets/css/banner.css'));
         wp_enqueue_media();
 
         wp_enqueue_script(
             'lrob-cc-admin',
             LROB_CC_URL . 'assets/js/admin-preview.js',
             ['wp-color-picker', 'jquery'],
-            LROB_CC_VERSION,
+            lrob_cc_asset_ver('assets/js/admin-preview.js'),
             true
         );
         wp_localize_script('lrob-cc-admin', 'lrobCcAdmin', [

@@ -47,6 +47,17 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+/**
+ * Cache-busting version for a bundled asset: its file mtime so any edit (even
+ * within the same plugin version) forces browsers to refetch. Falls back to the
+ * plugin version if the file is unreadable.
+ */
+function lrob_cc_asset_ver(string $relative_path): string
+{
+    $mtime = @filemtime(LROB_CC_PATH . ltrim($relative_path, '/'));
+    return $mtime !== false ? (string) $mtime : LROB_CC_VERSION;
+}
+
 register_activation_hook(__FILE__, [\LRob\CookieConsent\Activator::class, 'activate']);
 register_deactivation_hook(__FILE__, [\LRob\CookieConsent\Deactivator::class, 'deactivate']);
 

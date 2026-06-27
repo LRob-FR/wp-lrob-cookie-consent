@@ -40,10 +40,10 @@ final class Assets
             return;
         }
 
-        wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], LROB_CC_VERSION);
+        wp_enqueue_style('lrob-cc-banner', LROB_CC_URL . 'assets/css/banner.css', [], lrob_cc_asset_ver('assets/css/banner.css'));
         wp_add_inline_style('lrob-cc-banner', Appearance::inline_css());
 
-        wp_enqueue_script('lrob-cc-consent', LROB_CC_URL . 'assets/js/consent.js', [], LROB_CC_VERSION, true);
+        wp_enqueue_script('lrob-cc-consent', LROB_CC_URL . 'assets/js/consent.js', [], lrob_cc_asset_ver('assets/js/consent.js'), true);
         wp_localize_script('lrob-cc-consent', 'lrobCcData', $this->data());
     }
 

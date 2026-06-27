@@ -39,8 +39,10 @@
 	z-index: 99999;
 }
 
+/* Must beat the position rules below (same specificity set display:flex), or a
+   full-width/centre banner stays visible while [hidden] and flashes on show. */
 #lrob-cc-banner[hidden] {
-	display: none;
+	display: none !important;
 }
 
 /* Entrance animation: a single keyframe whose start state is composed from

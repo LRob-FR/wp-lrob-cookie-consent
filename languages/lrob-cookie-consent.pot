@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T00:10:55+00:00\n"
+"POT-Creation-Date: 2026-06-27T00:26:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -315,30 +315,43 @@ msgstr ""
 msgid "Still scanning — results so far:"
 msgstr ""
 
-#. translators: %d: number of pages scanned.
+#: src/Admin/SettingsPage.php:248
+msgid "added"
+msgstr ""
+
 #: src/Admin/SettingsPage.php:249
+msgid "Found on these pages"
+msgstr ""
+
+#. translators: %d: number of additional pages not listed.
+#: src/Admin/SettingsPage.php:251
+msgid "…and %d more"
+msgstr ""
+
+#. translators: %d: number of pages scanned.
+#: src/Admin/SettingsPage.php:253
 msgid "Scanned %d pages."
 msgstr ""
 
 #. translators: %1$d: current page, %2$d: total pages.
-#: src/Admin/SettingsPage.php:251
+#: src/Admin/SettingsPage.php:255
 msgid "Scanning page %1$d of %2$d…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:252
+#: src/Admin/SettingsPage.php:256
 msgid "Some pages could not be reached due to an SSL certificate error."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:253
+#: src/Admin/SettingsPage.php:257
 msgid "Retry ignoring SSL"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:261
+#: src/Admin/SettingsPage.php:265
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:397
-#: src/Admin/SettingsPage.php:406
+#: src/Admin/SettingsPage.php:401
+#: src/Admin/SettingsPage.php:410
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -404,7 +417,7 @@ msgstr ""
 msgid "Customize"
 msgstr ""
 
-#: src/Frontend/Banner.php:74
+#: src/Frontend/Banner.php:71
 msgid "Inline script"
 msgstr ""
 

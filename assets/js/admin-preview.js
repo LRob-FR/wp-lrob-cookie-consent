@@ -311,6 +311,31 @@
 	var scanBtn = document.getElementById('lrob-cc-scan-btn');
 	var scanResults = document.getElementById('lrob-cc-scan-results');
 
+	// Popup listing the pages a detected resource was found on.
+	function openPagesPopup(r) {
+		var pages = r.pages || [];
+		var overlay = document.createElement('div');
+		overlay.className = 'lrob-cc-modal-overlay';
+		var items = pages.map(function (p) {
+			return '<li><a href="' + escapeHtml(p) + '" target="_blank" rel="noopener">' + escapeHtml(p) + '</a></li>';
+		});
+		if ((r.pageCount || pages.length) > pages.length) {
+			items.push('<li class="description">' + (A.i18n.andMore || '…and %d more').replace('%d', (r.pageCount - pages.length)) + '</li>');
+		}
+		overlay.innerHTML = '<div class="lrob-cc-modal" role="dialog" aria-modal="true"><div class="lrob-cc-modal-body">' +
+			'<h2>' + escapeHtml((A.i18n.foundOn || 'Found on these pages') + ' — ' + r.pattern) + '</h2>' +
+			'<ul class="lrob-cc-pages-list">' + items.join('') + '</ul></div>' +
+			'<div class="lrob-cc-modal-foot"></div></div>';
+		document.body.appendChild(overlay);
+		var closeBtn = document.createElement('button');
+		closeBtn.type = 'button';
+		closeBtn.className = 'button';
+		closeBtn.textContent = A.i18n.wizClose || 'Close';
+		closeBtn.onclick = function () { if (overlay.parentNode) { document.body.removeChild(overlay); } };
+		overlay.querySelector('.lrob-cc-modal-foot').appendChild(closeBtn);
+		overlay.addEventListener('click', function (e) { if (e.target === overlay) { document.body.removeChild(overlay); } });
+	}
+
 	function renderScan(data) {
 		scanResults.innerHTML = '';
 		if (data.partial) {
@@ -339,29 +364,37 @@
 			var optionsHtml = catList.map(function (c) { return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.label) + '</option>'; }).join('');
 			var rowsHtml = '';
 			res.forEach(function (r, idx) {
-				rowsHtml += '<tr>' +
-					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '" checked/></td>' +
+				var added = !!(typeof ruleRowByPattern === 'function' && ruleRowByPattern(r.pattern));
+				var count = r.pageCount || (r.pages ? r.pages.length : 0);
+				rowsHtml += '<tr' + (added ? ' class="lrob-cc-scan-done"' : '') + '>' +
+					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '"' + (added ? ' disabled' : ' checked') + '/></td>' +
 					'<td><code>' + escapeHtml(r.pattern) + '</code></td>' +
 					'<td>' + escapeHtml(r.type) + '</td>' +
-					'<td><select class="lrob-cc-scan-cat" data-i="' + idx + '">' + optionsHtml + '</select></td>' +
+					'<td>' + (count ? '<a href="#" class="lrob-cc-scan-pages" data-i="' + idx + '">' + count + '</a>' : '0') + '</td>' +
+					'<td><select class="lrob-cc-scan-cat" data-i="' + idx + '"' + (added ? ' disabled' : '') + '>' + optionsHtml + '</select></td>' +
 					'<td>' + escapeHtml(r.service || '') + '</td>' +
-					'<td>' + (r.known
-						? '<span class="lrob-cc-badge is-known">' + (A.i18n.known || 'known') + '</span>'
-						: '<span class="lrob-cc-badge">' + (A.i18n.unknown || 'review') + '</span>') + '</td>' +
+					'<td>' + (added
+						? '<span class="lrob-cc-badge is-added">' + (A.i18n.alreadyAdded || 'added') + '</span>'
+						: (r.known
+							? '<span class="lrob-cc-badge is-known">' + (A.i18n.known || 'known') + '</span>'
+							: '<span class="lrob-cc-badge">' + (A.i18n.unknown || 'review') + '</span>')) + '</td>' +
 					'</tr>';
 			});
 			var table = document.createElement('table');
 			table.className = 'widefat striped lrob-cc-scan-table';
-			table.innerHTML = '<thead><tr><th><input type="checkbox" class="lrob-cc-scan-all" checked title="' + escapeHtml(A.i18n.selectAll || 'Select all') + '"/></th><th>pattern</th><th>type</th><th>category</th><th>service</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody>';
+			table.innerHTML = '<thead><tr><th><input type="checkbox" class="lrob-cc-scan-all" checked title="' + escapeHtml(A.i18n.selectAll || 'Select all') + '"/></th><th>pattern</th><th>type</th><th>pages</th><th>category</th><th>service</th><th></th></tr></thead><tbody>' + rowsHtml + '</tbody>';
 			scanResults.appendChild(table);
 			res.forEach(function (r, idx) {
 				var sel = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + idx + '"]');
 				if (sel && r.category) { sel.value = r.category; }
 			});
+			scanResults.querySelectorAll('.lrob-cc-scan-pages').forEach(function (a) {
+				a.addEventListener('click', function (e) { e.preventDefault(); openPagesPopup(res[a.getAttribute('data-i')]); });
+			});
 			var master = scanResults.querySelector('.lrob-cc-scan-all');
 			if (master) {
 				master.addEventListener('change', function () {
-					scanResults.querySelectorAll('.lrob-cc-scan-pick').forEach(function (cb) { cb.checked = master.checked; });
+					scanResults.querySelectorAll('.lrob-cc-scan-pick:not(:disabled)').forEach(function (cb) { cb.checked = master.checked; });
 				});
 			}
 
@@ -374,6 +407,7 @@
 				scanResults.querySelectorAll('.lrob-cc-scan-pick:checked').forEach(function (cb) {
 					var i = cb.getAttribute('data-i');
 					var r = res[i];
+					if (typeof ruleRowByPattern === 'function' && ruleRowByPattern(r.pattern)) { return; } // never duplicate
 					var cat = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + i + '"]').value;
 					addRuleRow(r.pattern, cat, r.service || '');
 					lastRow = rulesRows ? rulesRows.lastElementChild : null;
@@ -439,6 +473,20 @@
 		if (scanProgress) { scanProgress.hidden = true; }
 	}
 
+	// Merge a detection into the aggregate, unioning the pages it was found on.
+	function mergeRes(agg, r) {
+		var e = agg[r.pattern];
+		if (!e) {
+			e = agg[r.pattern] = { pattern: r.pattern, host: r.host, type: r.type, category: r.category, service: r.service, known: r.known, pages: [], pageCount: 0 };
+		}
+		(r.pages || []).forEach(function (p) {
+			if (e.pages.indexOf(p) === -1) {
+				e.pageCount++;
+				if (e.pages.length < 100) { e.pages.push(p); }
+			}
+		});
+	}
+
 	function scanUrls(urls, insecure) {
 		var agg = {}, cookies = [], sslErrors = 0, i = 0;
 		if (scanBar) { scanBar.max = urls.length; scanBar.value = 0; }
@@ -477,7 +525,7 @@
 				var before = Object.keys(agg).length + cookies.length;
 				if (json.success && json.data) {
 					if (json.data.error === 'ssl') { sslErrors++; }
-					(json.data.resources || []).forEach(function (r) { agg[r.pattern] = r; });
+					(json.data.resources || []).forEach(function (r) { mergeRes(agg, r); });
 					(json.data.cookies || []).forEach(function (c) { if (cookies.indexOf(c) === -1) { cookies.push(c); } });
 				}
 				i++;
@@ -501,7 +549,7 @@
 			}
 			var d = json.data;
 			var before = Object.keys(agg).length;
-			(d.resources || []).forEach(function (r) { agg[r.pattern] = r; });
+			(d.resources || []).forEach(function (r) { mergeRes(agg, r); });
 			if (scanBar) { scanBar.max = d.total || 1; scanBar.value = Math.min(d.processed || 0, d.total || 0); }
 			if (scanProgressText) {
 				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')

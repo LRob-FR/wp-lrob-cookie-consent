@@ -245,6 +245,10 @@ final class SettingsPage
                 'scannedUrls'  => __('Scanned:', 'lrob-cookie-consent'),
                 'selectAll'    => __('Select all', 'lrob-cookie-consent'),
                 'scanPartial'  => __('Still scanning — results so far:', 'lrob-cookie-consent'),
+                'alreadyAdded' => __('added', 'lrob-cookie-consent'),
+                'foundOn'      => __('Found on these pages', 'lrob-cookie-consent'),
+                /* translators: %d: number of additional pages not listed. */
+                'andMore'      => __('…and %d more', 'lrob-cookie-consent'),
                 /* translators: %d: number of pages scanned. */
                 'scannedCount' => __('Scanned %d pages.', 'lrob-cookie-consent'),
                 /* translators: %1$d: current page, %2$d: total pages. */

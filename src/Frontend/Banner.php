@@ -53,7 +53,6 @@ final class Banner
     {
         $texts = self::texts();
         $labels = self::category_labels();
-        $optional = Categories::optional();
         $position = (string) Options::get('position');
         $show_deny = (int) Options::get('show_deny') === 1;
         $show_save = (int) Options::get('show_save') === 1;
@@ -62,21 +61,27 @@ final class Banner
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];
         $watermark = (int) Options::get('watermark') === 1;
 
-        // What each category blocks, for the optional "show sources" disclosure.
-        $show_sources = (int) Options::get('show_sources') === 1;
+        // Map each category to what it blocks (services + inline scripts).
+        $compiled = \LRob\CookieConsent\Support\Rules::compiled();
         $sources = [];
-        if ($show_sources) {
-            $compiled = \LRob\CookieConsent\Support\Rules::compiled();
-            foreach ($compiled['rules'] as $r) {
-                $sources[$r['category']][] = $r['service'] !== '' ? $r['service'] : $r['pattern'];
-            }
-            foreach ($compiled['inline'] as $in) {
-                $sources[$in['category']][] = __('Inline script', 'lrob-cookie-consent');
-            }
-            foreach ($sources as $cat => $list) {
-                $sources[$cat] = array_values(array_unique($list));
-            }
+        foreach ($compiled['rules'] as $r) {
+            $sources[$r['category']][] = $r['service'] !== '' ? $r['service'] : $r['pattern'];
         }
+        foreach ($compiled['inline'] as $in) {
+            $sources[$in['category']][] = __('Inline script', 'lrob-cookie-consent');
+        }
+        foreach ($sources as $cat => $list) {
+            $sources[$cat] = array_values(array_unique($list));
+        }
+
+        // Only offer optional categories that actually block something — an empty
+        // category is meaningless to consent to and just adds clutter.
+        $optional = array_values(array_filter(
+            Categories::optional(),
+            static fn (string $cat): bool => !empty($sources[$cat])
+        ));
+
+        $show_sources = (int) Options::get('show_sources') === 1;
 
         ob_start();
         include LROB_CC_PATH . 'views/banner.php';

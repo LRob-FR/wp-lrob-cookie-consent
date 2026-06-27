@@ -88,7 +88,7 @@ final class LocalScanner implements ScanProvider
             }
         }
 
-        $this->collect(wp_remote_retrieve_body($response), '', $services, $site_host, $resources);
+        $this->collect(wp_remote_retrieve_body($response), $url, $services, $site_host, $resources);
 
         return ['resources' => array_values($resources), 'cookies' => $cookies, 'error' => ''];
     }
@@ -135,16 +135,17 @@ final class LocalScanner implements ScanProvider
             // contains the rendered "/embed" iframe src.
             $haystack = strtolower($content);
             foreach (self::detection_map() as $d) {
-                if (isset($resources[$d['pattern']])) {
-                    continue;
-                }
                 foreach ($d['needles'] as $needle) {
                     if (str_contains($haystack, $needle)) {
-                        $resources[$d['pattern']] = [
-                            'pattern' => $d['pattern'], 'host' => '', 'type' => 'embed',
-                            'category' => $d['category'], 'service' => $d['service'],
-                            'known' => true, 'sample' => $sample,
-                        ];
+                        if (isset($resources[$d['pattern']])) {
+                            $this->add_page($resources[$d['pattern']], $sample);
+                        } else {
+                            $resources[$d['pattern']] = [
+                                'pattern' => $d['pattern'], 'host' => '', 'type' => 'embed',
+                                'category' => $d['category'], 'service' => $d['service'],
+                                'known' => true, 'pages' => [$sample],
+                            ];
+                        }
                         break;
                     }
                 }
@@ -190,7 +191,7 @@ final class LocalScanner implements ScanProvider
      * @param list<array{label:string,pattern:string,category:string,service:string}> $services
      * @param array<string,array<string,mixed>> $resources
      */
-    private function collect(string $markup, string $sample, array $services, string $site_host, array &$resources): void
+    private function collect(string $markup, string $page, array $services, string $site_host, array &$resources): void
     {
         if ($markup === '' || !preg_match_all('/<(script|iframe|img|link)\b[^>]*?\b(?:src|href)\s*=\s*["\']([^"\']+)["\']/i', $markup, $matches, PREG_SET_ORDER)) {
             return;
@@ -210,7 +211,9 @@ final class LocalScanner implements ScanProvider
             if ($pattern === '') {
                 $pattern = $host;
             }
+            $where = $page !== '' ? $page : $src;
             if (isset($resources[$pattern])) {
+                $this->add_page($resources[$pattern], $where);
                 continue;
             }
             $resources[$pattern] = [
@@ -220,8 +223,16 @@ final class LocalScanner implements ScanProvider
                 'category' => $key['category'] ?? '',
                 'service'  => $key['service'] ?? $host,
                 'known'    => $key !== null,
-                'sample'   => $sample !== '' ? $sample : $src,
+                'pages'    => [$where],
             ];
+        }
+    }
+
+    /** Track where a resource was seen, capped so a site-wide script stays light. */
+    private function add_page(array &$resource, string $page): void
+    {
+        if ($page !== '' && !in_array($page, $resource['pages'], true) && count($resource['pages']) < 100) {
+            $resource['pages'][] = $page;
         }
     }
 

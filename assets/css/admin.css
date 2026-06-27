@@ -405,6 +405,28 @@
 	background: #d6f0d6;
 }
 
+.lrob-cc-badge.is-added {
+	background: #dbe7ff;
+}
+
+/* Already-in-rules rows are dimmed and not selectable. */
+.lrob-cc-scan-done {
+	opacity: 0.55;
+}
+
+.lrob-cc-pages-list {
+	max-height: 320px;
+	overflow: auto;
+	margin: 0;
+	list-style: none;
+}
+
+.lrob-cc-pages-list li {
+	padding: 3px 0;
+	border-bottom: 1px solid #f0f0f1;
+	word-break: break-all;
+}
+
 /* Logo media field. */
 .lrob-cc-logo-field {
 	display: flex;

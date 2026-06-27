@@ -159,11 +159,11 @@
 	border: 1px solid #dcdcde;
 	border-radius: 6px;
 	position: relative;
-	aspect-ratio: 1 / 1;
-	/* Explicit width: the banner inside is absolutely positioned and contributes
-	   no width, so without this the square collapses to nothing. */
-	width: 360px;
-	max-width: 100%;
+	/* Full column width (width:100% is explicit, so the absolutely-positioned
+	   banner inside doesn't collapse it) with a fixed, sane height — not a tall
+	   square — so it shows position + margins without forcing a scroll. */
+	width: 100%;
+	height: 440px;
 	overflow: hidden;
 }
 
@@ -399,7 +399,7 @@
 /* Category grid (immutable built-ins shown as cards). */
 .lrob-cc-cat-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 	gap: 10px;
 	max-width: 920px;
 	margin: 10px 0 16px;
@@ -416,11 +416,15 @@
 	background: #f6f7f7;
 }
 
-.lrob-cc-cat-card strong {
-	display: block;
+.lrob-cc-cat-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
 }
 
 .lrob-cc-cat-badge {
+	flex: none;
 	display: inline-block;
 	font-size: 10px;
 	text-transform: uppercase;
@@ -429,13 +433,30 @@
 	background: #e2e4e7;
 	border-radius: 8px;
 	padding: 1px 7px;
-	margin: 5px 0;
+}
+
+.lrob-cc-cat-card-body {
+	margin-top: 6px;
 }
 
 .lrob-cc-cat-card-desc {
-	display: block;
 	font-size: 12px;
 	color: #50575e;
+}
+
+.lrob-cc-cat-edit {
+	background: none;
+	border: 0;
+	padding: 0 2px;
+	margin-left: 4px;
+	cursor: pointer;
+	color: #2271b1;
+	line-height: 1;
+	vertical-align: baseline;
+}
+
+.lrob-cc-cat-edit:hover {
+	color: #135e96;
 }
 
 .lrob-cc-cat-card-desc-input {
@@ -443,6 +464,9 @@
 	width: 100%;
 	margin-top: 6px;
 	font-size: 12px;
+	line-height: 1.4;
+	min-height: 60px;
+	resize: vertical;
 }
 
 .lrob-cc-scan-scope {

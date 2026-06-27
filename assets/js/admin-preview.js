@@ -179,6 +179,17 @@
 	$('[data-toggle-text]').each(function () { syncTextToggle(this); });
 	$(document).on('change', '[data-toggle-text]', function () { syncTextToggle(this); });
 
+	// Pencil reveals the built-in category's description editor.
+	$(document).on('click', '.lrob-cc-cat-edit', function () {
+		var body = this.closest('.lrob-cc-cat-card-body');
+		if (!body) { return; }
+		var ta = body.querySelector('.lrob-cc-cat-card-desc-input');
+		var desc = body.querySelector('.lrob-cc-cat-card-desc');
+		if (ta) { ta.hidden = false; ta.focus(); }
+		if (desc) { desc.hidden = true; }
+		this.hidden = true;
+	});
+
 	// Duration "Default" buttons + restore default when a field is emptied.
 	$(document).on('click', '.lrob-cc-default-btn', function () {
 		var input = document.querySelector('[name="' + this.getAttribute('data-target') + '"]');

@@ -372,32 +372,38 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             <h3><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?> <?php $help(__('Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed. The built-in categories below are fixed; rename their wording via translation. You can add your own custom categories.', 'lrob-cookie-consent')); ?></h3>
             <?php
             $cat_overrides = is_array($o['cat_desc_overrides'] ?? null) ? $o['cat_desc_overrides'] : [];
-            $cat_desc_field = static function (string $slug) use ($option, $cat_overrides): void {
+            // Card: title + badge on one line; description shown as text with a
+            // pencil to reveal the (hidden) edit field.
+            $cat_card = static function (string $slug, string $badge) use ($option, $cat_overrides, $labels): void {
+                $pencil = '<svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M4 13.5V16h2.5l7.4-7.4-2.5-2.5L4 13.5zM15.7 6.3a1 1 0 0 0 0-1.4l-1.6-1.6a1 1 0 0 0-1.4 0l-1.2 1.2 2.5 2.5 1.7-1.7z"/></svg>';
                 printf(
-                    '<input type="text" class="lrob-cc-cat-card-desc-input" name="%s[cat_desc_overrides][%s]" value="%s" placeholder="%s" aria-label="%s" />',
+                    '<div class="lrob-cc-cat-card is-locked">'
+                        . '<div class="lrob-cc-cat-card-head"><strong>%1$s</strong><span class="lrob-cc-cat-badge">%2$s</span></div>'
+                        . '<div class="lrob-cc-cat-card-body">'
+                            . '<span class="lrob-cc-cat-card-desc">%3$s</span>'
+                            . '<button type="button" class="lrob-cc-cat-edit" aria-label="%4$s" title="%4$s">%5$s</button>'
+                            . '<textarea class="lrob-cc-cat-card-desc-input" rows="3" hidden name="%6$s[cat_desc_overrides][%7$s]" placeholder="%8$s">%9$s</textarea>'
+                        . '</div>'
+                    . '</div>',
+                    esc_html($labels[$slug]['title']),
+                    esc_html($badge),
+                    esc_html($labels[$slug]['desc']),
+                    esc_attr__('Edit description', 'lrob-cookie-consent'),
+                    $pencil,
                     esc_attr($option),
                     esc_attr($slug),
-                    esc_attr((string) ($cat_overrides[$slug] ?? '')),
                     esc_attr(\LRob\CookieConsent\Support\Categories::default_desc($slug)),
-                    esc_attr__('Description shown to visitors', 'lrob-cookie-consent')
+                    esc_textarea((string) ($cat_overrides[$slug] ?? ''))
                 );
             };
             ?>
             <div class="lrob-cc-cat-grid">
-                <div class="lrob-cc-cat-card is-locked">
-                    <strong><?php echo esc_html($labels['functional']['title']); ?></strong>
-                    <span class="lrob-cc-cat-badge"><?php esc_html_e('always on', 'lrob-cookie-consent'); ?></span>
-                    <?php $cat_desc_field('functional'); ?>
-                </div>
+                <?php $cat_card('functional', __('always on', 'lrob-cookie-consent')); ?>
                 <?php foreach ($default_categories as $slug) : ?>
-                    <div class="lrob-cc-cat-card is-locked">
-                        <strong><?php echo esc_html($labels[$slug]['title']); ?></strong>
-                        <span class="lrob-cc-cat-badge"><?php esc_html_e('built-in', 'lrob-cookie-consent'); ?></span>
-                        <?php $cat_desc_field($slug); ?>
-                    </div>
+                    <?php $cat_card($slug, __('built-in', 'lrob-cookie-consent')); ?>
                 <?php endforeach; ?>
             </div>
-            <p class="description"><?php esc_html_e('Built-in category names are fixed; you can customise their descriptions (leave blank for the default).', 'lrob-cookie-consent'); ?></p>
+            <p class="description"><?php esc_html_e('Built-in category names are fixed; click the pencil to customise a description (leave blank for the default).', 'lrob-cookie-consent'); ?></p>
 
             <p class="lrob-cc-field-label"><?php esc_html_e('Custom categories', 'lrob-cookie-consent'); ?></p>
             <div id="lrob-cc-cats" data-name="<?php echo esc_attr($option); ?>">

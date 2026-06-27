@@ -244,6 +244,7 @@ final class SettingsPage
                 'cookiesSeen'  => __('Cookies set on scanned pages:', 'lrob-cookie-consent'),
                 'scannedUrls'  => __('Scanned:', 'lrob-cookie-consent'),
                 'selectAll'    => __('Select all', 'lrob-cookie-consent'),
+                'scanPartial'  => __('Still scanning — results so far:', 'lrob-cookie-consent'),
                 /* translators: %d: number of pages scanned. */
                 'scannedCount' => __('Scanned %d pages.', 'lrob-cookie-consent'),
                 /* translators: %1$d: current page, %2$d: total pages. */

@@ -313,6 +313,12 @@
 
 	function renderScan(data) {
 		scanResults.innerHTML = '';
+		if (data.partial) {
+			var p = document.createElement('p');
+			p.className = 'lrob-cc-hint';
+			p.textContent = A.i18n.scanPartial || 'Still scanning — results so far:';
+			scanResults.appendChild(p);
+		}
 		if (data.urls && data.urls.length) {
 			var u = document.createElement('p');
 			u.className = 'description';
@@ -424,7 +430,7 @@
 			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body
 		}).then(function (r) { return r.text(); }).then(function (t) {
 			try { return JSON.parse(t); } catch (e) { return { success: false, data: { message: t.slice(0, 300) } }; }
-		});
+		}).catch(function () { return { success: false, data: {} }; });
 	}
 
 	function scanEnd() {
@@ -436,34 +442,39 @@
 	function scanUrls(urls, insecure) {
 		var agg = {}, cookies = [], sslErrors = 0, i = 0;
 		if (scanBar) { scanBar.max = urls.length; scanBar.value = 0; }
-		function next() {
-			if (i >= urls.length) {
-				scanEnd();
-				renderScan({ urls: urls, resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: cookies });
-				if (sslErrors > 0 && !insecure) {
-					var note = document.createElement('p');
-					note.className = 'lrob-cc-hint lrob-cc-hint-warning';
-					note.textContent = (A.i18n.sslFailed || 'Some pages had an SSL error.') + ' ';
-					var retry = document.createElement('button');
-					retry.type = 'button';
-					retry.className = 'button';
-					retry.textContent = A.i18n.sslRetry || 'Retry ignoring SSL';
-					retry.addEventListener('click', function () {
-						scanResults.innerHTML = '';
-						scanBtn.disabled = true;
-						if (scanProgress) { scanProgress.hidden = false; }
-						scanUrls(urls, true);
-					});
-					note.appendChild(retry);
-					scanResults.appendChild(note);
-				}
-				return;
+		function paint(done) {
+			renderScan({
+				urls: urls.slice(0, i),
+				resources: Object.keys(agg).map(function (k) { return agg[k]; }),
+				cookies: cookies,
+				partial: !done
+			});
+			if (done && sslErrors > 0 && !insecure) {
+				var note = document.createElement('p');
+				note.className = 'lrob-cc-hint lrob-cc-hint-warning';
+				note.textContent = (A.i18n.sslFailed || 'Some pages had an SSL error.') + ' ';
+				var retry = document.createElement('button');
+				retry.type = 'button';
+				retry.className = 'button';
+				retry.textContent = A.i18n.sslRetry || 'Retry ignoring SSL';
+				retry.addEventListener('click', function () {
+					scanResults.innerHTML = '';
+					scanBtn.disabled = true;
+					if (scanProgress) { scanProgress.hidden = false; }
+					scanUrls(urls, true);
+				});
+				note.appendChild(retry);
+				scanResults.appendChild(note);
 			}
+		}
+		function next() {
+			if (i >= urls.length) { scanEnd(); paint(true); return; }
 			if (scanProgressText) {
 				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
 					.replace('%1$d', i + 1).replace('%2$d', urls.length);
 			}
 			scanAjax('lrob_cc_scan_url', { url: urls[i], insecure: insecure ? 1 : 0 }).then(function (json) {
+				var before = Object.keys(agg).length + cookies.length;
 				if (json.success && json.data) {
 					if (json.data.error === 'ssl') { sslErrors++; }
 					(json.data.resources || []).forEach(function (r) { agg[r.pattern] = r; });
@@ -471,6 +482,9 @@
 				}
 				i++;
 				if (scanBar) { scanBar.value = i; }
+				// Repaint only when something new surfaced — shows results as they
+				// arrive and leaves partial findings on screen if a later page hangs.
+				if (Object.keys(agg).length + cookies.length !== before) { paint(false); }
 				next();
 			});
 		}
@@ -486,13 +500,20 @@
 				return;
 			}
 			var d = json.data;
+			var before = Object.keys(agg).length;
 			(d.resources || []).forEach(function (r) { agg[r.pattern] = r; });
 			if (scanBar) { scanBar.max = d.total || 1; scanBar.value = Math.min(d.processed || 0, d.total || 0); }
 			if (scanProgressText) {
 				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
 					.replace('%1$d', Math.min(d.processed || 0, d.total || 0)).replace('%2$d', d.total || 0);
 			}
-			if (!d.done) { scanDb(d.processed, agg); return; }
+			if (!d.done) {
+				if (Object.keys(agg).length !== before) {
+					renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [], partial: true });
+				}
+				scanDb(d.processed, agg);
+				return;
+			}
 			scanEnd();
 			renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [] });
 		});

@@ -160,7 +160,10 @@
 	border-radius: 6px;
 	position: relative;
 	aspect-ratio: 1 / 1;
-	max-width: 320px;
+	/* Explicit width: the banner inside is absolutely positioned and contributes
+	   no width, so without this the square collapses to nothing. */
+	width: 360px;
+	max-width: 100%;
 	overflow: hidden;
 }
 

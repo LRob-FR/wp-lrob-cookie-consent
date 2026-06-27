@@ -78,7 +78,7 @@ final class RestController
             'payload'        => substr((string) $request->get_body(), 0, 2000),
             'banner_version' => $banner_version,
             'config_version' => $version,
-            'ip_anon'        => (string) $stored_ip,
+            'ip'             => (string) $stored_ip,
             'user_agent'     => $ua,
         ]);
 

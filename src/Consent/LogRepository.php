@@ -19,7 +19,7 @@ final class LogRepository
     }
 
     /**
-     * @param array{consent_id:string,user_id:int,event_type:string,method:string,choices:string,payload:string,banner_version:string,config_version:string,ip_anon:string,user_agent:string} $row
+     * @param array{consent_id:string,user_id:int,event_type:string,method:string,choices:string,payload:string,banner_version:string,config_version:string,ip:string,user_agent:string} $row
      */
     public function insert(array $row): void
     {
@@ -39,7 +39,7 @@ final class LogRepository
                 'payload'        => $row['payload'],
                 'banner_version' => $row['banner_version'],
                 'config_version' => $row['config_version'],
-                'ip_anon'        => $row['ip_anon'],
+                'ip'             => $row['ip'],
                 'user_agent'     => $row['user_agent'],
             ],
             ['%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
@@ -157,7 +157,7 @@ final class LogRepository
                     $r['event_type'], $r['method'], $r['choices'], $r['banner_version'],
                     (string) ($texts['header'] ?? ''), (string) ($texts['message'] ?? ''),
                     (string) wp_json_encode($cats), (string) wp_json_encode($blocking),
-                    $r['config_version'], $r['ip_anon'], $r['user_agent'],
+                    $r['config_version'], $r['ip'], $r['user_agent'],
                 ]);
             }
             $offset += $batch;

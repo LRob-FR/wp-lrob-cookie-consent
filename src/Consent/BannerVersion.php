@@ -32,17 +32,32 @@ final class BannerVersion
             $blocking[$i['category']][] = ['pattern' => '(inline script)', 'service' => $i['name']];
         }
 
+        $categories = [];
+        foreach (Categories::labels() as $slug => $label) {
+            $categories[$slug] = ['title' => self::clean($label['title']), 'desc' => self::clean($label['desc'])];
+        }
+
         return [
             'texts' => [
-                'header'  => $t['header'],
-                'message' => $t['message'],
-                'accept'  => $t['accept'],
-                'deny'    => $t['deny'],
-                'save'    => $t['save'],
+                'header'  => self::clean($t['header']),
+                'message' => self::clean($t['message']),
+                'accept'  => self::clean($t['accept']),
+                'deny'    => self::clean($t['deny']),
+                'save'    => self::clean($t['save']),
             ],
-            'categories' => Categories::labels(),
+            'categories' => $categories,
             'blocking'   => $blocking,
         ];
+    }
+
+    /**
+     * Strip translation-plugin gettext markers (e.g. TranslatePress'
+     * #!trpst#…#!trpen# wrappers) so the snapshot stores clean text and its hash
+     * stays stable across the markers' changing internal IDs.
+     */
+    public static function clean(string $text): string
+    {
+        return trim((string) preg_replace('/#!trpst#.*?#!trpen#/s', '', $text));
     }
 
     public static function hash(): string

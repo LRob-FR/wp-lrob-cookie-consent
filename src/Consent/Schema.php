@@ -6,7 +6,7 @@ namespace LRob\CookieConsent\Consent;
 
 final class Schema
 {
-    public const DB_VERSION = 4;
+    public const DB_VERSION = 5;
     public const DB_VERSION_OPTION = 'lrob_cc_db_version';
 
     public static function table_name(): string
@@ -46,7 +46,7 @@ final class Schema
             payload text NOT NULL,
             banner_version varchar(40) NOT NULL DEFAULT '',
             config_version varchar(32) NOT NULL DEFAULT '',
-            ip_anon varchar(64) NOT NULL DEFAULT '',
+            ip varchar(64) NOT NULL DEFAULT '',
             user_agent varchar(255) NOT NULL DEFAULT '',
             PRIMARY KEY  (id),
             KEY created_at (created_at),
@@ -71,8 +71,25 @@ final class Schema
     /** Run the idempotent migration when the stored schema is behind. */
     public static function maybe_upgrade(): void
     {
-        if ((int) get_option(self::DB_VERSION_OPTION, 0) < self::DB_VERSION) {
-            self::create();
+        if ((int) get_option(self::DB_VERSION_OPTION, 0) >= self::DB_VERSION) {
+            return;
+        }
+        self::migrate();
+        self::create();
+    }
+
+    /** Column changes dbDelta can't make on its own. */
+    private static function migrate(): void
+    {
+        global $wpdb;
+        $table = self::table_name();
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+            return; // fresh install — create() builds it correctly
+        }
+        // v5: ip_anon → ip (an IP isn't necessarily anonymous).
+        $cols = $wpdb->get_col("DESC {$table}", 0);
+        if (is_array($cols) && in_array('ip_anon', $cols, true) && !in_array('ip', $cols, true)) {
+            $wpdb->query("ALTER TABLE {$table} CHANGE ip_anon ip varchar(64) NOT NULL DEFAULT ''");
         }
     }
 }

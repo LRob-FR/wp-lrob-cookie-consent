@@ -23,7 +23,8 @@ final class ConsentLogTable extends \WP_List_Table
             'cb'             => '<input type="checkbox" />',
             'created_at'     => __('Date (UTC)', 'lrob-cookie-consent'),
             'consent_id'     => __('Visitor ID', 'lrob-cookie-consent'),
-            'ip_anon'        => __('IP', 'lrob-cookie-consent'),
+            'ip'             => __('IP', 'lrob-cookie-consent'),
+            'user_id'        => __('WP user', 'lrob-cookie-consent'),
             'event_type'     => __('Event', 'lrob-cookie-consent'),
             'method'         => __('Act', 'lrob-cookie-consent'),
             'choices'        => __('Choices', 'lrob-cookie-consent'),
@@ -68,17 +69,33 @@ final class ConsentLogTable extends \WP_List_Table
     }
 
     /** @param array<string,mixed> $item */
-    protected function column_ip_anon($item): string
+    protected function column_ip($item): string
     {
-        $ip = (string) ($item['ip_anon'] ?? '');
+        $ip = (string) ($item['ip'] ?? '');
         if ($ip === '') {
             return '—';
         }
-        // Full IP shows as-is; a stored hash is shown truncated.
+        // Full IP shows as-is; a stored hash shows in full (it's the whole value).
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
             return esc_html($ip);
         }
-        return '<code title="' . esc_attr__('Stored as a salted hash', 'lrob-cookie-consent') . '">' . esc_html(substr($ip, 0, 12)) . '…</code>';
+        return '<code title="' . esc_attr__('Stored as a salted hash', 'lrob-cookie-consent') . '">' . esc_html($ip) . '</code>';
+    }
+
+    /** @param array<string,mixed> $item */
+    protected function column_user_id($item): string
+    {
+        $uid = (int) ($item['user_id'] ?? 0);
+        if ($uid <= 0) {
+            return '—';
+        }
+        $user = get_userdata($uid);
+        if (!$user) {
+            return '#' . $uid;
+        }
+        $url = get_edit_user_link($uid);
+        $name = $user->display_name !== '' ? $user->display_name : $user->user_login;
+        return $url ? sprintf('<a href="%s">%s</a>', esc_url($url), esc_html($name)) : esc_html($name);
     }
 
     /** @param array<string,mixed> $item */

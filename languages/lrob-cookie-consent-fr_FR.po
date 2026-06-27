@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T10:06:15+00:00\n"
+"POT-Creation-Date: 2026-06-27T10:14:55+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -55,30 +55,34 @@ msgid "IP"
 msgstr "IP"
 
 #: src/Admin/ConsentLogTable.php:27
+msgid "WP user"
+msgstr "Utilisateur WP"
+
+#: src/Admin/ConsentLogTable.php:28
 msgid "Event"
 msgstr "Événement"
 
-#: src/Admin/ConsentLogTable.php:28
+#: src/Admin/ConsentLogTable.php:29
 msgid "Act"
 msgstr "Action"
 
-#: src/Admin/ConsentLogTable.php:29
+#: src/Admin/ConsentLogTable.php:30
 msgid "Choices"
 msgstr "Choix"
 
-#: src/Admin/ConsentLogTable.php:30
+#: src/Admin/ConsentLogTable.php:31
 msgid "Cookie consent version"
 msgstr "Version du consentement"
 
-#: src/Admin/ConsentLogTable.php:31
+#: src/Admin/ConsentLogTable.php:32
 msgid "Renew by"
 msgstr "À renouveler avant"
 
-#: src/Admin/ConsentLogTable.php:47 src/Admin/ConsentLogTable.php:66
+#: src/Admin/ConsentLogTable.php:48 src/Admin/ConsentLogTable.php:67
 msgid "Delete"
 msgstr "Supprimer"
 
-#: src/Admin/ConsentLogTable.php:81
+#: src/Admin/ConsentLogTable.php:82
 msgid "Stored as a salted hash"
 msgstr "Stocké sous forme de hachage salé"
 
@@ -904,11 +908,11 @@ msgstr "Texte"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: views/admin-settings.php:153 views/admin-settings.php:598
+#: views/admin-settings.php:153 views/admin-settings.php:600
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:155 views/admin-settings.php:599
+#: views/admin-settings.php:155 views/admin-settings.php:601
 msgid "Message"
 msgstr "Message"
 
@@ -1561,15 +1565,15 @@ msgstr ""
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
 
-#: views/admin-settings.php:596
+#: views/admin-settings.php:598
 msgid "UTC"
 msgstr "UTC"
 
-#: views/admin-settings.php:600
+#: views/admin-settings.php:602
 msgid "Buttons"
 msgstr "Boutons"
 
-#: views/admin-settings.php:601
+#: views/admin-settings.php:603
 msgid "Categories & what was blocked"
 msgstr "Catégories et ce qui était bloqué"
 

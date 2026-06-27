@@ -591,13 +591,15 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
             $st = is_array($snap['texts'] ?? null) ? $snap['texts'] : [];
             $sc = is_array($snap['categories'] ?? null) ? $snap['categories'] : [];
             $sb = is_array($snap['blocking'] ?? null) ? $snap['blocking'] : [];
+            // Strip translation-plugin markers from older snapshots at display time.
+            $clean = static fn ($s): string => \LRob\CookieConsent\Consent\BannerVersion::clean((string) $s);
             ?>
             <details class="lrob-cc-version" id="lrob-cc-ver-<?php echo esc_attr((string) $v['version_hash']); ?>">
                 <summary><code><?php echo esc_html(substr((string) $v['version_hash'], 0, 12)); ?></code> — <?php echo esc_html((string) $v['created_at']); ?> <?php esc_html_e('UTC', 'lrob-cookie-consent'); ?></summary>
                 <div class="lrob-cc-version-body">
-                    <p><strong><?php esc_html_e('Header', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['header'] ?? '')); ?></p>
-                    <p><strong><?php esc_html_e('Message', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html((string) ($st['message'] ?? '')); ?></p>
-                    <p><strong><?php esc_html_e('Buttons', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html(trim(($st['accept'] ?? '') . ' / ' . ($st['deny'] ?? '') . ' / ' . ($st['save'] ?? ''), ' /')); ?></p>
+                    <p><strong><?php esc_html_e('Header', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html($clean($st['header'] ?? '')); ?></p>
+                    <p><strong><?php esc_html_e('Message', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html($clean($st['message'] ?? '')); ?></p>
+                    <p><strong><?php esc_html_e('Buttons', 'lrob-cookie-consent'); ?>:</strong> <?php echo esc_html(trim($clean($st['accept'] ?? '') . ' / ' . $clean($st['deny'] ?? '') . ' / ' . $clean($st['save'] ?? ''), ' /')); ?></p>
                     <p><strong><?php esc_html_e('Categories & what was blocked', 'lrob-cookie-consent'); ?>:</strong></p>
                     <ul class="lrob-cc-version-cats">
                         <?php foreach ($sc as $slug => $cat) :
@@ -607,7 +609,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             $blocked = is_array($sb[$slug] ?? null) ? $sb[$slug] : [];
                             ?>
                             <li>
-                                <strong><?php echo esc_html((string) ($cat['title'] ?? $slug)); ?></strong> — <?php echo esc_html((string) ($cat['desc'] ?? '')); ?>
+                                <strong><?php echo esc_html($clean($cat['title'] ?? $slug)); ?></strong> — <?php echo esc_html($clean($cat['desc'] ?? '')); ?>
                                 <?php if ($blocked) : ?>
                                     <span class="lrob-cc-version-blocked">
                                         <?php

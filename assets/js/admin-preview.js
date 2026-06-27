@@ -571,17 +571,22 @@
 	}
 
 	// Merge a detection into the aggregate, unioning the pages it was found on.
+	// Returns true if a new resource or a new page was added (so the table can
+	// refresh its live page counts, not just on first detection).
 	function mergeRes(agg, r) {
-		var e = agg[r.pattern];
+		var e = agg[r.pattern], changed = false;
 		if (!e) {
 			e = agg[r.pattern] = { pattern: r.pattern, host: r.host, type: r.type, category: r.category, service: r.service, known: r.known, pages: [], pageCount: 0 };
+			changed = true;
 		}
 		(r.pages || []).forEach(function (p) {
 			if (e.pages.indexOf(p) === -1) {
 				e.pageCount++;
 				if (e.pages.length < 100) { e.pages.push(p); }
+				changed = true;
 			}
 		});
+		return changed;
 	}
 
 	function scanUrls(urls, insecure) {
@@ -619,17 +624,17 @@
 					.replace('%1$d', i + 1).replace('%2$d', urls.length);
 			}
 			scanAjax('lrob_cc_scan_url', { url: urls[i], insecure: insecure ? 1 : 0 }).then(function (json) {
-				var before = Object.keys(agg).length + cookies.length;
+				var changed = false;
 				if (json.success && json.data) {
 					if (json.data.error === 'ssl') { sslErrors++; }
-					(json.data.resources || []).forEach(function (r) { mergeRes(agg, r); });
-					(json.data.cookies || []).forEach(function (c) { if (cookies.indexOf(c) === -1) { cookies.push(c); } });
+					(json.data.resources || []).forEach(function (r) { if (mergeRes(agg, r)) { changed = true; } });
+					(json.data.cookies || []).forEach(function (c) { if (cookies.indexOf(c) === -1) { cookies.push(c); changed = true; } });
 				}
 				i++;
 				if (scanBar) { scanBar.value = i; }
-				// Repaint only when something new surfaced — shows results as they
+				// Repaint whenever a resource OR a page count changed — shows results as they
 				// arrive and leaves partial findings on screen if a later page hangs.
-				if (Object.keys(agg).length + cookies.length !== before) { paint(false); }
+				if (changed) { paint(false); }
 				next();
 			});
 		}
@@ -645,15 +650,15 @@
 				return;
 			}
 			var d = json.data;
-			var before = Object.keys(agg).length;
-			(d.resources || []).forEach(function (r) { mergeRes(agg, r); });
+			var changed = false;
+			(d.resources || []).forEach(function (r) { if (mergeRes(agg, r)) { changed = true; } });
 			if (scanBar) { scanBar.max = d.total || 1; scanBar.value = Math.min(d.processed || 0, d.total || 0); }
 			if (scanProgressText) {
 				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
 					.replace('%1$d', Math.min(d.processed || 0, d.total || 0)).replace('%2$d', d.total || 0);
 			}
 			if (!d.done) {
-				if (Object.keys(agg).length !== before) {
+				if (changed) {
 					renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [], partial: true });
 				}
 				scanDb(d.processed, agg);

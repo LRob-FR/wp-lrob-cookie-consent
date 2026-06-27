@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T00:34:56+00:00\n"
+"POT-Creation-Date: 2026-06-27T00:37:56+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -184,8 +184,8 @@ msgstr "Annuler"
 
 #: src/Admin/SettingsPage.php:218 views/admin-settings.php:162
 #: views/admin-settings.php:189 views/admin-settings.php:357
-#: views/admin-settings.php:430 views/admin-settings.php:440
-#: views/admin-settings.php:458
+#: views/admin-settings.php:436 views/admin-settings.php:446
+#: views/admin-settings.php:464
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -834,11 +834,11 @@ msgstr "Texte"
 msgid "Presets"
 msgstr "Préréglages"
 
-#: views/admin-settings.php:144 views/admin-settings.php:514
+#: views/admin-settings.php:144 views/admin-settings.php:520
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:146 views/admin-settings.php:515
+#: views/admin-settings.php:146 views/admin-settings.php:521
 msgid "Message"
 msgstr "Message"
 
@@ -856,7 +856,11 @@ msgid ""
 "(functional) cookies. If something is genuinely required — a CAPTCHA, a "
 "payment script — list it under the functional category so it is referenced "
 "but never blocked."
-msgstr "Refuse toutes les catégories optionnelles et ne conserve que les cookies strictement nécessaires (fonctionnels). Si un élément est réellement indispensable — un CAPTCHA, un script de paiement — placez-le dans la catégorie fonctionnelle : il sera référencé mais jamais bloqué."
+msgstr ""
+"Refuse toutes les catégories optionnelles et ne conserve que les cookies "
+"strictement nécessaires (fonctionnels). Si un élément est réellement "
+"indispensable — un CAPTCHA, un script de paiement — placez-le dans la "
+"catégorie fonctionnelle : il sera référencé mais jamais bloqué."
 
 #: views/admin-settings.php:151 views/admin-settings.php:154
 msgid "Show"
@@ -1244,19 +1248,31 @@ msgstr ""
 "personnalisée. Le motif est comparé aux URL des scripts/iframes et au "
 "contenu des scripts inline."
 
-#: views/admin-settings.php:427 views/admin-settings.php:437
+#: views/admin-settings.php:425
+msgid "Pattern — text matched in script/iframe URLs & inline code"
+msgstr "Motif — texte recherché dans les URL de scripts/iframes et le code inline"
+
+#: views/admin-settings.php:426
+msgid "Category"
+msgstr "Catégorie"
+
+#: views/admin-settings.php:427
+msgid "Service name — shown to visitors"
+msgstr "Nom du service — affiché aux visiteurs"
+
+#: views/admin-settings.php:433 views/admin-settings.php:443
 msgid "pattern (e.g. google-analytics.com)"
 msgstr "motif (par ex. google-analytics.com)"
 
-#: views/admin-settings.php:429 views/admin-settings.php:439
+#: views/admin-settings.php:435 views/admin-settings.php:445
 msgid "Service name"
 msgstr "Nom du service"
 
-#: views/admin-settings.php:434
+#: views/admin-settings.php:440
 msgid "Add custom rule"
 msgstr "Ajouter une règle personnalisée"
 
-#: views/admin-settings.php:447
+#: views/admin-settings.php:453
 msgid ""
 "One rule per line: pattern | category | service name. The category must be "
 "one of your configured category slugs."
@@ -1264,11 +1280,11 @@ msgstr ""
 "Une règle par ligne : motif | catégorie | nom du service. La catégorie doit "
 "correspondre à l’un des slugs de catégorie que vous avez configurés."
 
-#: views/admin-settings.php:450
+#: views/admin-settings.php:456
 msgid "Inline scripts"
 msgstr "Scripts inline"
 
-#: views/admin-settings.php:450
+#: views/admin-settings.php:456
 msgid ""
 "Paste a snippet (GA4, Matomo…) and pick a category — injected inert, runs "
 "only after consent, no theme editing. Tip: Matomo cookieless and Cloudflare "
@@ -1281,50 +1297,50 @@ msgstr ""
 "nécessitent généralement aucun blocage, et bloquer un CAPTCHA peut casser "
 "les formulaires."
 
-#: views/admin-settings.php:462
+#: views/admin-settings.php:468
 msgid "Add inline script"
 msgstr "Ajouter un script inline"
 
-#: views/admin-settings.php:466
+#: views/admin-settings.php:472
 msgid "Save all settings"
 msgstr "Enregistrer tous les réglages"
 
-#: views/admin-settings.php:467
+#: views/admin-settings.php:473
 msgid "One save applies to the General, Banner and Cookies tabs together."
 msgstr ""
 "Un seul enregistrement s’applique conjointement aux onglets Général, "
 "Bannière et Cookies."
 
 #. translators: %s: number of stored consent records.
-#: views/admin-settings.php:476
+#: views/admin-settings.php:482
 msgid "Stored consent records: %s"
 msgstr "Enregistrements de consentement stockés : %s"
 
-#: views/admin-settings.php:479
+#: views/admin-settings.php:485
 msgid "Accepted all"
 msgstr "Tout accepté"
 
-#: views/admin-settings.php:480
+#: views/admin-settings.php:486
 msgid "Denied all"
 msgstr "Tout refusé"
 
-#: views/admin-settings.php:481
+#: views/admin-settings.php:487
 msgid "Customised"
 msgstr "Personnalisé"
 
-#: views/admin-settings.php:488
+#: views/admin-settings.php:494
 msgid "Export CSV"
 msgstr "Exporter en CSV"
 
-#: views/admin-settings.php:493
+#: views/admin-settings.php:499
 msgid "Delete all"
 msgstr "Tout supprimer"
 
-#: views/admin-settings.php:502
+#: views/admin-settings.php:508
 msgid "Cookie consent versions"
 msgstr "Versions du consentement"
 
-#: views/admin-settings.php:502
+#: views/admin-settings.php:508
 msgid ""
 "Each consent record links to the exact context shown then: banner text, what "
 "each category covers, AND what was blocked under each. Editing any of these "
@@ -1339,19 +1355,19 @@ msgstr ""
 "complet est conservé et inclus dans l’export CSV, et une version est "
 "supprimée dès qu’aucun enregistrement ne s’y rattache."
 
-#: views/admin-settings.php:504
+#: views/admin-settings.php:510
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
 
-#: views/admin-settings.php:512
+#: views/admin-settings.php:518
 msgid "UTC"
 msgstr "UTC"
 
-#: views/admin-settings.php:516
+#: views/admin-settings.php:522
 msgid "Buttons"
 msgstr "Boutons"
 
-#: views/admin-settings.php:517
+#: views/admin-settings.php:523
 msgid "Categories & what was blocked"
 msgstr "Catégories et ce qui était bloqué"
 

@@ -421,6 +421,12 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         </div>
                     </div>
                 <?php endforeach; ?>
+                <div class="lrob-cc-rule-row lrob-cc-rule-head">
+                    <span class="lrob-cc-rule-pattern"><?php esc_html_e('Pattern — text matched in script/iframe URLs & inline code', 'lrob-cookie-consent'); ?></span>
+                    <span class="lrob-cc-rule-category"><?php esc_html_e('Category', 'lrob-cookie-consent'); ?></span>
+                    <span class="lrob-cc-rule-service"><?php esc_html_e('Service name — shown to visitors', 'lrob-cookie-consent'); ?></span>
+                    <span class="lrob-cc-rule-remove" aria-hidden="true"></span>
+                </div>
                 <div id="lrob-cc-rule-rows">
                     <?php foreach ($rule_rows as $r) : ?>
                         <div class="lrob-cc-rule-row">

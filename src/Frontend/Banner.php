@@ -39,7 +39,7 @@ final class Banner
             'save'    => $get('text_save', __('Save preferences', 'lrob-cookie-consent')),
             'close'   => __('Close', 'lrob-cookie-consent'),
             'always'  => __('Always active', 'lrob-cookie-consent'),
-            'customize' => __('Customize', 'lrob-cookie-consent'),
+            'customize' => $get('text_customize', __('Customize', 'lrob-cookie-consent')),
         ];
     }
 

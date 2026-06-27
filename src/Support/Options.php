@@ -42,8 +42,10 @@ final class Options
 
             // Appearance
             'position'           => 'bottom-right', // top-left|top|top-right|center|bottom-left|bottom|bottom-right
-            'offset_x'           => 24,         // px from the side edge (corner positions)
-            'offset_y'           => 24,         // px from the top/bottom edge (corner positions)
+            'offset_preset'      => 'default',  // snug|default|spacious|custom (custom reveals value+unit)
+            'offset_x'           => 24,         // custom: distance from the side edge
+            'offset_y'           => 24,         // custom: distance from the top/bottom edge
+            'offset_unit'        => 'px',       // px|rem|em|vw|% — scalable units recommended
             'theme'              => 'auto',     // auto|light|dark|custom|...palettes
             'popup_size'         => 'small',    // small|medium|large (width)
             'density'            => 'cozy',     // compact|cozy|comfortable (spacing)
@@ -55,6 +57,7 @@ final class Options
             'align_text'         => 'left',
             'align_buttons'      => 'left',
             'align_footer'       => 'center',   // footer links default centred
+            'logo_height'        => 36,         // px max-height of the banner logo
             'footer_links'       => [],         // [ ['label'=>'', 'url'=>''], ... ]
 
             // Buttons + disclosure
@@ -82,6 +85,7 @@ final class Options
             'text_accept'        => '',
             'text_deny'          => '',
             'text_save'          => '',
+            'text_customize'     => '',
             'text_preset'        => '',         // remembered preset id, or 'custom'
         ];
     }

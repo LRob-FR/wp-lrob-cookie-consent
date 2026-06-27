@@ -21,18 +21,25 @@ $name = static fn (string $key): string => esc_attr($option . '[' . $key . ']');
 $checked = static fn (string $key) => checked(!empty($o[$key]), true, false);
 
 /** Segmented radio button group. */
+// A choice value is either a plain label string, or ['label'=>…, 'icon'=>dashicon].
 $seg = static function (string $key, array $choices) use ($o, $option, $name): void {
     echo '<div class="lrob-cc-segmented" role="radiogroup">';
     foreach ($choices as $value => $label) {
         $is = (string) $o[$key] === (string) $value;
+        $icon = is_array($label) ? (string) ($label['icon'] ?? '') : '';
+        $text = is_array($label) ? (string) ($label['label'] ?? '') : (string) $label;
+        $inner = $icon !== ''
+            ? sprintf('<span class="dashicons %s" aria-hidden="true"></span><span class="screen-reader-text">%s</span>', esc_attr($icon), esc_html($text))
+            : esc_html($text);
         printf(
-            '<label class="lrob-cc-seg%s"><input type="radio" name="%s" value="%s" data-field="%s" %s /><span>%s</span></label>',
+            '<label class="lrob-cc-seg%s" title="%s"><input type="radio" name="%s" value="%s" data-field="%s" %s /><span>%s</span></label>',
             $is ? ' is-active' : '',
+            esc_attr($text),
             $name($key),
             esc_attr((string) $value),
             esc_attr($key),
             checked($is, true, false),
-            esc_html((string) $label)
+            $inner
         );
     }
     echo '</div>';
@@ -154,6 +161,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?></th>
                             <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_save" data-toggle-text="text_save" name="<?php echo $name('show_save'); ?>" value="1" <?php echo $checked('show_save'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
                                 <input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($texts['save']); ?>"<?php echo empty($o['show_save']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
+                        <tr><th><?php esc_html_e('Customize button', 'lrob-cookie-consent'); ?> <?php $help(__('Shown only when category options are hidden behind a button (see Layout). It reveals the per-category choices.', 'lrob-cookie-consent')); ?></th>
+                            <td><input type="text" data-field="text_customize" name="<?php echo $name('text_customize'); ?>" value="<?php echo esc_attr((string) $o['text_customize']); ?>" placeholder="<?php echo esc_attr($texts['customize']); ?>" /></td></tr>
                         <tr><th><?php esc_html_e('Logo', 'lrob-cookie-consent'); ?></th>
                             <td>
                                 <div class="lrob-cc-logo-field">
@@ -162,6 +171,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                     <button type="button" class="button" id="lrob-cc-logo-select"><?php esc_html_e('Select logo', 'lrob-cookie-consent'); ?></button>
                                     <button type="button" class="button-link lrob-cc-logo-remove" id="lrob-cc-logo-remove" <?php echo $o['logo'] === '' ? 'hidden' : ''; ?>><?php esc_html_e('Remove', 'lrob-cookie-consent'); ?></button>
                                 </div>
+                                <label class="lrob-cc-logo-size"><?php esc_html_e('Max height', 'lrob-cookie-consent'); ?>
+                                    <input type="number" min="12" max="200" data-field="logo_height" name="<?php echo $name('logo_height'); ?>" value="<?php echo esc_attr((string) $o['logo_height']); ?>" class="small-text" /> px</label>
                             </td></tr>
                     </table>
 
@@ -207,15 +218,25 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         'bottom-right' => __('Bottom right', 'lrob-cookie-consent'),
                     ]); ?>
 
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Distance from the screen edges', 'lrob-cookie-consent'); ?> <?php $help(__('Gap between the banner and the screen edges when placed in a corner — increase it to clear a chat widget or other floating button.', 'lrob-cookie-consent')); ?></p>
-                    <p class="lrob-cc-offsets">
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Distance from the screen edges', 'lrob-cookie-consent'); ?> <?php $help(__('Gap between the banner and the screen edges when placed in a corner — increase it to clear a chat widget or other floating button. Choose a preset, or Custom to set your own value and unit (rem/em/% scale better across screens).', 'lrob-cookie-consent')); ?></p>
+                    <?php $seg('offset_preset', [
+                        'snug' => __('Snug', 'lrob-cookie-consent'),
+                        'default' => __('Default', 'lrob-cookie-consent'),
+                        'spacious' => __('Spacious', 'lrob-cookie-consent'),
+                        'custom' => __('Custom', 'lrob-cookie-consent'),
+                    ]); ?>
+                    <div class="lrob-cc-offsets" id="lrob-cc-offset-custom"<?php echo $o['offset_preset'] === 'custom' ? '' : ' hidden'; ?>>
                         <label><?php esc_html_e('Horizontal', 'lrob-cookie-consent'); ?>
-                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_x']); ?>" name="<?php echo $name('offset_x'); ?>" value="<?php echo esc_attr((string) $o['offset_x']); ?>" /> px</label>
-                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('offset_x'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_x']); ?>" name="<?php echo $name('offset_x'); ?>" value="<?php echo esc_attr((string) $o['offset_x']); ?>" /></label>
                         <label><?php esc_html_e('Vertical', 'lrob-cookie-consent'); ?>
-                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_y']); ?>" name="<?php echo $name('offset_y'); ?>" value="<?php echo esc_attr((string) $o['offset_y']); ?>" /> px</label>
-                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('offset_y'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button>
-                    </p>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_y']); ?>" name="<?php echo $name('offset_y'); ?>" value="<?php echo esc_attr((string) $o['offset_y']); ?>" /></label>
+                        <label><?php esc_html_e('Unit', 'lrob-cookie-consent'); ?>
+                            <select name="<?php echo $name('offset_unit'); ?>">
+                                <?php foreach (['px', 'rem', 'em', 'vw', '%'] as $u) : ?>
+                                    <option value="<?php echo esc_attr($u); ?>" <?php selected($o['offset_unit'], $u); ?>><?php echo esc_html($u); ?></option>
+                                <?php endforeach; ?>
+                            </select></label>
+                    </div>
 
                     <h3><?php esc_html_e('Appearance', 'lrob-cookie-consent'); ?></h3>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Colors', 'lrob-cookie-consent'); ?> <?php $help(__('Auto follows your theme via WordPress global-style tokens. The back-office preview may not match your theme exactly — always check the result on the front end.', 'lrob-cookie-consent')); ?></p>
@@ -259,27 +280,29 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         </table>
                     </div>
 
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Popup width', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('popup_size', ['small' => __('Small', 'lrob-cookie-consent'), 'medium' => __('Medium', 'lrob-cookie-consent'), 'large' => __('Large', 'lrob-cookie-consent')]); ?>
-
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Density (spacing)', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('density', ['compact' => __('Compact', 'lrob-cookie-consent'), 'cozy' => __('Cozy', 'lrob-cookie-consent'), 'comfortable' => __('Comfortable', 'lrob-cookie-consent')]); ?>
-
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Font size', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('font_size', ['small' => __('Small', 'lrob-cookie-consent'), 'medium' => __('Medium', 'lrob-cookie-consent'), 'large' => __('Large', 'lrob-cookie-consent')]); ?>
-
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Corners', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('shape', ['square' => __('Square', 'lrob-cookie-consent'), 'rounded' => __('Rounded', 'lrob-cookie-consent'), 'pill' => __('Pill', 'lrob-cookie-consent')]); ?>
-
                     <?php
-                    $align_choices = ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')];
+                    $align_choices = [
+                        'left'   => ['label' => __('Left', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-alignleft'],
+                        'center' => ['label' => __('Center', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-aligncenter'],
+                        'right'  => ['label' => __('Right', 'lrob-cookie-consent'), 'icon' => 'dashicons-editor-alignright'],
+                    ];
                     ?>
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Title alignment', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('align_title', $align_choices); ?>
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Text alignment', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('align_text', $align_choices); ?>
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Buttons alignment', 'lrob-cookie-consent'); ?></p>
-                    <?php $seg('align_buttons', $align_choices); ?>
+                    <div class="lrob-cc-fieldgrid">
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Popup width', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('popup_size', ['small' => __('Small', 'lrob-cookie-consent'), 'medium' => __('Medium', 'lrob-cookie-consent'), 'large' => __('Large', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Density (spacing)', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('density', ['compact' => __('Compact', 'lrob-cookie-consent'), 'cozy' => __('Cozy', 'lrob-cookie-consent'), 'comfortable' => __('Comfortable', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Font size', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('font_size', ['small' => __('Small', 'lrob-cookie-consent'), 'medium' => __('Medium', 'lrob-cookie-consent'), 'large' => __('Large', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Corners', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('shape', ['square' => __('Square', 'lrob-cookie-consent'), 'rounded' => __('Rounded', 'lrob-cookie-consent'), 'pill' => __('Pill', 'lrob-cookie-consent')]); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Title alignment', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('align_title', $align_choices); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Text alignment', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('align_text', $align_choices); ?></div>
+                        <div class="lrob-cc-field"><p class="lrob-cc-field-label"><?php esc_html_e('Buttons alignment', 'lrob-cookie-consent'); ?></p>
+                            <?php $seg('align_buttons', $align_choices); ?></div>
+                    </div>
                 </div>
 
                 <div class="lrob-cc-banner-preview">
@@ -288,6 +311,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <div id="lrob-cc-preview" class="lrob-cc-banner">
                             <div class="lrob-cc-inner" role="document">
                                 <div class="lrob-cc-header">
+                                    <img class="lrob-cc-logo" data-preview="logo" alt="" hidden />
                                     <h2 class="lrob-cc-title" data-preview="header"></h2>
                                 </div>
                                 <div class="lrob-cc-message" data-preview="message"></div>

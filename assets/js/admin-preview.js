@@ -100,6 +100,15 @@
 		setText('accept', val('text_accept'), field('text_accept'));
 		setText('deny', val('text_deny'), field('text_deny'));
 		setText('save', val('text_save'), field('text_save'));
+		setText('customize', val('text_customize'), field('text_customize'));
+
+		var logo = preview.querySelector('[data-preview="logo"]');
+		if (logo) {
+			var logoUrl = val('logo');
+			logo.src = logoUrl || '';
+			logo.hidden = !logoUrl;
+			preview.style.setProperty('--lrob-cc-logo-height', (parseInt(val('logo_height'), 10) || 36) + 'px');
+		}
 
 		var collapsed = val('categories_collapsed');
 		show('deny', val('show_deny'));
@@ -130,6 +139,9 @@
 				var u = (row.querySelector('.lrob-cc-link-url') || {}).value || '';
 				if (l && u) { fh += '<a href="#" onclick="return false">' + escapeHtml(l) + '</a> '; }
 			});
+			if (val('watermark')) {
+				fh += '<a class="lrob-cc-watermark" href="#" onclick="return false">' + escapeHtml(A.i18n.watermark || 'Cookie Consent by LRob') + '</a>';
+			}
 			footerSlot.innerHTML = fh;
 			footerSlot.style.display = fh ? '' : 'none';
 		}
@@ -162,6 +174,16 @@
 	$(document).on('blur', '.lrob-cc-num-default', function () {
 		if (this.value.trim() === '') { this.value = this.getAttribute('data-default') || ''; }
 	});
+
+	// Reveal the custom edge-distance controls only for the "Custom" preset.
+	function updateOffsetCustom() {
+		var el = document.getElementById('lrob-cc-offset-custom');
+		if (!el) { return; }
+		var v = (document.querySelector('[name="' + A.optionName + '[offset_preset]"]:checked') || {}).value;
+		el.hidden = v !== 'custom';
+	}
+	$(document).on('change', '[name="' + A.optionName + '[offset_preset]"]', updateOffsetCustom);
+	updateOffsetCustom();
 
 	// Warn when proof retention is shorter than the consent lifetime.
 	function checkRetention() {

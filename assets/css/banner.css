@@ -131,8 +131,9 @@
 }
 
 .lrob-cc-logo {
-	max-height: 32px;
+	max-height: var(--lrob-cc-logo-height, 36px);
 	width: auto;
+	margin-bottom: 6px;
 }
 
 .lrob-cc-title {
@@ -419,12 +420,27 @@ iframe.lrob-cc-blocked {
 	}
 }
 
+/* On phones a corner popup is awkward — span the width with a small margin so
+   it stays readable and never collides with screen edges or floating widgets. */
 @media (max-width: 520px) {
 	#lrob-cc-banner.lrob-cc-pos-bottom-left,
-	#lrob-cc-banner.lrob-cc-pos-bottom-right {
-		left: 0;
-		right: 0;
-		bottom: 0;
+	#lrob-cc-banner.lrob-cc-pos-bottom-right,
+	#lrob-cc-banner.lrob-cc-pos-bottom {
+		left: 8px;
+		right: 8px;
+		bottom: 8px;
+	}
+
+	#lrob-cc-banner.lrob-cc-pos-top-left,
+	#lrob-cc-banner.lrob-cc-pos-top-right,
+	#lrob-cc-banner.lrob-cc-pos-top {
+		left: 8px;
+		right: 8px;
+		top: 8px;
+	}
+
+	#lrob-cc-banner:not(.lrob-cc-pos-center) {
+		--lrob-cc-width: auto;
 	}
 
 	.lrob-cc-inner {

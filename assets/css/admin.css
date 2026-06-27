@@ -290,6 +290,40 @@
 	margin-bottom: 8px;
 }
 
+/* Two-up grid for the appearance controls — avoids the long vertical stack. */
+.lrob-cc-fieldgrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	gap: 10px 22px;
+	margin: 6px 0 4px;
+}
+
+.lrob-cc-fieldgrid .lrob-cc-field-label {
+	margin-top: 6px;
+}
+
+/* Pictogram segmented controls (alignment). */
+.lrob-cc-seg .dashicons {
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 18px;
+	vertical-align: text-bottom;
+}
+
+.lrob-cc-logo-size {
+	display: inline-block;
+	margin-top: 8px;
+}
+
+.lrob-cc-offsets {
+	margin: 8px 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 14px;
+}
+
 .lrob-cc-offsets label {
 	margin-right: 6px;
 }

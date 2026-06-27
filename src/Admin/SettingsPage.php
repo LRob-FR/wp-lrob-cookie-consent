@@ -220,6 +220,7 @@ final class SettingsPage
                 'catLabel'     => __('Label', 'lrob-cookie-consent'),
                 'catDesc'      => __('Description', 'lrob-cookie-consent'),
                 'selectLogo'   => __('Select logo', 'lrob-cookie-consent'),
+                'watermark'    => __('Cookie Consent by LRob', 'lrob-cookie-consent'),
                 'wizExisting'  => __('You already have block rules. How do you want to run the wizard?', 'lrob-cookie-consent'),
                 'wizAddTo'     => __('Add to my current rules', 'lrob-cookie-consent'),
                 'wizFresh'     => __('Clear them and start fresh', 'lrob-cookie-consent'),
@@ -367,15 +368,19 @@ final class SettingsPage
                 }
             }
         }
-        $out['theme'] = in_array($in['theme'] ?? '', ['auto', 'light', 'dark', 'custom'], true) ? $in['theme'] : 'auto';
+        $themes = array_merge(['auto', 'custom'], array_keys(\LRob\CookieConsent\Frontend\Appearance::palettes()));
+        $out['theme'] = in_array($in['theme'] ?? '', $themes, true) ? $in['theme'] : 'auto';
         $out['popup_size'] = in_array($in['popup_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['popup_size'] : 'small';
         $out['density'] = in_array($in['density'] ?? '', ['compact', 'cozy', 'comfortable'], true) ? $in['density'] : 'cozy';
         $out['font_size'] = in_array($in['font_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['font_size'] : 'medium';
         $out['shape'] = in_array($in['shape'] ?? '', ['square', 'rounded', 'pill'], true) ? $in['shape'] : 'rounded';
         $out['backdrop_blur'] = min(30, max(0, (int) ($in['backdrop_blur'] ?? $d['backdrop_blur'])));
+        $out['offset_preset'] = in_array($in['offset_preset'] ?? '', ['snug', 'default', 'spacious', 'custom'], true) ? $in['offset_preset'] : 'default';
         $out['offset_x'] = min(200, max(0, (int) ($in['offset_x'] ?? $d['offset_x'])));
         $out['offset_y'] = min(200, max(0, (int) ($in['offset_y'] ?? $d['offset_y'])));
+        $out['offset_unit'] = in_array($in['offset_unit'] ?? '', ['px', 'rem', 'em', 'vw', '%'], true) ? $in['offset_unit'] : 'px';
         $out['logo'] = esc_url_raw((string) ($in['logo'] ?? ''));
+        $out['logo_height'] = min(200, max(12, (int) ($in['logo_height'] ?? $d['logo_height'])));
 
         foreach (['color_bg', 'color_text', 'color_title', 'color_border', 'color_btn_bg',
             'color_btn_text', 'color_btn_deny_bg', 'color_btn_deny_text'] as $key) {
@@ -387,6 +392,7 @@ final class SettingsPage
         $out['text_accept'] = sanitize_text_field((string) ($in['text_accept'] ?? ''));
         $out['text_deny'] = sanitize_text_field((string) ($in['text_deny'] ?? ''));
         $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
+        $out['text_customize'] = sanitize_text_field((string) ($in['text_customize'] ?? ''));
         $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
         $out['revisit_text'] = sanitize_text_field((string) ($in['revisit_text'] ?? ''));
         $out['text_preset'] = sanitize_text_field((string) ($in['text_preset'] ?? ''));

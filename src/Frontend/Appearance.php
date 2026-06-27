@@ -39,6 +39,9 @@ final class Appearance
 
     private const ALIGN_FLEX = ['left' => 'flex-start', 'center' => 'center', 'right' => 'flex-end'];
 
+    /** Edge-distance presets; "custom" reveals a value + unit control instead. */
+    public const OFFSET_PRESETS = ['snug' => '12px', 'default' => '24px', 'spacious' => '44px'];
+
     private const WIDTH = ['small' => '340px', 'medium' => '420px', 'large' => '540px'];
     private const DENSITY = [
         'compact'     => ['pad' => '14px', 'gap' => '8px'],
@@ -96,8 +99,18 @@ final class Appearance
         $vars['--lrob-cc-title-size'] = $font['title'];
         $vars['--lrob-cc-radius'] = self::RADIUS[(string) Options::get('shape')] ?? self::RADIUS['rounded'];
         $vars['--lrob-cc-blur'] = max(0, (int) Options::get('backdrop_blur')) . 'px';
-        $vars['--lrob-cc-offset-x'] = max(0, (int) Options::get('offset_x')) . 'px';
-        $vars['--lrob-cc-offset-y'] = max(0, (int) Options::get('offset_y')) . 'px';
+
+        $preset = (string) Options::get('offset_preset');
+        if (isset(self::OFFSET_PRESETS[$preset])) {
+            $vars['--lrob-cc-offset-x'] = self::OFFSET_PRESETS[$preset];
+            $vars['--lrob-cc-offset-y'] = self::OFFSET_PRESETS[$preset];
+        } else {
+            $unit = (string) Options::get('offset_unit');
+            $unit = in_array($unit, ['px', 'rem', 'em', 'vw', '%'], true) ? $unit : 'px';
+            $vars['--lrob-cc-offset-x'] = max(0, (int) Options::get('offset_x')) . $unit;
+            $vars['--lrob-cc-offset-y'] = max(0, (int) Options::get('offset_y')) . $unit;
+        }
+        $vars['--lrob-cc-logo-height'] = max(12, (int) Options::get('logo_height')) . 'px';
 
         $vars['--lrob-cc-align-title'] = self::align((string) Options::get('align_title'));
         $vars['--lrob-cc-align-text'] = self::align((string) Options::get('align_text'));

@@ -38,10 +38,12 @@ final class Options
             'ip_storage'         => 'hashed',   // hashed (default) | full | none — a subject_id is always logged regardless
             'store_user_agent'   => 0,
             'store_wp_user'      => 1,          // record the logged-in WP user id
-            'log_retention_days' => 365,
+            'log_retention_days' => 395,        // proof kept ≥ consent lifetime (warned if below)
 
             // Appearance
             'position'           => 'bottom-right', // top-left|top|top-right|center|bottom-left|bottom|bottom-right
+            'offset_x'           => 24,         // px from the side edge (corner positions)
+            'offset_y'           => 24,         // px from the top/bottom edge (corner positions)
             'theme'              => 'auto',     // auto|light|dark|custom|...palettes
             'popup_size'         => 'small',    // small|medium|large (width)
             'density'            => 'cozy',     // compact|cozy|comfortable (spacing)

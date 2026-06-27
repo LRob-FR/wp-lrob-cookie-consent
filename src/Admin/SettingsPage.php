@@ -373,6 +373,8 @@ final class SettingsPage
         $out['font_size'] = in_array($in['font_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['font_size'] : 'medium';
         $out['shape'] = in_array($in['shape'] ?? '', ['square', 'rounded', 'pill'], true) ? $in['shape'] : 'rounded';
         $out['backdrop_blur'] = min(30, max(0, (int) ($in['backdrop_blur'] ?? $d['backdrop_blur'])));
+        $out['offset_x'] = min(200, max(0, (int) ($in['offset_x'] ?? $d['offset_x'])));
+        $out['offset_y'] = min(200, max(0, (int) ($in['offset_y'] ?? $d['offset_y'])));
         $out['logo'] = esc_url_raw((string) ($in['logo'] ?? ''));
 
         foreach (['color_bg', 'color_text', 'color_title', 'color_border', 'color_btn_bg',

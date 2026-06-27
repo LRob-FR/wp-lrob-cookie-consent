@@ -75,23 +75,23 @@
 }
 
 #lrob-cc-banner.lrob-cc-pos-bottom-left {
-	left: 16px;
-	bottom: 16px;
+	left: var(--lrob-cc-offset-x, 24px);
+	bottom: var(--lrob-cc-offset-y, 24px);
 }
 
 #lrob-cc-banner.lrob-cc-pos-bottom-right {
-	right: 16px;
-	bottom: 16px;
+	right: var(--lrob-cc-offset-x, 24px);
+	bottom: var(--lrob-cc-offset-y, 24px);
 }
 
 #lrob-cc-banner.lrob-cc-pos-top-left {
-	left: 16px;
-	top: 16px;
+	left: var(--lrob-cc-offset-x, 24px);
+	top: var(--lrob-cc-offset-y, 24px);
 }
 
 #lrob-cc-banner.lrob-cc-pos-top-right {
-	right: 16px;
-	top: 16px;
+	right: var(--lrob-cc-offset-x, 24px);
+	top: var(--lrob-cc-offset-y, 24px);
 }
 
 #lrob-cc-banner.lrob-cc-pos-center {

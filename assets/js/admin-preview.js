@@ -163,6 +163,17 @@
 		if (this.value.trim() === '') { this.value = this.getAttribute('data-default') || ''; }
 	});
 
+	// Warn when proof retention is shorter than the consent lifetime.
+	function checkRetention() {
+		var warn = document.getElementById('lrob-cc-retention-warn');
+		if (!warn) { return; }
+		var consent = parseInt((document.querySelector('[name="' + A.optionName + '[cookie_days]"]') || {}).value, 10);
+		var retain = parseInt((document.querySelector('[name="' + A.optionName + '[log_retention_days]"]') || {}).value, 10);
+		warn.hidden = !(retain > 0 && consent > 0 && retain < consent);
+	}
+	$(document).on('input change', '[name="' + A.optionName + '[cookie_days]"],[name="' + A.optionName + '[log_retention_days]"]', checkRetention);
+	checkRetention();
+
 	// Clicking a consent-version link opens that version's full detail.
 	$(document).on('click', '.lrob-cc-ver-link', function () {
 		var det = document.querySelector(this.getAttribute('href'));

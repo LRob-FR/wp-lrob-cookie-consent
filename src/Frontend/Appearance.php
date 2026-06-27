@@ -96,6 +96,8 @@ final class Appearance
         $vars['--lrob-cc-title-size'] = $font['title'];
         $vars['--lrob-cc-radius'] = self::RADIUS[(string) Options::get('shape')] ?? self::RADIUS['rounded'];
         $vars['--lrob-cc-blur'] = max(0, (int) Options::get('backdrop_blur')) . 'px';
+        $vars['--lrob-cc-offset-x'] = max(0, (int) Options::get('offset_x')) . 'px';
+        $vars['--lrob-cc-offset-y'] = max(0, (int) Options::get('offset_y')) . 'px';
 
         $vars['--lrob-cc-align-title'] = self::align((string) Options::get('align_title'));
         $vars['--lrob-cc-align-text'] = self::align((string) Options::get('align_text'));

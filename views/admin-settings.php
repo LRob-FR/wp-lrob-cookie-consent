@@ -124,7 +124,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <td><label><input type="checkbox" name="<?php echo $name('store_wp_user'); ?>" value="1" <?php echo $checked('store_wp_user'); ?> /> <?php esc_html_e('Record the logged-in user (guests are never identified)', 'lrob-cookie-consent'); ?></label></td></tr>
 
                 <tr><th><?php esc_html_e('Log retention (days)', 'lrob-cookie-consent'); ?></th>
-                    <td><input type="number" min="0" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['log_retention_days']); ?>" name="<?php echo $name('log_retention_days'); ?>" value="<?php echo esc_attr((string) $o['log_retention_days']); ?>" /> <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('log_retention_days'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button> <span class="description"><?php esc_html_e('0 = keep forever', 'lrob-cookie-consent'); ?></span></td></tr>
+                    <td><input type="number" min="0" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['log_retention_days']); ?>" name="<?php echo $name('log_retention_days'); ?>" value="<?php echo esc_attr((string) $o['log_retention_days']); ?>" /> <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('log_retention_days'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button> <span class="description"><?php esc_html_e('0 = keep forever', 'lrob-cookie-consent'); ?></span>
+                        <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-retention-warn" hidden><?php esc_html_e('Proof of consent should be kept at least as long as the consent lasts (the consent duration above) — otherwise you may delete evidence for consents that are still valid.', 'lrob-cookie-consent'); ?></p></td></tr>
             </table>
         </section>
 
@@ -205,6 +206,16 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         'bottom' => __('Bottom', 'lrob-cookie-consent'),
                         'bottom-right' => __('Bottom right', 'lrob-cookie-consent'),
                     ]); ?>
+
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Distance from the screen edges', 'lrob-cookie-consent'); ?> <?php $help(__('Gap between the banner and the screen edges when placed in a corner — increase it to clear a chat widget or other floating button.', 'lrob-cookie-consent')); ?></p>
+                    <p class="lrob-cc-offsets">
+                        <label><?php esc_html_e('Horizontal', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_x']); ?>" name="<?php echo $name('offset_x'); ?>" value="<?php echo esc_attr((string) $o['offset_x']); ?>" /> px</label>
+                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('offset_x'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button>
+                        <label><?php esc_html_e('Vertical', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="0" max="200" class="small-text lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['offset_y']); ?>" name="<?php echo $name('offset_y'); ?>" value="<?php echo esc_attr((string) $o['offset_y']); ?>" /> px</label>
+                        <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('offset_y'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button>
+                    </p>
 
                     <h3><?php esc_html_e('Appearance', 'lrob-cookie-consent'); ?></h3>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Colors', 'lrob-cookie-consent'); ?> <?php $help(__('Auto follows your theme via WordPress global-style tokens. The back-office preview may not match your theme exactly — always check the result on the front end.', 'lrob-cookie-consent')); ?></p>

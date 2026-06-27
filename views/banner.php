@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
                     </label>
                     <div class="lrob-cc-cat-desc"><?php echo esc_html($labels[$cat]['desc']); ?></div>
                     <?php if (!empty($show_sources) && !empty($sources[$cat])) : ?>
-                        <details class="lrob-cc-cat-sources"><summary><?php esc_html_e('What this blocks', 'lrob-cookie-consent'); ?></summary>
+                        <details class="lrob-cc-cat-sources"><summary><?php esc_html_e('What this includes', 'lrob-cookie-consent'); ?></summary>
                             <ul><?php foreach ($sources[$cat] as $s) : ?><li><?php echo esc_html($s); ?></li><?php endforeach; ?></ul>
                         </details>
                     <?php endif; ?>

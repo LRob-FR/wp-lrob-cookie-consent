@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-27T17:08:06+00:00\n"
+"POT-Creation-Date: 2026-06-27T17:17:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -1384,14 +1384,11 @@ msgid "Categories & what was blocked"
 msgstr ""
 
 #: views/banner.php:42
+#: views/banner.php:63
 msgid "What this includes"
 msgstr ""
 
 #. translators: %s: cookie category name.
 #: views/banner.php:56
 msgid "Allow %s cookies"
-msgstr ""
-
-#: views/banner.php:63
-msgid "What this blocks"
 msgstr ""

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T10:20:51+00:00\n"
+"POT-Creation-Date: 2026-06-27T17:17:22+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -1581,7 +1581,7 @@ msgstr "Boutons"
 msgid "Categories & what was blocked"
 msgstr "Catégories et ce qui était bloqué"
 
-#: views/banner.php:42
+#: views/banner.php:42 views/banner.php:63
 msgid "What this includes"
 msgstr "Ce que cela comprend"
 
@@ -1589,7 +1589,3 @@ msgstr "Ce que cela comprend"
 #: views/banner.php:56
 msgid "Allow %s cookies"
 msgstr "Autoriser les cookies %s"
-
-#: views/banner.php:63
-msgid "What this blocks"
-msgstr "Ce que cela bloque"

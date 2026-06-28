@@ -74,7 +74,9 @@ final class Assets
             'revisitText'   => (string) Options::get('revisit_text'),
             'position'      => (string) Options::get('position'),
             'showDelay'     => (int) Options::get('show_delay'),
-            'bannerVersion' => \LRob\CookieConsent\Consent\BannerVersion::ensure(),
+            // Versioning is driven by the client snapshot at consent time (so it
+            // captures the translated, on-screen text) — no need to pre-create one.
+            'bannerVersion' => '',
             'rest'          => [
                 'url'        => esc_url_raw(rest_url('lrob-cc/v1/log')),
                 'nonce'      => wp_create_nonce('wp_rest'),

@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
         <div id="lrob-cc-desc" class="lrob-cc-message"><?php echo wp_kses_post(wpautop($texts['message'])); ?></div>
 
         <div id="lrob-cc-categories" class="lrob-cc-categories"<?php echo $collapsed ? ' hidden' : ''; ?>>
-            <div class="lrob-cc-cat lrob-cc-cat-functional">
+            <div class="lrob-cc-cat lrob-cc-cat-functional" data-cat-slug="functional">
                 <div class="lrob-cc-cat-head">
                     <span class="lrob-cc-cat-title"><?php echo esc_html($labels['functional']['title']); ?></span>
                     <span class="lrob-cc-cat-always"><?php echo esc_html($texts['always']); ?></span>
@@ -46,7 +46,7 @@ if (!defined('ABSPATH')) {
             </div>
 
             <?php foreach ($optional as $cat) : ?>
-                <div class="lrob-cc-cat lrob-cc-cat-<?php echo esc_attr($cat); ?>">
+                <div class="lrob-cc-cat lrob-cc-cat-<?php echo esc_attr($cat); ?>" data-cat-slug="<?php echo esc_attr($cat); ?>">
                     <label class="lrob-cc-cat-head">
                         <span class="lrob-cc-cat-title"><?php echo esc_html($labels[$cat]['title']); ?></span>
                         <span class="lrob-cc-switch">

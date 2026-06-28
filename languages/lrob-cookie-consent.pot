@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-28T00:23:12+00:00\n"
+"POT-Creation-Date: 2026-06-28T09:49:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -387,20 +387,20 @@ msgid "Lean, opinionated GDPR / ePrivacy cookie consent — opt-in banner, scrip
 msgstr ""
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:85
+#: src/Frontend/Assets.php:87
 msgid "%s content blocked"
 msgstr ""
 
 #. translators: %s: cookie category name (e.g. External content).
-#: src/Frontend/Assets.php:87
+#: src/Frontend/Assets.php:89
 msgid "Loads once you accept “%s”."
 msgstr ""
 
-#: src/Frontend/Assets.php:88
+#: src/Frontend/Assets.php:90
 msgid "Accept & load"
 msgstr ""
 
-#: src/Frontend/Assets.php:89
+#: src/Frontend/Assets.php:91
 #: views/admin-settings.php:191
 msgid "Manage cookies"
 msgstr ""

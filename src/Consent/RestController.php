@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LRob\CookieConsent\Consent;
 
 use LRob\CookieConsent\Support\Bots;
-use LRob\CookieConsent\Support\Categories;
 use LRob\CookieConsent\Support\Ip;
 use LRob\CookieConsent\Support\Options;
 use WP_REST_Request;
@@ -56,8 +55,14 @@ final class RestController
         }
 
         $consent_id = substr((string) preg_replace('/[^a-z0-9]/', '', strtolower((string) $request->get_param('consent_id'))), 0, 40);
-        $banner_version = substr((string) preg_replace('/[^a-f0-9]/', '', strtolower((string) $request->get_param('banner_version'))), 0, 40);
         $version = substr(sanitize_text_field((string) $request->get_param('version')), 0, 32);
+
+        // Record the banner exactly as shown to the visitor (translated text from
+        // the rendered DOM); fall back to the server snapshot if not provided.
+        $shown = $request->get_param('shown');
+        $banner_version = is_array($shown)
+            ? BannerVersion::record($shown)
+            : BannerVersion::ensure();
 
         $ip = Ip::client_ip();
         $stored_ip = ((string) Options::get('ip_storage')) === 'full' ? $ip : Ip::hash($ip);

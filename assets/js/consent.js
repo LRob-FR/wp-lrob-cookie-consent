@@ -212,6 +212,30 @@
 		}
 	}
 
+	// Capture the banner exactly as the visitor saw it (post-translation, active
+	// categories only) so the proof records the real on-screen text, not the
+	// server's base-language strings.
+	function bannerSnapshot() {
+		var b = document.getElementById('lrob-cc-banner');
+		if (!b) { return null; }
+		var txt = function (el) { return el ? (el.textContent || '').replace(/\s+/g, ' ').trim() : ''; };
+		var cats = {};
+		b.querySelectorAll('.lrob-cc-cat[data-cat-slug]').forEach(function (c) {
+			cats[c.getAttribute('data-cat-slug')] = {
+				title: txt(c.querySelector('.lrob-cc-cat-title')),
+				desc: txt(c.querySelector('.lrob-cc-cat-desc'))
+			};
+		});
+		return {
+			header: txt(b.querySelector('.lrob-cc-title')),
+			message: txt(b.querySelector('.lrob-cc-message')),
+			accept: txt(b.querySelector('.lrob-cc-btn-accept')),
+			deny: txt(b.querySelector('.lrob-cc-btn-deny')),
+			save: txt(b.querySelector('.lrob-cc-btn-save')),
+			categories: cats
+		};
+	}
+
 	function logConsent(consent, method, ev) {
 		if (!D.rest || !D.rest.logConsent || !D.rest.url) { return; }
 		try {
@@ -225,7 +249,8 @@
 					event: ev,
 					choices: choicesMap(consent),
 					version: VERSION,
-					banner_version: D.bannerVersion || ''
+					banner_version: D.bannerVersion || '',
+					shown: bannerSnapshot()
 				})
 			}).catch(function () {});
 		} catch (e) {}

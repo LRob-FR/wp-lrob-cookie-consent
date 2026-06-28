@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-27T18:29:46+00:00\n"
+"POT-Creation-Date: 2026-06-28T09:49:31+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -380,20 +380,20 @@ msgstr ""
 "in, blocage des scripts et iframes, preuve de consentement."
 
 #. translators: %s: name of the blocked service (e.g. YouTube).
-#: src/Frontend/Assets.php:85
+#: src/Frontend/Assets.php:87
 msgid "%s content blocked"
 msgstr "Contenu %s bloqué"
 
 #. translators: %s: cookie category name (e.g. External content).
-#: src/Frontend/Assets.php:87
+#: src/Frontend/Assets.php:89
 msgid "Loads once you accept “%s”."
 msgstr "Se charge une fois que vous acceptez « %s »."
 
-#: src/Frontend/Assets.php:88
+#: src/Frontend/Assets.php:90
 msgid "Accept & load"
 msgstr "Accepter et charger"
 
-#: src/Frontend/Assets.php:89 views/admin-settings.php:191
+#: src/Frontend/Assets.php:91 views/admin-settings.php:191
 msgid "Manage cookies"
 msgstr "Gérer les cookies"
 
@@ -921,7 +921,9 @@ msgstr ""
 
 #: views/admin-settings.php:139
 msgid "Keep the consent log (proof of consent) when uninstalling"
-msgstr "Conserver le journal de consentement (preuve de consentement) à la désinstallation"
+msgstr ""
+"Conserver le journal de consentement (preuve de consentement) à la "
+"désinstallation"
 
 #: views/admin-settings.php:147 views/admin-settings.php:273
 msgid "Text"

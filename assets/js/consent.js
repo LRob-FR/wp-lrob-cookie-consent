@@ -110,6 +110,17 @@
 		});
 	}
 
+	// Keep the banner's category toggles in sync with the stored consent, so
+	// granting a category via a placeholder is reflected (and a later Save keeps it).
+	function syncCheckboxes(consent) {
+		var b = document.getElementById('lrob-cc-banner');
+		if (!b) { return; }
+		OPTIONAL.forEach(function (cat) {
+			var box = b.querySelector('input[data-category="' + cat + '"]');
+			if (box) { box.checked = !!consent[cat]; }
+		});
+	}
+
 	function mirrorConsentApi(consent) {
 		if (typeof window.wp_set_consent !== 'function') { return; }
 		window.wp_set_consent('functional', 'allow');
@@ -137,7 +148,7 @@
 			((D.i18n && D.i18n.embedNote) || 'Loads once you accept “%s”.').replace('%s', catLabel);
 		// Only the button accepts — not the whole placeholder area.
 		ph.querySelector('.lrob-cc-placeholder-btn').addEventListener('click', function () {
-			setConsent(category, 'allow');
+			grantCategory(category);
 		});
 		return ph;
 	}
@@ -215,7 +226,7 @@
 	}
 
 	// --- Persisting a decision ------------------------------------------
-	function persist(consent, method) {
+	function persist(consent, method, dismiss) {
 		var prior = stored(); // before we overwrite the cookie
 		consent.functional = true;
 		// Anonymous subject identifier — stable per browser, reused across events.
@@ -223,10 +234,13 @@
 		consent.ts = Math.floor(Date.now() / 1000);
 		consent.version = VERSION;
 		setCookie(COOKIE, JSON.stringify(consent), DAYS);
-		setCookie(STATUS, 'dismissed', DAYS);
+		// A provisional grant (loading one blocked item) records consent but keeps
+		// the banner asking until the visitor formally decides everything else.
+		if (dismiss !== false) { setCookie(STATUS, 'dismissed', DAYS); }
 
 		OPTIONAL.forEach(function (cat) { if (consent[cat]) { enableCategory(cat); } });
 		syncBodyClasses(consent);
+		syncCheckboxes(consent);
 		mirrorConsentApi(consent);
 		buildPlaceholders();
 
@@ -301,6 +315,13 @@
 		var data = stored() || emptyConsent();
 		if (category !== 'functional') { data[category] = (value === 'allow'); }
 		persist(data, 'service');
+	}
+
+	// Grant + load a single blocked item without finalising the whole banner.
+	function grantCategory(category) {
+		var data = stored() || emptyConsent();
+		if (category !== 'functional') { data[category] = true; }
+		persist(data, 'service', false);
 	}
 
 	function savePreferences() {
@@ -434,24 +455,34 @@
 	function init() {
 		bindBanner();
 
+		var dismissed = getCookie(STATUS) === 'dismissed';
 		var data = stored();
 		if (data) {
-			// Returning visitor with a current decision — apply it silently.
+			// Apply the stored decision (silently).
 			OPTIONAL.forEach(function (cat) { if (data[cat]) { enableCategory(cat); } });
 			syncBodyClasses(data);
+			syncCheckboxes(data);
 			mirrorConsentApi(data);
 			buildPlaceholders();
-			ensureRevisitButton();
+			// Formally decided → done. Otherwise (e.g. a provisional grant from a
+			// placeholder) keep asking for the full decision.
+			if (dismissed) { ensureRevisitButton(); return; }
+			maybeShowBanner();
 			return;
 		}
 
 		document.body.classList.add('lrob-cc-functional');
 		mirrorConsentApi(emptyConsent());
 		buildPlaceholders();
+		if (dismissed) { ensureRevisitButton(); return; }
 
 		if (D.respectDnt && isDntOn()) {
 			if (D.dntHideBanner) { denyAll(); return; }
 		}
+		maybeShowBanner();
+	}
+
+	function maybeShowBanner() {
 		var delay = Math.max(0, parseInt(D.showDelay, 10) || 0);
 		if (delay) { setTimeout(showBanner, delay); } else { showBanner(); }
 	}

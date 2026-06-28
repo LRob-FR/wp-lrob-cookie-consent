@@ -9,7 +9,7 @@ This spec is written for Claude Code. It assumes you have read this file plus th
 ## 0. Design principles
 
 - **Lean.** No privacy-policy generator, no packaged third-party integrations, no A/B testing, no US/DNSMPD logic. Keep the **GDPR core only**. A **lightweight local cookie/resource scan** (anonymous crawl that *suggests* rules) is included; a heavier headless **remote scan** is a future, optional LRob-hosted provider (behind a provider seam), not part of core.
-- **Opinionated.** Opt-in consent by default (strict EU model), 4 fixed categories, **no consent-per-service** (v1).
+- **Opinionated.** Opt-in consent by default (strict EU model), immutable built-in categories plus optional custom ones, **no consent-per-service** (v1).
 - **Self-contained.** No Composer, no React, no build pipeline. Plain PHP 8.2+, vanilla JS, server-rendered admin. Only outbound network call is the GitHub auto-updater. (Mirrors email-toolkit's "no library bloat" stance.)
 - **Single source of truth for version**: plugin header `Version:` + `LROB_CC_VERSION` constant, bumped together.
 - Target total plugin size well under Complianz's ~23 MB. Front JS < 15 KB unminified, front CSS < 10 KB.
@@ -227,13 +227,13 @@ Expose `apply_filters('lrob_cc_style_presets', $presets)` and `apply_filters('lr
 
 ## 6. Proof of consent (`Consent\*`) — legally robust
 
-The burden of proof is on the data controller: a click is not enough — we must be able to show consent was **free, specific, informed, unambiguous**, and record withdrawals too. Each consent event (`Consent\Schema` table `{prefix}lrob_cc_consent_log`, schema v4) stores:
+The burden of proof is on the data controller: a click is not enough — we must be able to show consent was **free, specific, informed, unambiguous**, and record withdrawals too. Each consent event (`Consent\Schema` table `{prefix}lrob_cc_consent_log`, schema v5) stores:
 - **Precise timestamp** (`created_at`, UTC) + **`expires_at`** (created + `cookie_days`, ~13 months / CNIL renewal).
 - **Anonymous subject identifier** (`consent_id`) — a random token generated client-side, stored in the consent cookie and reused across that browser's events (data-minimised; not PII). Always logged so records are auditable regardless of IP setting.
-- **Granular per-purpose decision** (`choices` JSON: `{category: 1|0}` for every optional category — an explicit allow/deny per purpose, never a single blanket flag). functional is implicit, never a choice.
-- **Banner text version** (`banner_version`) — links to the exact information text shown then (see §6b).
+- **Granular per-purpose decision** (`choices` JSON: `{category: 1|0}` for **every optional category actually proposed** — `Rules::active_categories()`, i.e. those that block something — an explicit allow/deny per purpose, never a single blanket flag). functional is implicit, never a choice.
+- **Banner version** (`banner_version`) — links to the exact banner as the visitor saw it, captured from the rendered DOM at consent time so it stays accurate under a translation plugin (see §6b).
 - **Technical trace of the positive act**: `method` (which button: accept_all / deny_all / save / service) + `payload` (raw client JSON) + `event_type` (consent / update / **withdraw**). Withdrawals are logged the same way.
-- `config_version`, optional `user_id` (`store_wp_user`), `ip_anon` (`ip_storage`: *hashed* default / *full* / *none* — the subject_id keeps records identifiable either way), `user_agent` (opt-in).
+- `config_version`, optional `user_id` (`store_wp_user`), `ip` (`ip_storage`: *hashed* default / *full* — the subject_id keeps records identifiable either way), `user_agent` (opt-in).
 - Skip logging for bots; only when "Store proof of consent" is on (default on).
 
 ### 6b. Versioning, retention, audit

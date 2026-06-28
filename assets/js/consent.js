@@ -94,6 +94,7 @@
 	}
 
 	function enableCategory(category) {
+		activateCaptchas(category); // clear our placeholder before the script renders
 		activateScripts(category);
 		activateIframes(category);
 		document.body.classList.add('lrob-cc-' + category);
@@ -117,45 +118,72 @@
 		});
 	}
 
-	// --- Iframe placeholders (built client-side, pre-consent) ------------
+	// --- Placeholders (built client-side, pre-consent) -------------------
+	function makePlaceholder(category, service, host) {
+		var catLabel = (D.catLabels && D.catLabels[category]) || category;
+		var ph = document.createElement('div');
+		ph.className = 'lrob-cc-placeholder';
+		ph.setAttribute('data-category', category);
+		ph.innerHTML =
+			'<span class="lrob-cc-ph-title"></span>' +
+			'<span class="lrob-cc-ph-url"></span>' +
+			'<button type="button" class="lrob-cc-placeholder-btn"></button>' +
+			'<span class="lrob-cc-ph-note"></span>';
+		ph.querySelector('.lrob-cc-ph-title').textContent =
+			((D.i18n && D.i18n.embedTitle) || '%s content blocked').replace('%s', service || catLabel);
+		ph.querySelector('.lrob-cc-ph-url').textContent = host || '';
+		ph.querySelector('.lrob-cc-placeholder-btn').textContent = (D.i18n && D.i18n.acceptLoad) || 'Accept & load';
+		ph.querySelector('.lrob-cc-ph-note').textContent =
+			((D.i18n && D.i18n.embedNote) || 'Loads once you accept “%s”.').replace('%s', catLabel);
+		// Only the button accepts — not the whole placeholder area.
+		ph.querySelector('.lrob-cc-placeholder-btn').addEventListener('click', function () {
+			setConsent(category, 'allow');
+		});
+		return ph;
+	}
+
 	function buildPlaceholders() {
 		document.querySelectorAll('iframe.lrob-cc-blocked').forEach(function (el) {
 			var category = el.getAttribute('data-category');
 			if (!category || hasConsent(category)) { enableCategory(category); return; }
 			if (el.parentNode.querySelector('.lrob-cc-placeholder[data-category="' + category + '"]')) { return; }
 
-			var service = el.getAttribute('data-service') || '';
-			var catLabel = (D.catLabels && D.catLabels[category]) || category;
 			var src = el.getAttribute('data-src') || '';
 			var host = '';
 			try { host = src ? new URL(src, location.href).hostname : ''; } catch (e) { host = src; }
 
-			var ph = document.createElement('div');
-			ph.className = 'lrob-cc-placeholder';
-			ph.setAttribute('data-category', category);
+			var ph = makePlaceholder(category, el.getAttribute('data-service') || '', host);
 			// Match the blocked iframe's footprint so it doesn't leave a larger void.
 			var w = el.getAttribute('width');
 			var h = el.getAttribute('height');
 			if (w && /^\d+$/.test(w)) { ph.style.maxWidth = w + 'px'; }
 			if (h && /^\d+$/.test(h)) { ph.style.minHeight = Math.min(parseInt(h, 10), 240) + 'px'; }
-
-			ph.innerHTML =
-				'<span class="lrob-cc-ph-title"></span>' +
-				'<span class="lrob-cc-ph-url"></span>' +
-				'<button type="button" class="lrob-cc-placeholder-btn"></button>' +
-				'<span class="lrob-cc-ph-note"></span>';
-			ph.querySelector('.lrob-cc-ph-title').textContent =
-				((D.i18n && D.i18n.embedTitle) || '%s content blocked').replace('%s', service || catLabel);
-			ph.querySelector('.lrob-cc-ph-url').textContent = host;
-			ph.querySelector('.lrob-cc-placeholder-btn').textContent = (D.i18n && D.i18n.acceptLoad) || 'Accept & load';
-			ph.querySelector('.lrob-cc-ph-note').textContent =
-				((D.i18n && D.i18n.embedNote) || 'Loads once you accept “%s”.').replace('%s', catLabel);
-
-			// Only the button accepts — not the whole placeholder area.
-			ph.querySelector('.lrob-cc-placeholder-btn').addEventListener('click', function () {
-				setConsent(category, 'allow');
-			});
 			el.parentNode.insertBefore(ph, el);
+		});
+		buildCaptchaPlaceholders();
+	}
+
+	// CAPTCHAs are JS-injected into an existing container (.cf-turnstile, etc.).
+	// The blocked script never fills it, so we drop a placeholder inside; on
+	// consent we remove ours and the re-activated script renders the real widget.
+	function buildCaptchaPlaceholders() {
+		(D.captchas || []).forEach(function (cap) {
+			document.querySelectorAll(cap.selector).forEach(function (el) {
+				if (hasConsent(cap.category)) { return; }
+				if (el.querySelector('.lrob-cc-placeholder')) { return; }
+				var ph = makePlaceholder(cap.category, cap.service, '');
+				ph.className += ' lrob-cc-placeholder-captcha';
+				el.appendChild(ph);
+				el.setAttribute('data-lrob-cc-captcha', cap.category);
+			});
+		});
+	}
+
+	function activateCaptchas(category) {
+		document.querySelectorAll('[data-lrob-cc-captcha="' + category + '"]').forEach(function (el) {
+			var ph = el.querySelector('.lrob-cc-placeholder');
+			if (ph) { ph.parentNode.removeChild(ph); }
+			el.removeAttribute('data-lrob-cc-captcha');
 		});
 	}
 

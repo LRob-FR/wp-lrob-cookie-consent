@@ -432,6 +432,18 @@ iframe.lrob-cc-blocked {
 	margin: 0;
 }
 
+/* CAPTCHA slots are small — keep the placeholder compact. */
+.lrob-cc-placeholder-captcha {
+	min-height: 0;
+	padding: 10px 12px;
+	gap: 4px;
+	font-size: 0.8em;
+}
+
+.lrob-cc-placeholder-captcha .lrob-cc-ph-url {
+	display: none;
+}
+
 .lrob-cc-ph-title {
 	font-weight: 600;
 }

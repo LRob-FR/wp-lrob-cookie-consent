@@ -68,6 +68,7 @@ final class Assets
             'categories'    => array_merge(['functional'], Rules::active_categories()),
             'optional'      => Rules::active_categories(),
             'catLabels'     => array_map(static fn (array $l): string => $l['title'], Categories::labels()),
+            'captchas'      => $this->captcha_blocks(),
             'respectDnt'    => (int) Options::get('respect_dnt') === 1,
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,
             'revisitButton' => (int) Options::get('revisit_button') === 1,
@@ -91,5 +92,40 @@ final class Assets
                 'manageCookies' => __('Manage cookies', 'lrob-cookie-consent'),
             ],
         ];
+    }
+
+    /**
+     * Known CAPTCHAs that have an active block rule, mapped to the container the
+     * provider injects into. The script is already neutralised; this lets the
+     * front JS show a placeholder in that container (a CAPTCHA renders into an
+     * existing div, unlike a JS-injected video).
+     *
+     * @return list<array{selector:string,category:string,service:string}>
+     */
+    private function captcha_blocks(): array
+    {
+        $providers = apply_filters('lrob_cc_captcha_providers', [
+            ['pattern' => 'challenges.cloudflare.com', 'selector' => '.cf-turnstile', 'service' => 'Cloudflare Turnstile'],
+            ['pattern' => 'recaptcha', 'selector' => '.g-recaptcha', 'service' => 'Google reCAPTCHA'],
+            ['pattern' => 'hcaptcha.com', 'selector' => '.h-captcha', 'service' => 'hCaptcha'],
+        ]);
+
+        $out = [];
+        foreach (Rules::compiled()['rules'] as $rule) {
+            if ($rule['category'] === 'functional') {
+                continue; // functional is referenced, not blocked
+            }
+            foreach ($providers as $p) {
+                if (str_contains($rule['pattern'], $p['pattern']) || str_contains($p['pattern'], $rule['pattern'])) {
+                    $out[] = [
+                        'selector' => $p['selector'],
+                        'category' => $rule['category'],
+                        'service'  => $rule['service'] !== '' ? $rule['service'] : $p['service'],
+                    ];
+                    break;
+                }
+            }
+        }
+        return $out;
     }
 }

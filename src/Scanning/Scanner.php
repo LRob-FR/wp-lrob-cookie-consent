@@ -26,7 +26,8 @@ final class Scanner
         $providers = self::providers();
         $provider = $providers[$provider_id] ?? $providers['local'] ?? new LocalScanner();
 
-        $urls = self::targets();
+        $types = array_map(static fn (array $t): array => ['type' => $t['type'], 'limit' => 0, 'order' => 'newest'], self::scan_types());
+        $urls = self::targets_from($types);
         $result = $provider->scan($urls);
 
         return [
@@ -47,58 +48,65 @@ final class Scanner
     }
 
     /**
-     * Selectable scan scopes with their URL counts (capped at the 50 the scan
-     * fetches). Always starts with the home page.
+     * Public post types offered to the granular "visit pages" scan, each with
+     * its published count. Pages and posts first, then any other public CPT.
      *
-     * @return list<array{id:string,label:string,count:int}>
+     * @return list<array{type:string,label:string,count:int}>
      */
-    public static function scopes(): array
+    public static function scan_types(): array
     {
         $count = static fn (string $type): int => (int) (wp_count_posts($type)->publish ?? 0);
-        $cpt = 0;
-        foreach (self::public_post_types() as $type) {
+        $public = self::public_post_types();
+        $ordered = array_values(array_filter(['page', 'post'], static fn (string $t): bool => in_array($t, $public, true)));
+        foreach ($public as $type) {
             if (!in_array($type, ['page', 'post'], true)) {
-                $cpt += $count($type);
+                $ordered[] = $type;
             }
         }
-        return [
-            ['id' => 'home', 'label' => __('Home page only', 'lrob-cookie-consent'), 'count' => 1],
-            ['id' => 'pages', 'label' => __('Home + all pages', 'lrob-cookie-consent'), 'count' => 1 + $count('page')],
-            ['id' => 'posts', 'label' => __('Home + all posts', 'lrob-cookie-consent'), 'count' => 1 + $count('post')],
-            ['id' => 'all', 'label' => __('Everything (pages, posts, custom types)', 'lrob-cookie-consent'), 'count' => 1 + $count('page') + $count('post') + $cpt],
-        ];
+        $out = [];
+        foreach ($ordered as $type) {
+            $obj = get_post_type_object($type);
+            $label = ($obj && isset($obj->labels->name)) ? (string) $obj->labels->name : $type;
+            $out[] = ['type' => $type, 'label' => $label, 'count' => $count($type)];
+        }
+        return $out;
     }
 
     /**
-     * The exact URLs the "visit pages" scan fetches for a scope — home page
-     * first, then ALL matching published content (newest first). No cap: the
-     * admin chose the scope and the UI fetches one page at a time with progress.
+     * Build the exact URL list for the "visit pages" scan from a granular
+     * per-type selection — each entry {type, limit (0 = all), order
+     * (newest|oldest)}. The home page is always first.
      *
+     * @param list<array<string,mixed>> $types
      * @return list<string>
      */
-    public static function targets(string $scope = 'pages'): array
+    public static function targets_from(array $types): array
     {
         $urls = [home_url('/')];
-        if ($scope === 'home') {
-            return $urls;
-        }
-        $types = match ($scope) {
-            'pages' => ['page'],
-            'posts' => ['post'],
-            default => self::public_post_types(),
-        };
-        $posts = get_posts([
-            'numberposts' => -1,
-            'post_type'   => $types,
-            'post_status' => 'publish',
-            'fields'      => 'ids',
-            'orderby'     => 'modified',
-            'order'       => 'DESC',
-        ]);
-        foreach ($posts as $pid) {
-            $link = get_permalink((int) $pid);
-            if (is_string($link)) {
-                $urls[] = $link;
+        $valid = self::public_post_types();
+        foreach ($types as $spec) {
+            if (!is_array($spec)) {
+                continue;
+            }
+            $type = sanitize_key((string) ($spec['type'] ?? ''));
+            if (!in_array($type, $valid, true)) {
+                continue;
+            }
+            $limit = max(0, (int) ($spec['limit'] ?? 0));
+            $order = (($spec['order'] ?? 'newest') === 'oldest') ? 'ASC' : 'DESC';
+            $ids = get_posts([
+                'numberposts' => $limit > 0 ? $limit : -1,
+                'post_type'   => $type,
+                'post_status' => 'publish',
+                'fields'      => 'ids',
+                'orderby'     => 'date',
+                'order'       => $order,
+            ]);
+            foreach ($ids as $pid) {
+                $link = get_permalink((int) $pid);
+                if (is_string($link)) {
+                    $urls[] = $link;
+                }
             }
         }
         return array_values(array_unique($urls));

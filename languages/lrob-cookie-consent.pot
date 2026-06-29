@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-28T10:07:14+00:00\n"
+"POT-Creation-Date: 2026-06-29T23:53:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -84,7 +84,7 @@ msgid "Stored as a salted hash"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:53
-#: views/admin-settings.php:472
+#: views/admin-settings.php:496
 msgid "necessary, not blocked"
 msgstr ""
 
@@ -92,293 +92,315 @@ msgstr ""
 msgid "Configure"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:117
+#: src/Admin/SettingsPage.php:118
 msgid "Only this site's own pages can be scanned."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:130
+#: src/Admin/SettingsPage.php:131
 msgid "Not allowed."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:138
+#: src/Admin/SettingsPage.php:139
 #: views/admin-settings.php:67
 msgid "LRob Cookie Consent"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:139
+#: src/Admin/SettingsPage.php:140
 msgid "Cookie Consent"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:185
+#: src/Admin/SettingsPage.php:186
 msgid "Pick a tone for your banner text"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:186
+#: src/Admin/SettingsPage.php:187
 msgid "You can fine-tune the wording afterwards."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:189
+#: src/Admin/SettingsPage.php:190
 msgid "Choose how the banner looks"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:191
+#: src/Admin/SettingsPage.php:192
 msgid "Auto (follow theme)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:192
+#: src/Admin/SettingsPage.php:193
 #: views/admin-settings.php:250
 msgid "Light"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:193
+#: src/Admin/SettingsPage.php:194
 #: views/admin-settings.php:251
 msgid "Dark"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:194
+#: src/Admin/SettingsPage.php:195
 #: views/admin-settings.php:252
 msgid "Midnight"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:195
+#: src/Admin/SettingsPage.php:196
 #: views/admin-settings.php:253
 msgid "Ocean"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:196
+#: src/Admin/SettingsPage.php:197
 #: views/admin-settings.php:254
 msgid "Sand"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:199
+#: src/Admin/SettingsPage.php:200
 #: views/admin-settings.php:223
 #: views/admin-settings.php:322
 msgid "Bottom"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:200
+#: src/Admin/SettingsPage.php:201
 #: views/admin-settings.php:224
 msgid "Bottom right"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:201
+#: src/Admin/SettingsPage.php:202
 #: views/admin-settings.php:222
 msgid "Bottom left"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:202
+#: src/Admin/SettingsPage.php:203
 #: views/admin-settings.php:212
 #: views/admin-settings.php:221
 #: views/admin-settings.php:295
 msgid "Center"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:204
+#: src/Admin/SettingsPage.php:205
 #: views/admin-settings.php:247
 msgid "Colors"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:205
+#: src/Admin/SettingsPage.php:206
 #: views/admin-settings.php:216
 msgid "Position"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:208
+#: src/Admin/SettingsPage.php:209
 msgid "Keep a record of consent decisions?"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:209
+#: src/Admin/SettingsPage.php:210
 msgid "Recommended for GDPR accountability. Stored locally, IP anonymised."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:215
+#: src/Admin/SettingsPage.php:216
 msgid "Delete all consent log entries? This cannot be undone."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:216
+#: src/Admin/SettingsPage.php:217
 msgid "Confirm"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:217
+#: src/Admin/SettingsPage.php:218
 msgid "Cancel"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:218
+#: src/Admin/SettingsPage.php:219
 #: views/admin-settings.php:176
 #: views/admin-settings.php:205
-#: views/admin-settings.php:437
-#: views/admin-settings.php:516
-#: views/admin-settings.php:526
-#: views/admin-settings.php:545
+#: views/admin-settings.php:461
+#: views/admin-settings.php:540
+#: views/admin-settings.php:550
+#: views/admin-settings.php:569
 msgid "Remove"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:219
-#: views/admin-settings.php:434
+#: src/Admin/SettingsPage.php:220
+#: views/admin-settings.php:458
 msgid "slug"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:220
+#: src/Admin/SettingsPage.php:221
 #: views/admin-settings.php:203
-#: views/admin-settings.php:435
+#: views/admin-settings.php:459
 msgid "Label"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:221
-#: views/admin-settings.php:436
+#: src/Admin/SettingsPage.php:222
+#: views/admin-settings.php:460
 msgid "Description"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:222
+#: src/Admin/SettingsPage.php:223
 #: views/admin-settings.php:175
 msgid "Select logo"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:223
+#: src/Admin/SettingsPage.php:224
 #: views/banner.php:98
 msgid "Cookie Consent by LRob"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:224
-#: views/admin-settings.php:543
+#: src/Admin/SettingsPage.php:225
+#: views/admin-settings.php:567
 msgid "Service name (shown to visitors)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:225
+#: src/Admin/SettingsPage.php:226
 msgid "You already have block rules. How do you want to run the wizard?"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:226
+#: src/Admin/SettingsPage.php:227
 msgid "Add to my current rules"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:227
+#: src/Admin/SettingsPage.php:228
 msgid "Clear them and start fresh"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:228
+#: src/Admin/SettingsPage.php:229
 msgid "Yes"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:229
+#: src/Admin/SettingsPage.php:230
 msgid "No / skip"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:230
+#: src/Admin/SettingsPage.php:231
 msgid "Back"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:231
+#: src/Admin/SettingsPage.php:232
 msgid "Next"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:232
+#: src/Admin/SettingsPage.php:233
 msgid "Finish & save"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:233
+#: src/Admin/SettingsPage.php:234
 #: src/Frontend/Banner.php:42
 msgid "Close"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:234
+#: src/Admin/SettingsPage.php:235
 msgid "Yes, keep proof"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:235
+#: src/Admin/SettingsPage.php:236
 msgid "No"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:236
+#: src/Admin/SettingsPage.php:237
 msgid "Keep current"
 msgstr ""
 
 #. translators: %1$d: current step number, %2$d: total steps.
-#: src/Admin/SettingsPage.php:238
+#: src/Admin/SettingsPage.php:239
 msgid "Step %1$d of %2$d"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:239
+#: src/Admin/SettingsPage.php:240
 msgid "Scanning…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:240
+#: src/Admin/SettingsPage.php:241
 msgid "Scan again"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:241
+#: src/Admin/SettingsPage.php:242
 msgid "Scan failed. Try again."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:242
+#: src/Admin/SettingsPage.php:243
 msgid "No third-party resources found on the scanned pages."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:243
+#: src/Admin/SettingsPage.php:244
 msgid "Add selected as rules"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:244
+#: src/Admin/SettingsPage.php:245
 msgid "known"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:245
+#: src/Admin/SettingsPage.php:246
 msgid "review"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:246
+#: src/Admin/SettingsPage.php:247
 msgid "Cookies set on scanned pages:"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:247
+#: src/Admin/SettingsPage.php:248
 msgid "Scanned:"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:248
+#: src/Admin/SettingsPage.php:249
 msgid "Select all"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:249
+#: src/Admin/SettingsPage.php:250
 msgid "Still scanning — results so far:"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:250
+#: src/Admin/SettingsPage.php:251
 msgid "added"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:251
+#: src/Admin/SettingsPage.php:252
 msgid "Found on these pages"
 msgstr ""
 
 #. translators: %d: number of additional pages not listed.
-#: src/Admin/SettingsPage.php:253
+#: src/Admin/SettingsPage.php:254
 msgid "…and %d more"
 msgstr ""
 
 #. translators: %d: number of pages scanned.
-#: src/Admin/SettingsPage.php:255
+#: src/Admin/SettingsPage.php:256
 msgid "Scanned %d pages."
 msgstr ""
 
 #. translators: %1$d: current page, %2$d: total pages.
-#: src/Admin/SettingsPage.php:257
+#: src/Admin/SettingsPage.php:258
 msgid "Scanning page %1$d of %2$d…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:258
+#: src/Admin/SettingsPage.php:259
 msgid "Some pages could not be reached due to an SSL certificate error."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:259
+#: src/Admin/SettingsPage.php:260
 msgid "Retry ignoring SSL"
 msgstr ""
 
+#. translators: %d: estimated seconds remaining.
+#: src/Admin/SettingsPage.php:262
+msgid "~%ds left"
+msgstr ""
+
+#. translators: %d: number of pages to scan.
+#: src/Admin/SettingsPage.php:264
+msgid "%d pages to scan."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:265
+msgid "Your host is limiting requests — slowing the scan down."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:266
+msgid "Your host could not complete the page-visit scan (it may have very limited resources). The results found so far are still valid."
+msgstr ""
+
 #: src/Admin/SettingsPage.php:267
+msgid "Scan complete."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:275
 msgid "You are not allowed to access this page."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:440
-#: src/Admin/SettingsPage.php:449
+#: src/Admin/SettingsPage.php:448
+#: src/Admin/SettingsPage.php:457
 msgid "You are not allowed to do this."
 msgstr ""
 
@@ -450,22 +472,6 @@ msgstr ""
 
 #: src/Scanning/LocalScanner.php:24
 msgid "Local crawl"
-msgstr ""
-
-#: src/Scanning/Scanner.php:65
-msgid "Home page only"
-msgstr ""
-
-#: src/Scanning/Scanner.php:66
-msgid "Home + all pages"
-msgstr ""
-
-#: src/Scanning/Scanner.php:67
-msgid "Home + all posts"
-msgstr ""
-
-#: src/Scanning/Scanner.php:68
-msgid "Everything (pages, posts, custom types)"
 msgstr ""
 
 #: src/Support/Categories.php:21
@@ -848,12 +854,12 @@ msgid "Presets"
 msgstr ""
 
 #: views/admin-settings.php:156
-#: views/admin-settings.php:603
+#: views/admin-settings.php:627
 msgid "Header"
 msgstr ""
 
 #: views/admin-settings.php:158
-#: views/admin-settings.php:604
+#: views/admin-settings.php:628
 msgid "Message"
 msgstr ""
 
@@ -1176,222 +1182,253 @@ msgid "Finds third-party scripts and embeds so you can block them. Runs as an an
 msgstr ""
 
 #: views/admin-settings.php:366
-msgid "Scan method"
-msgstr ""
-
-#: views/admin-settings.php:368
-msgid "Visit pages (rendered)"
+msgid "Find third-party scripts, embeds and cookies so you can block them. Start with a fast scan of your content; then optionally visit your pages for a deeper look."
 msgstr ""
 
 #: views/admin-settings.php:369
-msgid "Site content (database)"
-msgstr ""
-
-#: views/admin-settings.php:371
-msgid "Fetches the chosen pages (starting with the home page), one at a time; the exact list scanned is shown with the results. The most reliable mode — it sees what visitors actually load."
-msgstr ""
-
-#: views/admin-settings.php:372
-msgid "Reads the content of every published page and post — fast, no HTTP. It can miss embeds injected by your theme/plugins or auto-embeds rendered at request time — use “Visit pages” for those."
-msgstr ""
-
-#: views/admin-settings.php:375
-msgid "What to scan"
-msgstr ""
-
-#. translators: 1: scope label, 2: number of URLs.
-#: views/admin-settings.php:381
-msgid "%1$s (%2$d pages)"
-msgstr ""
-
-#: views/admin-settings.php:386
-msgid "That is a lot of pages to fetch one by one — on a slow or poorly-optimised server this can take a while and add load."
-msgstr ""
-
-#: views/admin-settings.php:389
 msgid "Scan my site"
 msgstr ""
 
-#: views/admin-settings.php:394
+#: views/admin-settings.php:370
+msgid "Start over"
+msgstr ""
+
+#: views/admin-settings.php:382
+msgid "Deeper scan — visit pages"
+msgstr ""
+
+#: views/admin-settings.php:382
+msgid "Loads your pages as a visitor would, catching resources injected by your theme or plugins that aren’t in the stored content. Findings add to what’s already listed above."
+msgstr ""
+
+#: views/admin-settings.php:385
+msgid "Scan everything"
+msgstr ""
+
+#: views/admin-settings.php:386
+msgid "Limit"
+msgstr ""
+
+#: views/admin-settings.php:387
+msgid "Order"
+msgstr ""
+
+#: views/admin-settings.php:391
+msgid "Home page"
+msgstr ""
+
+#: views/admin-settings.php:392
+msgid "always"
+msgstr ""
+
+#: views/admin-settings.php:397
+msgid "all"
+msgstr ""
+
+#: views/admin-settings.php:398
+msgid "newest"
+msgstr ""
+
+#: views/admin-settings.php:398
+msgid "oldest"
+msgstr ""
+
+#: views/admin-settings.php:405
+msgid "Scan speed"
+msgstr ""
+
+#: views/admin-settings.php:408
+msgid "How many pages to fetch at once. Higher is faster but loads your server more — the scan slows itself down automatically if your host can’t keep up."
+msgstr ""
+
+#: views/admin-settings.php:412
+msgid "That is a lot of pages to fetch one by one — on a slow or limited host this can take a while."
+msgstr ""
+
+#: views/admin-settings.php:414
+msgid "Run deeper scan"
+msgstr ""
+
+#: views/admin-settings.php:418
 msgid "Categories"
 msgstr ""
 
-#: views/admin-settings.php:394
+#: views/admin-settings.php:418
 msgid "Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed. The built-in categories below are fixed; rename their wording via translation. You can add your own custom categories."
 msgstr ""
 
-#: views/admin-settings.php:413
+#: views/admin-settings.php:437
 msgid "Edit description"
 msgstr ""
 
-#: views/admin-settings.php:423
+#: views/admin-settings.php:447
 msgid "always on"
 msgstr ""
 
-#: views/admin-settings.php:425
+#: views/admin-settings.php:449
 msgid "built-in"
 msgstr ""
 
-#: views/admin-settings.php:428
+#: views/admin-settings.php:452
 msgid "Built-in category names are fixed; click the pencil to customise a description (leave blank for the default)."
 msgstr ""
 
-#: views/admin-settings.php:430
+#: views/admin-settings.php:454
 msgid "Custom categories"
 msgstr ""
 
-#: views/admin-settings.php:441
+#: views/admin-settings.php:465
 msgid "Add category"
 msgstr ""
 
-#: views/admin-settings.php:443
+#: views/admin-settings.php:467
 msgid "Blocking"
 msgstr ""
 
-#: views/admin-settings.php:445
+#: views/admin-settings.php:469
 msgid "Block iframes"
 msgstr ""
 
-#: views/admin-settings.php:445
+#: views/admin-settings.php:469
 msgid "Embedded iframes (YouTube, Maps…) can set third-party cookies before consent. Turning this off loads them immediately — a GDPR risk. Leave on."
 msgstr ""
 
-#: views/admin-settings.php:446
+#: views/admin-settings.php:470
 msgid "Neutralise matching iframes until consent"
 msgstr ""
 
-#: views/admin-settings.php:447
+#: views/admin-settings.php:471
 msgid "Behavior on change"
 msgstr ""
 
-#: views/admin-settings.php:447
+#: views/admin-settings.php:471
 msgid "When you start blocking a brand-new category of cookies, returning visitors are re-asked so their consent stays accurate. Enable this to also re-ask on smaller changes (e.g. adding another service to a category they already decided on)."
 msgstr ""
 
-#: views/admin-settings.php:448
+#: views/admin-settings.php:472
 msgid "Re-prompt on any change to the block list"
 msgstr ""
 
-#: views/admin-settings.php:451
+#: views/admin-settings.php:475
 msgid "Block rules"
 msgstr ""
 
-#: views/admin-settings.php:451
+#: views/admin-settings.php:475
 msgid "The patterns blocked under each category. Use “Auto-detect my cookies” at the top to find them automatically, or add them by hand."
 msgstr ""
 
-#: views/admin-settings.php:452
+#: views/admin-settings.php:476
 msgid "Editor mode"
 msgstr ""
 
-#: views/admin-settings.php:453
+#: views/admin-settings.php:477
 msgid "Guided"
 msgstr ""
 
-#: views/admin-settings.php:453
+#: views/admin-settings.php:477
 msgid "Raw text"
 msgstr ""
 
-#: views/admin-settings.php:480
+#: views/admin-settings.php:504
 msgid "Click a common service to add it, or add a custom rule. The pattern is matched against script/iframe URLs and inline script bodies."
 msgstr ""
 
-#: views/admin-settings.php:505
+#: views/admin-settings.php:529
 msgid "Pattern — text matched in script/iframe URLs & inline code"
 msgstr ""
 
-#: views/admin-settings.php:506
+#: views/admin-settings.php:530
 msgid "Category"
 msgstr ""
 
-#: views/admin-settings.php:507
+#: views/admin-settings.php:531
 msgid "Service name — shown to visitors"
 msgstr ""
 
-#: views/admin-settings.php:513
-#: views/admin-settings.php:523
+#: views/admin-settings.php:537
+#: views/admin-settings.php:547
 msgid "pattern (e.g. google-analytics.com)"
 msgstr ""
 
-#: views/admin-settings.php:515
-#: views/admin-settings.php:525
+#: views/admin-settings.php:539
+#: views/admin-settings.php:549
 msgid "Service name"
 msgstr ""
 
-#: views/admin-settings.php:520
+#: views/admin-settings.php:544
 msgid "Add custom rule"
 msgstr ""
 
-#: views/admin-settings.php:533
+#: views/admin-settings.php:557
 msgid "One rule per line: pattern | category | service name. The category must be one of your configured category slugs."
 msgstr ""
 
-#: views/admin-settings.php:536
+#: views/admin-settings.php:560
 msgid "Inline scripts"
 msgstr ""
 
-#: views/admin-settings.php:536
+#: views/admin-settings.php:560
 msgid "Paste a snippet (GA4, Matomo…) and pick a category — injected inert, runs only after consent, no theme editing. Tip: Matomo cookieless and Cloudflare Turnstile / hCaptcha usually need no blocking, and blocking a CAPTCHA can break forms."
 msgstr ""
 
-#: views/admin-settings.php:549
+#: views/admin-settings.php:573
 msgid "Add inline script"
 msgstr ""
 
-#: views/admin-settings.php:553
+#: views/admin-settings.php:577
 msgid "Save all settings"
 msgstr ""
 
-#: views/admin-settings.php:554
+#: views/admin-settings.php:578
 msgid "One save applies to the General, Banner and Cookies tabs together."
 msgstr ""
 
 #. translators: %s: number of stored consent records.
-#: views/admin-settings.php:563
+#: views/admin-settings.php:587
 msgid "Stored consent records: %s"
 msgstr ""
 
-#: views/admin-settings.php:566
+#: views/admin-settings.php:590
 msgid "Accepted all"
 msgstr ""
 
-#: views/admin-settings.php:567
+#: views/admin-settings.php:591
 msgid "Denied all"
 msgstr ""
 
-#: views/admin-settings.php:568
+#: views/admin-settings.php:592
 msgid "Customised"
 msgstr ""
 
-#: views/admin-settings.php:575
+#: views/admin-settings.php:599
 msgid "Export CSV"
 msgstr ""
 
-#: views/admin-settings.php:580
+#: views/admin-settings.php:604
 msgid "Delete all"
 msgstr ""
 
-#: views/admin-settings.php:589
+#: views/admin-settings.php:613
 msgid "Cookie consent versions"
 msgstr ""
 
-#: views/admin-settings.php:589
+#: views/admin-settings.php:613
 msgid "Each consent record links to the exact context shown then: banner text, what each category covers, AND what was blocked under each. Editing any of these creates a new version; older records keep their version. The full snapshot is stored and included in the CSV export, and a version is removed once no record references it."
 msgstr ""
 
-#: views/admin-settings.php:591
+#: views/admin-settings.php:615
 msgid "No versions recorded yet."
 msgstr ""
 
-#: views/admin-settings.php:601
+#: views/admin-settings.php:625
 msgid "UTC"
 msgstr ""
 
-#: views/admin-settings.php:605
+#: views/admin-settings.php:629
 msgid "Buttons"
 msgstr ""
 
-#: views/admin-settings.php:606
+#: views/admin-settings.php:630
 msgid "Categories & what was blocked"
 msgstr ""
 

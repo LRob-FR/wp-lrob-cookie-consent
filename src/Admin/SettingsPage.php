@@ -90,8 +90,9 @@ final class SettingsPage
     public function handle_scan_targets(): void
     {
         $this->require_scan_access();
-        $scope = isset($_POST['scope']) ? sanitize_key(wp_unslash((string) $_POST['scope'])) : 'pages';
-        wp_send_json_success(['urls' => Scanner::targets($scope)]);
+        $raw = isset($_POST['types']) ? wp_unslash((string) $_POST['types']) : '[]';
+        $types = json_decode($raw, true);
+        wp_send_json_success(['urls' => Scanner::targets_from(is_array($types) ? $types : [])]);
     }
 
     public function handle_scan_db(): void
@@ -257,6 +258,13 @@ final class SettingsPage
                 'scanProgress' => __('Scanning page %1$d of %2$d…', 'lrob-cookie-consent'),
                 'sslFailed'    => __('Some pages could not be reached due to an SSL certificate error.', 'lrob-cookie-consent'),
                 'sslRetry'     => __('Retry ignoring SSL', 'lrob-cookie-consent'),
+                /* translators: %d: estimated seconds remaining. */
+                'secondsLeft'  => __('~%ds left', 'lrob-cookie-consent'),
+                /* translators: %d: number of pages to scan. */
+                'pagesToScan'  => __('%d pages to scan.', 'lrob-cookie-consent'),
+                'hostSlowdown' => __('Your host is limiting requests — slowing the scan down.', 'lrob-cookie-consent'),
+                'hostFailed'   => __('Your host could not complete the page-visit scan (it may have very limited resources). The results found so far are still valid.', 'lrob-cookie-consent'),
+                'scanComplete' => __('Scan complete.', 'lrob-cookie-consent'),
             ],
         ]);
     }
@@ -278,7 +286,7 @@ final class SettingsPage
         $text_presets = Presets::text();
         $color_presets = Presets::styles()['colors'] ?? [];
         $services = Services::common();
-        $scan_scopes = Scanner::scopes();
+        $scan_types = Scanner::scan_types();
         $log = $this->log;
         $option = Options::OPTION_KEY;
         $log_table = new ConsentLogTable($this->log);

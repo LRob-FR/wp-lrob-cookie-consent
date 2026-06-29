@@ -404,9 +404,42 @@
 		});
 	}
 
-	// --- Site scan -------------------------------------------------------
-	var scanBtn = document.getElementById('lrob-cc-scan-btn');
+	// --- Site scan: DB-first, results accumulate; optional parallel HTTP deep scan ---
 	var scanResults = document.getElementById('lrob-cc-scan-results');
+
+	// Persistent aggregate — DB and HTTP scans both merge here and never reset
+	// until "Start over". category + picked live here so repaints keep edits.
+	var scanAgg = {};
+	var scanCookies = [];
+	var httpPump = null; // set to the worker-pool pump while an HTTP scan runs
+
+	function aggArray() { return Object.keys(scanAgg).map(function (k) { return scanAgg[k]; }); }
+
+	// Merge one detection; returns true if a new resource or page was added.
+	function mergeRes(r) {
+		var e = scanAgg[r.pattern], changed = false;
+		if (!e) {
+			e = scanAgg[r.pattern] = { pattern: r.pattern, host: r.host, type: r.type, category: r.category, service: r.service, known: r.known, pages: [], pageCount: 0, picked: true };
+			changed = true;
+		}
+		(r.pages || []).forEach(function (p) {
+			if (e.pages.indexOf(p) === -1) { e.pageCount++; if (e.pages.length < 100) { e.pages.push(p); } changed = true; }
+		});
+		return changed;
+	}
+	function mergeCookies(list) {
+		var changed = false;
+		(list || []).forEach(function (c) { if (scanCookies.indexOf(c) === -1) { scanCookies.push(c); changed = true; } });
+		return changed;
+	}
+
+	// Throttle repaints so a fast parallel scan doesn't thrash the DOM.
+	var renderPending = false;
+	function scheduleRender() {
+		if (renderPending) { return; }
+		renderPending = true;
+		setTimeout(function () { renderPending = false; renderResults(); }, 200);
+	}
 
 	// Popup listing the pages a detected resource was found on.
 	function openPagesPopup(r) {
@@ -433,29 +466,13 @@
 		overlay.addEventListener('click', function (e) { if (e.target === overlay) { document.body.removeChild(overlay); } });
 	}
 
-	function renderScan(data) {
+	function renderResults() {
 		scanResults.innerHTML = '';
-		if (data.partial) {
-			var p = document.createElement('p');
-			p.className = 'lrob-cc-hint';
-			p.textContent = A.i18n.scanPartial || 'Still scanning — results so far:';
-			scanResults.appendChild(p);
-		}
-		if (data.urls && data.urls.length) {
-			var u = document.createElement('p');
-			u.className = 'description';
-			u.textContent = data.urls.length > 25
-				? (A.i18n.scannedCount || 'Scanned %d pages.').replace('%d', data.urls.length)
-				: (A.i18n.scannedUrls || 'Scanned:') + ' ' + data.urls.join(', ');
-			scanResults.appendChild(u);
-		}
+		var res = aggArray();
+		if (scanStartOver) { scanStartOver.hidden = !(res.length || scanCookies.length); }
+		if (!res.length && !scanCookies.length) { return; }
 
-		var res = data.resources || [];
-		if (!res.length) {
-			var none = document.createElement('p');
-			none.textContent = A.i18n.noneFound || 'Nothing found.';
-			scanResults.appendChild(none);
-		} else {
+		if (res.length) {
 			// Include functional so payment/necessary services (Stripe…) keep their category.
 			var catList = A.catChoices || A.catList || (A.optional || []).map(function (s) { return { slug: s, label: s }; });
 			var optionsHtml = catList.map(function (c) { return '<option value="' + escapeHtml(c.slug) + '">' + escapeHtml(c.label) + '</option>'; }).join('');
@@ -464,7 +481,7 @@
 				var added = !!(typeof ruleRowByPattern === 'function' && ruleRowByPattern(r.pattern));
 				var count = r.pageCount || (r.pages ? r.pages.length : 0);
 				rowsHtml += '<tr' + (added ? ' class="lrob-cc-scan-done"' : '') + '>' +
-					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '"' + (added ? ' disabled' : ' checked') + '/></td>' +
+					'<td><input type="checkbox" class="lrob-cc-scan-pick" data-i="' + idx + '"' + (added ? ' disabled' : (r.picked ? ' checked' : '')) + '/></td>' +
 					'<td><code>' + escapeHtml(r.pattern) + '</code></td>' +
 					'<td>' + escapeHtml(r.type) + '</td>' +
 					'<td>' + (count ? '<a href="#" class="lrob-cc-scan-pages" data-i="' + idx + '">' + count + '</a>' : '0') + '</td>' +
@@ -485,13 +502,23 @@
 				var sel = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + idx + '"]');
 				if (sel && r.category) { sel.value = r.category; }
 			});
+			// Persist table edits into the aggregate so repaints keep them.
+			scanResults.querySelectorAll('.lrob-cc-scan-cat').forEach(function (sel) {
+				sel.addEventListener('change', function () { var r = res[sel.getAttribute('data-i')]; if (r) { r.category = sel.value; } });
+			});
+			scanResults.querySelectorAll('.lrob-cc-scan-pick').forEach(function (cb) {
+				cb.addEventListener('change', function () { var r = res[cb.getAttribute('data-i')]; if (r) { r.picked = cb.checked; } });
+			});
 			scanResults.querySelectorAll('.lrob-cc-scan-pages').forEach(function (a) {
 				a.addEventListener('click', function (e) { e.preventDefault(); openPagesPopup(res[a.getAttribute('data-i')]); });
 			});
 			var master = scanResults.querySelector('.lrob-cc-scan-all');
 			if (master) {
 				master.addEventListener('change', function () {
-					scanResults.querySelectorAll('.lrob-cc-scan-pick:not(:disabled)').forEach(function (cb) { cb.checked = master.checked; });
+					scanResults.querySelectorAll('.lrob-cc-scan-pick:not(:disabled)').forEach(function (cb) {
+						cb.checked = master.checked;
+						var r = res[cb.getAttribute('data-i')]; if (r) { r.picked = cb.checked; }
+					});
 				});
 			}
 
@@ -501,16 +528,17 @@
 			add.textContent = A.i18n.addSelected || 'Add selected as rules';
 			add.addEventListener('click', function () {
 				var lastRow = null;
-				scanResults.querySelectorAll('.lrob-cc-scan-pick:checked').forEach(function (cb) {
-					var i = cb.getAttribute('data-i');
-					var r = res[i];
+				res.forEach(function (r, i) {
+					var cb = scanResults.querySelector('.lrob-cc-scan-pick[data-i="' + i + '"]');
+					if (!cb || !cb.checked || cb.disabled) { return; }
 					if (typeof ruleRowByPattern === 'function' && ruleRowByPattern(r.pattern)) { return; } // never duplicate
-					var cat = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + i + '"]').value;
-					addRuleRow(r.pattern, cat, r.service || '');
+					var sel = scanResults.querySelector('.lrob-cc-scan-cat[data-i="' + i + '"]');
+					addRuleRow(r.pattern, sel ? sel.value : (r.category || ''), r.service || '');
 					lastRow = rulesRows ? rulesRows.lastElementChild : null;
 				});
 				serializeRules();
 				toStructuredMode();
+				renderResults(); // re-mark the rows now flagged "added"
 				if (lastRow && lastRow.scrollIntoView) {
 					lastRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
 					var firstInput = lastRow.querySelector('input');
@@ -518,12 +546,16 @@
 				}
 			});
 			scanResults.appendChild(add);
+		} else {
+			var none = document.createElement('p');
+			none.textContent = A.i18n.noneFound || 'Nothing found.';
+			scanResults.appendChild(none);
 		}
 
-		if (data.cookies && data.cookies.length) {
+		if (scanCookies.length) {
 			var c = document.createElement('p');
 			c.className = 'description';
-			c.textContent = (A.i18n.cookiesSeen || 'Cookies set:') + ' ' + data.cookies.join(', ');
+			c.textContent = (A.i18n.cookiesSeen || 'Cookies set:') + ' ' + scanCookies.join(', ');
 			scanResults.appendChild(c);
 		}
 	}
@@ -531,168 +563,242 @@
 	var scanProgress = document.getElementById('lrob-cc-scan-progress');
 	var scanBar = document.getElementById('lrob-cc-scan-bar');
 	var scanProgressText = document.getElementById('lrob-cc-scan-progress-text');
-	var scanDbNote = document.getElementById('lrob-cc-scan-db-note');
-	var scanPagesWarn = document.getElementById('lrob-cc-scan-pages-warn');
-	var scanScopeWrap = document.getElementById('lrob-cc-scan-scope-wrap');
-	var scanScope = document.getElementById('lrob-cc-scan-scope');
+	var scanCurrent = document.getElementById('lrob-cc-scan-current');
+	var scanDbBtn = document.getElementById('lrob-cc-scan-db-btn');
+	var scanHttpBtn = document.getElementById('lrob-cc-scan-http-btn');
+	var scanHttpCard = document.getElementById('lrob-cc-scan-http-card');
+	var scanStartOver = document.getElementById('lrob-cc-scan-startover');
+	var scanAllTypes = document.getElementById('lrob-cc-scan-all-types');
+	var scanSpeed = document.getElementById('lrob-cc-scan-speed');
+	var scanSpeedVal = document.getElementById('lrob-cc-scan-speed-val');
+	var scanTotalEl = document.getElementById('lrob-cc-scan-total');
 	var scanManyWarn = document.getElementById('lrob-cc-scan-many-warn');
 
-	function scanScopeCount() {
-		if (!scanScope) { return 0; }
-		var opt = scanScope.options[scanScope.selectedIndex];
-		return opt ? (parseInt(opt.getAttribute('data-count'), 10) || 0) : 0;
-	}
-	function updateScanUi() {
-		var pages = (document.querySelector('input[name="lrob-cc-scan-method"]:checked') || {}).value === 'pages';
-		if (scanDbNote) { scanDbNote.hidden = pages; }
-		if (scanPagesWarn) { scanPagesWarn.hidden = !pages; }
-		if (scanScopeWrap) { scanScopeWrap.hidden = !pages; }
-		if (scanManyWarn) { scanManyWarn.hidden = !(pages && scanScopeCount() > 10); }
-	}
-	$(document).on('change', 'input[name="lrob-cc-scan-method"]', updateScanUi);
-	$(scanScope).on('change', updateScanUi);
-	updateScanUi();
-
-	function scanAjax(action, params) {
+	// opts.timeout (ms) aborts via AbortController; the result carries httpStatus
+	// + timedOut so the worker pool can detect host overload.
+	function scanAjax(action, params, opts) {
+		opts = opts || {};
 		var body = 'action=' + action + '&nonce=' + encodeURIComponent(A.scanNonce || '');
 		Object.keys(params || {}).forEach(function (k) { body += '&' + k + '=' + encodeURIComponent(params[k]); });
+		var ctrl = (opts.timeout && window.AbortController) ? new AbortController() : null;
+		var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, opts.timeout) : null;
 		return fetch(A.ajaxUrl, {
 			method: 'POST', credentials: 'same-origin',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body
-		}).then(function (r) { return r.text(); }).then(function (t) {
-			try { return JSON.parse(t); } catch (e) { return { success: false, data: { message: t.slice(0, 300) } }; }
-		}).catch(function () { return { success: false, data: {} }; });
-	}
-
-	function scanEnd() {
-		scanBtn.disabled = false;
-		scanBtn.textContent = A.i18n.scanAgain || 'Scan again';
-		if (scanProgress) { scanProgress.hidden = true; }
-	}
-
-	// Merge a detection into the aggregate, unioning the pages it was found on.
-	// Returns true if a new resource or a new page was added (so the table can
-	// refresh its live page counts, not just on first detection).
-	function mergeRes(agg, r) {
-		var e = agg[r.pattern], changed = false;
-		if (!e) {
-			e = agg[r.pattern] = { pattern: r.pattern, host: r.host, type: r.type, category: r.category, service: r.service, known: r.known, pages: [], pageCount: 0 };
-			changed = true;
-		}
-		(r.pages || []).forEach(function (p) {
-			if (e.pages.indexOf(p) === -1) {
-				e.pageCount++;
-				if (e.pages.length < 100) { e.pages.push(p); }
-				changed = true;
-			}
-		});
-		return changed;
-	}
-
-	function scanUrls(urls, insecure) {
-		var agg = {}, cookies = [], sslErrors = 0, i = 0;
-		if (scanBar) { scanBar.max = urls.length; scanBar.value = 0; }
-		function paint(done) {
-			renderScan({
-				urls: urls.slice(0, i),
-				resources: Object.keys(agg).map(function (k) { return agg[k]; }),
-				cookies: cookies,
-				partial: !done
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: body, signal: ctrl ? ctrl.signal : undefined
+		}).then(function (r) {
+			var status = r.status;
+			return r.text().then(function (t) {
+				if (timer) { clearTimeout(timer); }
+				var json;
+				try { json = JSON.parse(t); } catch (e) { json = { success: false, data: { message: t.slice(0, 300) } }; }
+				json.httpStatus = status;
+				return json;
 			});
-			if (done && sslErrors > 0 && !insecure) {
-				var note = document.createElement('p');
-				note.className = 'lrob-cc-hint lrob-cc-hint-warning';
-				note.textContent = (A.i18n.sslFailed || 'Some pages had an SSL error.') + ' ';
-				var retry = document.createElement('button');
-				retry.type = 'button';
-				retry.className = 'button';
-				retry.textContent = A.i18n.sslRetry || 'Retry ignoring SSL';
-				retry.addEventListener('click', function () {
-					scanResults.innerHTML = '';
-					scanBtn.disabled = true;
-					if (scanProgress) { scanProgress.hidden = false; }
-					scanUrls(urls, true);
-				});
-				note.appendChild(retry);
-				scanResults.appendChild(note);
-			}
-		}
-		function next() {
-			if (i >= urls.length) { scanEnd(); paint(true); return; }
-			if (scanProgressText) {
-				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
-					.replace('%1$d', i + 1).replace('%2$d', urls.length);
-			}
-			scanAjax('lrob_cc_scan_url', { url: urls[i], insecure: insecure ? 1 : 0 }).then(function (json) {
-				var changed = false;
-				if (json.success && json.data) {
-					if (json.data.error === 'ssl') { sslErrors++; }
-					(json.data.resources || []).forEach(function (r) { if (mergeRes(agg, r)) { changed = true; } });
-					(json.data.cookies || []).forEach(function (c) { if (cookies.indexOf(c) === -1) { cookies.push(c); changed = true; } });
-				}
-				i++;
-				if (scanBar) { scanBar.value = i; }
-				// Repaint whenever a resource OR a page count changed — shows results as they
-				// arrive and leaves partial findings on screen if a later page hangs.
-				if (changed) { paint(false); }
-				next();
-			});
-		}
-		next();
-	}
-
-	// Database scan, batched with a progress bar (mirrors the visit-pages loop).
-	function scanDb(offset, agg) {
-		scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
-			if (!json.success || !json.data) {
-				scanEnd();
-				scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
-				return;
-			}
-			var d = json.data;
-			var changed = false;
-			(d.resources || []).forEach(function (r) { if (mergeRes(agg, r)) { changed = true; } });
-			if (scanBar) { scanBar.max = d.total || 1; scanBar.value = Math.min(d.processed || 0, d.total || 0); }
-			if (scanProgressText) {
-				scanProgressText.textContent = (A.i18n.scanProgress || 'Scanning %1$d of %2$d…')
-					.replace('%1$d', Math.min(d.processed || 0, d.total || 0)).replace('%2$d', d.total || 0);
-			}
-			if (!d.done) {
-				if (changed) {
-					renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [], partial: true });
-				}
-				scanDb(d.processed, agg);
-				return;
-			}
-			scanEnd();
-			renderScan({ urls: [], resources: Object.keys(agg).map(function (k) { return agg[k]; }), cookies: [] });
+		}).catch(function (e) {
+			if (timer) { clearTimeout(timer); }
+			return { success: false, data: {}, httpStatus: 0, timedOut: !!(ctrl && e && e.name === 'AbortError') };
 		});
 	}
 
-	if (scanBtn) {
-		scanBtn.addEventListener('click', function () {
-			var method = (document.querySelector('input[name="lrob-cc-scan-method"]:checked') || {}).value || 'database';
-			scanBtn.disabled = true;
-			scanBtn.textContent = A.i18n.scanning || 'Scanning…';
-			scanResults.innerHTML = '';
+	// One notice line above the results (slowdown / SSL retry / host failure).
+	function scanNotice(msg, isError, btnLabel, btnFn) {
+		var box = document.getElementById('lrob-cc-scan-notice');
+		if (!box) {
+			box = document.createElement('div');
+			box.id = 'lrob-cc-scan-notice';
+			scanResults.parentNode.insertBefore(box, scanResults);
+		}
+		box.className = 'lrob-cc-hint' + (isError ? ' lrob-cc-hint-warning' : '');
+		box.textContent = msg + ' ';
+		if (btnLabel && btnFn) {
+			var b = document.createElement('button');
+			b.type = 'button'; b.className = 'button';
+			b.textContent = btnLabel;
+			b.addEventListener('click', function () { clearScanNotice(); btnFn(); });
+			box.appendChild(b);
+		}
+	}
+	function clearScanNotice() { var box = document.getElementById('lrob-cc-scan-notice'); if (box) { box.parentNode.removeChild(box); } }
 
-			if (method === 'database') {
-				if (scanProgress) { scanProgress.hidden = false; }
-				scanDb(0, {});
-				return;
-			}
+	function pathOf(u) { try { var x = new URL(u, location.href); return x.pathname + x.search; } catch (e) { return u; } }
 
-			if (scanProgress) { scanProgress.hidden = false; }
-			scanAjax('lrob_cc_scan_targets', { scope: scanScope ? scanScope.value : 'pages' }).then(function (json) {
-				if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
-					scanEnd();
-					scanResults.textContent = (json && json.data && json.data.message) ? json.data.message : (A.i18n.scanError || 'Scan failed.');
+	function setScanBusy(on) {
+		if (scanDbBtn) { scanDbBtn.disabled = on; }
+		if (scanHttpBtn) { scanHttpBtn.disabled = on; }
+		if (scanProgress) { scanProgress.hidden = !on; }
+		if (scanCurrent) { scanCurrent.textContent = ''; }
+	}
+	function setProgress(done, total, etaSecs, current) {
+		if (scanBar) { scanBar.max = total || 1; scanBar.value = Math.min(done, total || 0); }
+		if (scanProgressText) {
+			var t = done + ' / ' + (total || 0);
+			if (etaSecs != null && etaSecs > 0) { t += '  ' + (A.i18n.secondsLeft || '~%ds left').replace('%d', etaSecs); }
+			scanProgressText.textContent = t;
+		}
+		if (scanCurrent && current != null) { scanCurrent.textContent = current; }
+	}
+
+	// --- Granular "visit pages" selection -------------------------------
+	function scanTypeConfig() {
+		var cfg = [];
+		document.querySelectorAll('#lrob-cc-scan-http-card .lrob-cc-scan-type').forEach(function (row) {
+			if (row.getAttribute('data-type') === 'home') { return; }
+			var on = row.querySelector('.lrob-cc-scan-type-on');
+			if (!on || !on.checked) { return; }
+			cfg.push({
+				type: row.getAttribute('data-type'),
+				limit: Math.max(0, parseInt((row.querySelector('.lrob-cc-scan-type-limit') || {}).value, 10) || 0),
+				order: (row.querySelector('.lrob-cc-scan-type-order') || {}).value || 'newest'
+			});
+		});
+		return cfg;
+	}
+	function scanTotal() {
+		var total = 1; // home is always scanned
+		scanTypeConfig().forEach(function (c) {
+			var row = document.querySelector('#lrob-cc-scan-http-card .lrob-cc-scan-type[data-type="' + c.type + '"]');
+			var count = row ? (parseInt(row.getAttribute('data-count'), 10) || 0) : 0;
+			total += (c.limit > 0 && c.limit < count) ? c.limit : count;
+		});
+		return total;
+	}
+	function updateHttpUi() {
+		var total = scanTotal();
+		if (scanTotalEl) { scanTotalEl.textContent = (A.i18n.pagesToScan || '%d pages to scan.').replace('%d', total); }
+		if (scanManyWarn) { scanManyWarn.hidden = total <= 20; }
+	}
+	if (scanAllTypes) {
+		scanAllTypes.addEventListener('change', function () {
+			document.querySelectorAll('#lrob-cc-scan-http-card .lrob-cc-scan-type-on').forEach(function (cb) { cb.checked = scanAllTypes.checked; });
+			updateHttpUi();
+		});
+	}
+	$(document).on('change input', '#lrob-cc-scan-http-card .lrob-cc-scan-type-on, #lrob-cc-scan-http-card .lrob-cc-scan-type-limit, #lrob-cc-scan-http-card .lrob-cc-scan-type-order', updateHttpUi);
+	if (scanSpeed) {
+		scanSpeed.addEventListener('input', function () {
+			if (scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
+			if (httpPump) { httpPump(); } // ramp up live mid-scan
+		});
+	}
+
+	// --- Database scan (fast, batched) ----------------------------------
+	function runDbScan() {
+		clearScanNotice();
+		setScanBusy(true);
+		(function batch(offset) {
+			scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
+				if (!json.success || !json.data) {
+					setScanBusy(false);
+					scanNotice((json && json.data && json.data.message) || (A.i18n.scanError || 'Scan failed.'), true);
 					return;
 				}
-				scanUrls(json.data.urls, false);
+				var d = json.data, changed = false;
+				(d.resources || []).forEach(function (r) { if (mergeRes(r)) { changed = true; } });
+				setProgress(Math.min(d.processed || 0, d.total || 0), d.total || 0);
+				if (changed) { scheduleRender(); }
+				if (!d.done) { batch(d.processed); return; }
+				setScanBusy(false);
+				renderResults();
+				if (scanHttpCard) { scanHttpCard.hidden = false; updateHttpUi(); }
 			});
+		})(0);
+	}
+
+	// --- HTTP "visit pages" scan: worker pool with live concurrency, a
+	// front-side ETA, and auto-backoff when the host 5xx's / times out. ------
+	function runHttpScan() {
+		clearScanNotice();
+		setScanBusy(true);
+		scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (json) {
+			if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
+				setScanBusy(false);
+				scanNotice((json && json.data && json.data.message) || (A.i18n.scanError || 'Scan failed.'), true);
+				return;
+			}
+			httpPool(json.data.urls, false);
 		});
 	}
+
+	function httpPool(urls, insecure) {
+		var queue = urls.map(function (u) { return { url: u, tries: 0 }; });
+		var total = queue.length, done = 0, active = 0, stopped = false, fatal = false;
+		var times = [], sslErrors = 0, consecFail = 0;
+
+		function conc() { return Math.max(1, parseInt(scanSpeed ? scanSpeed.value : 2, 10) || 2); }
+		function eta() {
+			if (!times.length) { return null; }
+			var avg = times.reduce(function (a, b) { return a + b; }, 0) / times.length;
+			return Math.ceil((queue.length + active) * avg / conc() / 1000);
+		}
+		function backoff() {
+			if (scanSpeed && parseInt(scanSpeed.value, 10) > 1) {
+				scanSpeed.value = String(Math.max(1, Math.floor(parseInt(scanSpeed.value, 10) / 2)));
+				if (scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
+			}
+			scanNotice(A.i18n.hostSlowdown || 'Slowing the scan down.', false);
+		}
+		function finish() {
+			if (stopped) { return; }
+			stopped = true; httpPump = null;
+			setScanBusy(false);
+			renderResults();
+			clearScanNotice();
+			if (fatal) { scanNotice(A.i18n.hostFailed || 'Host could not complete the scan.', true); }
+			else if (sslErrors > 0 && !insecure) {
+				scanNotice(A.i18n.sslFailed || 'Some pages had an SSL error.', true,
+					A.i18n.sslRetry || 'Retry ignoring SSL', function () { setScanBusy(true); httpPool(urls, true); });
+			}
+		}
+		function runOne(item) {
+			active++;
+			setProgress(done, total, eta(), pathOf(item.url));
+			var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
+			scanAjax('lrob_cc_scan_url', { url: item.url, insecure: insecure ? 1 : 0 }, { timeout: 20000 }).then(function (json) {
+				var dt = ((window.performance && performance.now) ? performance.now() : Date.now()) - t0;
+				var overloaded = json.timedOut || json.httpStatus === 429 || json.httpStatus === 502 || json.httpStatus === 503 || json.httpStatus === 504;
+				if (overloaded) {
+					consecFail++;
+					backoff();
+					if (item.tries < 1) { item.tries++; queue.push(item); } // retry once, at the back
+					if (consecFail >= 3 && conc() <= 1) { fatal = true; queue.length = 0; } // host can't cope even serial
+				} else {
+					consecFail = 0;
+					times.push(dt); if (times.length > 8) { times.shift(); }
+					if (json.success && json.data) {
+						if (json.data.error === 'ssl') { sslErrors++; }
+						var changed = false;
+						(json.data.resources || []).forEach(function (r) { if (mergeRes(r)) { changed = true; } });
+						if (mergeCookies(json.data.cookies || [])) { changed = true; }
+						if (changed) { scheduleRender(); }
+					}
+				}
+				done++;
+				active--;
+				setProgress(done, total, eta());
+				pump();
+			});
+		}
+		function pump() {
+			if (fatal) { if (active === 0) { finish(); } return; }
+			while (active < conc() && queue.length) { runOne(queue.shift()); }
+			if (active === 0 && queue.length === 0) { finish(); }
+		}
+		httpPump = pump;
+		pump();
+	}
+
+	if (scanDbBtn) { scanDbBtn.addEventListener('click', runDbScan); }
+	if (scanHttpBtn) { scanHttpBtn.addEventListener('click', runHttpScan); }
+	if (scanStartOver) {
+		scanStartOver.addEventListener('click', function () {
+			scanAgg = {}; scanCookies = [];
+			clearScanNotice();
+			if (scanHttpCard) { scanHttpCard.hidden = true; }
+			renderResults();
+		});
+	}
+	if (scanSpeed && scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
 
 	// --- Logo: WordPress media library ----------------------------------
 	var logoFrame;

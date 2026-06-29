@@ -363,32 +363,56 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
         <section class="lrob-cc-panel" data-panel="cookies" hidden>
             <h3><?php esc_html_e('Auto-detect my cookies', 'lrob-cookie-consent'); ?> <?php $help(__('Finds third-party scripts and embeds so you can block them. Runs as an anonymous visitor — admin/member-only cookies are never touched. Note: external fonts (e.g. Google Fonts) also send visitor IPs to a third party — best self-hosted rather than blocked.', 'lrob-cookie-consent')); ?></h3>
             <div class="lrob-cc-scan">
-                <p class="lrob-cc-field-label"><?php esc_html_e('Scan method', 'lrob-cookie-consent'); ?></p>
-                <div class="lrob-cc-segmented" role="radiogroup">
-                    <label class="lrob-cc-seg is-active"><input type="radio" name="lrob-cc-scan-method" value="pages" checked /><span><?php esc_html_e('Visit pages (rendered)', 'lrob-cookie-consent'); ?></span></label>
-                    <label class="lrob-cc-seg"><input type="radio" name="lrob-cc-scan-method" value="database" /><span><?php esc_html_e('Site content (database)', 'lrob-cookie-consent'); ?></span></label>
-                </div>
-                <p class="lrob-cc-hint" id="lrob-cc-scan-pages-warn"><?php esc_html_e('Fetches the chosen pages (starting with the home page), one at a time; the exact list scanned is shown with the results. The most reliable mode — it sees what visitors actually load.', 'lrob-cookie-consent'); ?></p>
-                <p class="lrob-cc-hint" id="lrob-cc-scan-db-note" hidden><?php esc_html_e('Reads the content of every published page and post — fast, no HTTP. It can miss embeds injected by your theme/plugins or auto-embeds rendered at request time — use “Visit pages” for those.', 'lrob-cookie-consent'); ?></p>
+                <p><?php esc_html_e('Find third-party scripts, embeds and cookies so you can block them. Start with a fast scan of your content; then optionally visit your pages for a deeper look.', 'lrob-cookie-consent'); ?></p>
 
-                <div id="lrob-cc-scan-scope-wrap" class="lrob-cc-scan-scope">
-                    <label for="lrob-cc-scan-scope"><?php esc_html_e('What to scan', 'lrob-cookie-consent'); ?></label>
-                    <select id="lrob-cc-scan-scope">
-                        <?php foreach ($scan_scopes as $sc) : ?>
-                            <option value="<?php echo esc_attr($sc['id']); ?>" data-count="<?php echo (int) $sc['count']; ?>" <?php selected($sc['id'], 'all'); ?>>
-                                <?php
-                                /* translators: 1: scope label, 2: number of URLs. */
-                                printf(esc_html__('%1$s (%2$d pages)', 'lrob-cookie-consent'), esc_html($sc['label']), (int) $sc['count']);
-                                ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-many-warn" hidden><?php esc_html_e('That is a lot of pages to fetch one by one — on a slow or poorly-optimised server this can take a while and add load.', 'lrob-cookie-consent'); ?></p>
+                <p>
+                    <button type="button" class="button button-primary" id="lrob-cc-scan-db-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
+                    <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
+                </p>
+
+                <div id="lrob-cc-scan-progress" class="lrob-cc-scan-progress" hidden>
+                    <progress id="lrob-cc-scan-bar" max="100" value="0"></progress>
+                    <span id="lrob-cc-scan-progress-text"></span>
+                    <span id="lrob-cc-scan-current" class="description"></span>
                 </div>
 
-                <p><button type="button" class="button button-primary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button></p>
-                <div id="lrob-cc-scan-progress" hidden><progress id="lrob-cc-scan-bar" max="100" value="0"></progress> <span id="lrob-cc-scan-progress-text"></span></div>
                 <div id="lrob-cc-scan-results"></div>
+
+                <div id="lrob-cc-scan-http-card" class="lrob-cc-scan-deeper" hidden>
+                    <h4><?php esc_html_e('Deeper scan — visit pages', 'lrob-cookie-consent'); ?> <?php $help(__('Loads your pages as a visitor would, catching resources injected by your theme or plugins that aren’t in the stored content. Findings add to what’s already listed above.', 'lrob-cookie-consent')); ?></h4>
+                    <table class="lrob-cc-scan-types">
+                        <thead><tr>
+                            <th><label><input type="checkbox" id="lrob-cc-scan-all-types" checked /> <?php esc_html_e('Scan everything', 'lrob-cookie-consent'); ?></label></th>
+                            <th><?php esc_html_e('Limit', 'lrob-cookie-consent'); ?></th>
+                            <th><?php esc_html_e('Order', 'lrob-cookie-consent'); ?></th>
+                        </tr></thead>
+                        <tbody>
+                            <tr class="lrob-cc-scan-type" data-type="home" data-count="1">
+                                <td><label><input type="checkbox" checked disabled /> <?php esc_html_e('Home page', 'lrob-cookie-consent'); ?></label></td>
+                                <td colspan="2" class="description"><?php esc_html_e('always', 'lrob-cookie-consent'); ?></td>
+                            </tr>
+                            <?php foreach ($scan_types as $t) : ?>
+                                <tr class="lrob-cc-scan-type" data-type="<?php echo esc_attr($t['type']); ?>" data-count="<?php echo (int) $t['count']; ?>">
+                                    <td><label><input type="checkbox" class="lrob-cc-scan-type-on" checked /> <?php echo esc_html($t['label']); ?> <span class="description">(<?php echo (int) $t['count']; ?>)</span></label></td>
+                                    <td><input type="number" class="small-text lrob-cc-scan-type-limit" min="0" step="1" placeholder="<?php esc_attr_e('all', 'lrob-cookie-consent'); ?>" /></td>
+                                    <td><select class="lrob-cc-scan-type-order"><option value="newest"><?php esc_html_e('newest', 'lrob-cookie-consent'); ?></option><option value="oldest"><?php esc_html_e('oldest', 'lrob-cookie-consent'); ?></option></select></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+
+                    <p class="lrob-cc-scan-speed-wrap">
+                        <label for="lrob-cc-scan-speed"><?php esc_html_e('Scan speed', 'lrob-cookie-consent'); ?></label>
+                        <input type="range" id="lrob-cc-scan-speed" min="1" max="8" value="2" step="1" />
+                        <span id="lrob-cc-scan-speed-val" class="lrob-cc-scan-speed-val">2</span>
+                        <?php $help(__('How many pages to fetch at once. Higher is faster but loads your server more — the scan slows itself down automatically if your host can’t keep up.', 'lrob-cookie-consent')); ?>
+                    </p>
+
+                    <p class="description" id="lrob-cc-scan-total"></p>
+                    <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-many-warn" hidden><?php esc_html_e('That is a lot of pages to fetch one by one — on a slow or limited host this can take a while.', 'lrob-cookie-consent'); ?></p>
+
+                    <p><button type="button" class="button button-primary" id="lrob-cc-scan-http-btn"><?php esc_html_e('Run deeper scan', 'lrob-cookie-consent'); ?></button></p>
+                </div>
             </div>
 
             <h3><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?> <?php $help(__('Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed. The built-in categories below are fixed; rename their wording via translation. You can add your own custom categories.', 'lrob-cookie-consent')); ?></h3>

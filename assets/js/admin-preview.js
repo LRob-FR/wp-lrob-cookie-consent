@@ -127,6 +127,15 @@
 		// link style.
 		var linkOpts = document.querySelector('.lrob-cc-deny-link-opts');
 		if (linkOpts) { linkOpts.hidden = denyStyle !== 'link'; }
+
+		// Backdrop: reveal the blur strength only for "Dim + blur"; reflect dim/blur
+		// on the preview box (the live full-screen overlay can't render in-panel).
+		var bd = val('backdrop');
+		var bdBlurOpt = document.getElementById('lrob-cc-backdrop-blur');
+		if (bdBlurOpt) { bdBlurOpt.hidden = bd !== 'blur'; }
+		preview.classList.toggle('lrob-cc-bd-dim', bd === 'dim');
+		preview.classList.toggle('lrob-cc-bd-blur', bd === 'blur');
+		preview.style.setProperty('--lrob-cc-blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
 		var cont = preview.querySelector('[data-preview="continue"]');
 		if (cont) {
 			var asLink = val('show_deny') && denyStyle === 'link';

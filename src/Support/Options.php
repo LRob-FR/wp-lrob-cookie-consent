@@ -54,7 +54,8 @@ final class Options
             'density'            => 'cozy',     // compact|cozy|comfortable (spacing)
             'font_size'          => 'medium',   // small|medium|large
             'shape'              => 'rounded',  // square|rounded|pill (corner radius)
-            'backdrop_blur'      => 0,
+            'backdrop'           => 'none',     // none | dim | blur — overlay behind the banner (any position)
+            'backdrop_blur'      => 4,          // blur strength (px) when backdrop = blur
             'logo'               => '',
             'align_title'        => 'left',     // left|center|right
             'align_text'         => 'left',
@@ -73,6 +74,7 @@ final class Options
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")
+            'revisit_position'   => 'follow',   // follow (banner corner) | bottom-left | bottom-right | top-left | top-right
             'show_sources'       => 1,          // show visitors what each category blocks
             'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
 

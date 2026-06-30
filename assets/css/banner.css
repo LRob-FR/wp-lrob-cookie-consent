@@ -128,9 +128,17 @@
 	padding: 16px;
 }
 
-#lrob-cc-banner.lrob-cc-pos-center .lrob-cc-backdrop {
+/* Overlay shown for the centered modal, or when the backdrop control is on
+   (dim/blur) in any position; blur applies only for the "blur" choice. */
+#lrob-cc-banner.lrob-cc-pos-center .lrob-cc-backdrop,
+#lrob-cc-banner.lrob-cc-bd-dim .lrob-cc-backdrop,
+#lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
 	display: block;
+}
+
+#lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
 	backdrop-filter: blur(var(--_blur));
+	-webkit-backdrop-filter: blur(var(--_blur));
 }
 
 #lrob-cc-banner.lrob-cc-pos-center .lrob-cc-inner {

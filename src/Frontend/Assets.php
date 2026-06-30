@@ -74,6 +74,7 @@ final class Assets
             'dntHideBanner' => (int) Options::get('dnt_hide_banner') === 1,
             'revisitButton' => (int) Options::get('revisit_button') === 1,
             'revisitText'   => (string) Options::get('revisit_text'),
+            'revisitPosition' => (string) Options::get('revisit_position'),
             'position'      => (string) Options::get('position'),
             'showDelay'     => (int) Options::get('show_delay'),
             // Versioning is driven by the client snapshot at consent time (so it

@@ -374,7 +374,8 @@
 	}
 
 	function revisitCorner() {
-		var pos = D.position || 'bottom';
+		var rp = D.revisitPosition || 'follow';
+		var pos = (rp && rp !== 'follow') ? rp : (D.position || 'bottom');
 		var v = pos.indexOf('top') === 0 ? 'top' : 'bottom';
 		var h = pos.indexOf('left') !== -1 ? 'left' : 'right';
 		return v + '-' + h;

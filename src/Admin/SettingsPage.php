@@ -410,7 +410,9 @@ final class SettingsPage
         $out['density'] = in_array($in['density'] ?? '', ['compact', 'cozy', 'comfortable'], true) ? $in['density'] : 'cozy';
         $out['font_size'] = in_array($in['font_size'] ?? '', ['small', 'medium', 'large'], true) ? $in['font_size'] : 'medium';
         $out['shape'] = in_array($in['shape'] ?? '', ['square', 'rounded', 'pill'], true) ? $in['shape'] : 'rounded';
+        $out['backdrop'] = in_array($in['backdrop'] ?? '', ['none', 'dim', 'blur'], true) ? $in['backdrop'] : 'none';
         $out['backdrop_blur'] = min(30, max(0, (int) ($in['backdrop_blur'] ?? $d['backdrop_blur'])));
+        $out['revisit_position'] = in_array($in['revisit_position'] ?? '', ['follow', 'bottom-left', 'bottom-right', 'top-left', 'top-right'], true) ? $in['revisit_position'] : 'follow';
         $out['offset_preset'] = in_array($in['offset_preset'] ?? '', ['snug', 'default', 'spacious', 'custom'], true) ? $in['offset_preset'] : 'default';
         $out['offset_x'] = min(200, max(0, (int) ($in['offset_x'] ?? $d['offset_x'])));
         $out['offset_y'] = min(200, max(0, (int) ($in['offset_y'] ?? $d['offset_y'])));

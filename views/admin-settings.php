@@ -103,13 +103,12 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <td><input type="text" value="<?php esc_attr_e('Opt-in (EU / GDPR)', 'lrob-cookie-consent'); ?>" disabled />
                         <p class="description"><?php esc_html_e('Opt-in only in v1: nothing optional loads until the visitor agrees.', 'lrob-cookie-consent'); ?></p></td></tr>
 
-                <tr><th><?php esc_html_e('Remember a choice for (days)', 'lrob-cookie-consent'); ?> <?php $help(__('How long the visitor’s decision is remembered before the banner asks again. The consent cookie and the proof’s renewal date follow these. Separate from the proof log’s retention.', 'lrob-cookie-consent')); ?></th>
+                <tr><th><?php esc_html_e('Remember a choice for (days)', 'lrob-cookie-consent'); ?> <?php $help(__('How long the visitor’s decision is remembered before the banner asks again — the consent cookie and the proof’s renewal date follow these (separate from the proof log’s retention). As of July 2026, the CNIL advises keeping a refusal for at least 6 months (180 days).', 'lrob-cookie-consent')); ?></th>
                     <td>
                         <label class="lrob-cc-dur"><?php esc_html_e('After accepting', 'lrob-cookie-consent'); ?>
                             <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['accept_days']); ?>" name="<?php echo $name('accept_days'); ?>" value="<?php echo esc_attr((string) $o['accept_days']); ?>" /></label>
                         <label class="lrob-cc-dur"><?php esc_html_e('After refusing', 'lrob-cookie-consent'); ?>
                             <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['deny_days']); ?>" name="<?php echo $name('deny_days'); ?>" value="<?php echo esc_attr((string) $o['deny_days']); ?>" /></label>
-                        <p class="lrob-cc-hint"><?php esc_html_e('As of July 2025, the CNIL advises keeping a refusal for at least 6 months (180 days).', 'lrob-cookie-consent'); ?></p>
                     </td></tr>
 
                 <tr><th><?php esc_html_e('Show to logged-in users', 'lrob-cookie-consent'); ?></th>
@@ -212,6 +211,15 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <label><?php esc_html_e('“Manage cookies” button label', 'lrob-cookie-consent'); ?>
                             <input type="text" data-field="revisit_text" name="<?php echo $name('revisit_text'); ?>" value="<?php echo esc_attr((string) $o['revisit_text']); ?>" placeholder="<?php esc_attr_e('Manage cookies', 'lrob-cookie-consent'); ?>" />
                         </label>
+                        <label><?php esc_html_e('“Manage cookies” button position', 'lrob-cookie-consent'); ?>
+                            <select data-field="revisit_position" name="<?php echo $name('revisit_position'); ?>">
+                                <option value="follow" <?php selected($o['revisit_position'], 'follow'); ?>><?php esc_html_e('Follow the banner', 'lrob-cookie-consent'); ?></option>
+                                <option value="bottom-right" <?php selected($o['revisit_position'], 'bottom-right'); ?>><?php esc_html_e('Bottom right', 'lrob-cookie-consent'); ?></option>
+                                <option value="bottom-left" <?php selected($o['revisit_position'], 'bottom-left'); ?>><?php esc_html_e('Bottom left', 'lrob-cookie-consent'); ?></option>
+                                <option value="top-right" <?php selected($o['revisit_position'], 'top-right'); ?>><?php esc_html_e('Top right', 'lrob-cookie-consent'); ?></option>
+                                <option value="top-left" <?php selected($o['revisit_position'], 'top-left'); ?>><?php esc_html_e('Top left', 'lrob-cookie-consent'); ?></option>
+                            </select>
+                        </label>
                     </p>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Footer links', 'lrob-cookie-consent'); ?> <?php $help(__('Links shown at the bottom of the banner — e.g. your Privacy Policy. Search an existing page or add any URL.', 'lrob-cookie-consent')); ?></p>
@@ -245,6 +253,17 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         'bottom' => __('Bottom', 'lrob-cookie-consent'),
                         'bottom-right' => __('Bottom right', 'lrob-cookie-consent'),
                     ]); ?>
+
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Backdrop', 'lrob-cookie-consent'); ?> <?php $help(__('Dim or blur the page behind the banner, making it modal. Not recommended by default; pairs naturally with the Center position.', 'lrob-cookie-consent')); ?></p>
+                    <?php $seg('backdrop', [
+                        'none' => __('None', 'lrob-cookie-consent'),
+                        'dim' => __('Dim', 'lrob-cookie-consent'),
+                        'blur' => __('Dim + blur', 'lrob-cookie-consent'),
+                    ]); ?>
+                    <p class="lrob-cc-backdrop-blur" id="lrob-cc-backdrop-blur"<?php echo $o['backdrop'] === 'blur' ? '' : ' hidden'; ?>>
+                        <label><?php esc_html_e('Blur strength (px)', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="0" max="30" data-field="backdrop_blur" name="<?php echo $name('backdrop_blur'); ?>" value="<?php echo esc_attr((string) $o['backdrop_blur']); ?>" class="small-text" /></label>
+                    </p>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Distance from the screen edges', 'lrob-cookie-consent'); ?> <?php $help(__('Gap between the banner and the screen edges when placed in a corner — increase it to clear a chat widget or other floating button. Choose a preset, or Custom to set your own value and unit (rem/em/% scale better across screens).', 'lrob-cookie-consent')); ?></p>
                     <?php $seg('offset_preset', [

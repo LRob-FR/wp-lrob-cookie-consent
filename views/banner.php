@@ -24,7 +24,7 @@ $continue_html = $continue_pos !== ''
     ? '<button type="button" class="lrob-cc-continue" data-lrob-cc-action="deny-all">' . esc_html($texts['continue']) . '</button>'
     : '';
 ?>
-<div id="lrob-cc-banner" class="lrob-cc-banner lrob-cc-pos-<?php echo esc_attr($position); ?>"
+<div id="lrob-cc-banner" class="lrob-cc-banner lrob-cc-pos-<?php echo esc_attr($position); ?><?php echo in_array($backdrop ?? 'none', ['dim', 'blur'], true) ? ' lrob-cc-bd-' . esc_attr($backdrop) : ''; ?>"
      role="dialog" aria-modal="true" aria-labelledby="lrob-cc-title" aria-describedby="lrob-cc-desc" hidden>
     <div class="lrob-cc-backdrop" data-lrob-cc-action="close" tabindex="-1" aria-hidden="true"></div>
     <div class="lrob-cc-inner" role="document">

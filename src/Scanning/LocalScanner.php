@@ -130,25 +130,17 @@ final class LocalScanner implements ScanProvider
 
             $this->collect($content, $sample, $services, $site_host, $resources);
 
-            // Provider URLs anywhere in content — catches oEmbed-by-URL (e.g. a
-            // bare youtu.be/watch link or a Gutenberg embed block), which never
-            // contains the rendered "/embed" iframe src.
-            $haystack = strtolower($content);
-            foreach (self::detection_map() as $d) {
-                foreach ($d['needles'] as $needle) {
-                    if (str_contains($haystack, $needle)) {
-                        if (isset($resources[$d['pattern']])) {
-                            $this->add_page($resources[$d['pattern']], $sample);
-                        } else {
-                            $resources[$d['pattern']] = [
-                                'pattern' => $d['pattern'], 'host' => '', 'type' => 'embed',
-                                'category' => $d['category'], 'service' => $d['service'],
-                                'known' => true, 'pages' => [$sample],
-                            ];
-                        }
-                        break;
-                    }
-                }
+            // oEmbeds leave no <iframe>/<script> in stored content, so collect()
+            // can't see them. Detect the embed *structurally* — Gutenberg embed
+            // blocks (always an embed) and classic bare-URL auto-embeds (only for
+            // known oEmbed providers; a bare URL to an unknown host is just a
+            // link) — then identify the host. We never flag a provider merely
+            // because its name appears somewhere in the text.
+            foreach ($this->embed_block_urls($content) as $url) {
+                $this->add_embed($url, $sample, $site_host, $resources, true);
+            }
+            foreach ($this->bare_line_urls($content) as $url) {
+                $this->add_embed($url, $sample, $site_host, $resources, false);
             }
         }
 
@@ -164,23 +156,116 @@ final class LocalScanner implements ScanProvider
     }
 
     /**
-     * Broad host needles → the precise rule to suggest. Used by the database
-     * scan to catch oEmbeds whose content holds only the provider URL.
+     * Known providers, keyed by host (+ optional path hint), used ONLY to
+     * identify and sort an already-detected embed URL — never to detect one.
+     * Matching is host-accurate (dot-boundary), so `x.com` can't match `box.com`.
      *
-     * @return list<array{needles:list<string>,pattern:string,category:string,service:string}>
+     * @return list<array{hosts:list<string>,path?:string,pattern:string,category:string,service:string}>
      */
     private static function detection_map(): array
     {
         return apply_filters('lrob_cc_detection_map', [
-            ['needles' => ['youtube.com', 'youtu.be'], 'pattern' => 'youtube.com/embed', 'category' => 'embed', 'service' => 'YouTube'],
-            ['needles' => ['vimeo.com'], 'pattern' => 'player.vimeo.com', 'category' => 'embed', 'service' => 'Vimeo'],
-            ['needles' => ['dailymotion.com', 'dai.ly'], 'pattern' => 'dailymotion.com/embed', 'category' => 'embed', 'service' => 'Dailymotion'],
-            ['needles' => ['platform.twitter.com', 'twitter.com', 'x.com'], 'pattern' => 'platform.twitter.com', 'category' => 'embed', 'service' => 'X (Twitter)'],
-            ['needles' => ['instagram.com'], 'pattern' => 'instagram.com/embed', 'category' => 'embed', 'service' => 'Instagram'],
-            ['needles' => ['tiktok.com'], 'pattern' => 'tiktok.com/embed', 'category' => 'embed', 'service' => 'TikTok'],
-            ['needles' => ['google.com/maps', 'maps.google.com'], 'pattern' => 'google.com/maps/embed', 'category' => 'embed', 'service' => 'Google Maps'],
-            ['needles' => ['fonts.googleapis.com', 'fonts.gstatic.com'], 'pattern' => 'fonts.googleapis.com', 'category' => 'functional', 'service' => 'Google Fonts'],
+            ['hosts' => ['youtube.com', 'youtu.be', 'youtube-nocookie.com'], 'pattern' => 'youtube.com/embed', 'category' => 'embed', 'service' => 'YouTube'],
+            ['hosts' => ['vimeo.com'], 'pattern' => 'player.vimeo.com', 'category' => 'embed', 'service' => 'Vimeo'],
+            ['hosts' => ['dailymotion.com', 'dai.ly'], 'pattern' => 'dailymotion.com/embed', 'category' => 'embed', 'service' => 'Dailymotion'],
+            ['hosts' => ['twitter.com', 'x.com'], 'pattern' => 'platform.twitter.com', 'category' => 'embed', 'service' => 'X (Twitter)'],
+            ['hosts' => ['instagram.com'], 'pattern' => 'instagram.com/embed', 'category' => 'embed', 'service' => 'Instagram'],
+            ['hosts' => ['tiktok.com'], 'pattern' => 'tiktok.com/embed', 'category' => 'embed', 'service' => 'TikTok'],
+            ['hosts' => ['google.com', 'maps.google.com'], 'path' => '/maps', 'pattern' => 'google.com/maps/embed', 'category' => 'embed', 'service' => 'Google Maps'],
+            ['hosts' => ['fonts.googleapis.com', 'fonts.gstatic.com'], 'pattern' => 'fonts.googleapis.com', 'category' => 'functional', 'service' => 'Google Fonts'],
         ]);
+    }
+
+    /**
+     * URLs from Gutenberg embed blocks (`<!-- wp:…embed … "url":"…" … -->`).
+     * These are real embeds; their rendered iframe/script isn't in stored content.
+     *
+     * @return list<string>
+     */
+    private function embed_block_urls(string $content): array
+    {
+        $urls = [];
+        if (preg_match_all('/<!--\s+wp:[^>]*?embed[^>]*?-->/is', $content, $blocks)) {
+            foreach ($blocks[0] as $block) {
+                if (preg_match('/"url":"([^"]+)"/', $block, $m)) {
+                    $urls[] = str_replace('\\/', '/', html_entity_decode($m[1]));
+                }
+            }
+        }
+        return $urls;
+    }
+
+    /**
+     * URLs sitting alone on a line — WordPress auto-embeds these (classic editor).
+     *
+     * @return list<string>
+     */
+    private function bare_line_urls(string $content): array
+    {
+        if (!preg_match_all('/^\s*(https?:\/\/[^\s<"\']+)\s*$/im', $content, $m)) {
+            return [];
+        }
+        return $m[1];
+    }
+
+    /**
+     * Record a detected embed URL, identifying its host against the known base.
+     * $force adds it even if unknown (an explicit embed block); otherwise only a
+     * known oEmbed provider counts (a bare URL to an unknown host is just a link).
+     *
+     * @param array<string,array<string,mixed>> $resources
+     */
+    private function add_embed(string $url, string $page, string $site_host, array &$resources, bool $force): void
+    {
+        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+        if ($host === '' || $host === $site_host) {
+            return;
+        }
+        $known = $this->identify_url($url);
+        if ($known === null && !$force) {
+            return; // bare URL to an unknown host — not an embed, just a link
+        }
+        $pattern = $known['pattern'] ?? $host;
+        if (isset($resources[$pattern])) {
+            $this->add_page($resources[$pattern], $page);
+            return;
+        }
+        $resources[$pattern] = [
+            'pattern'  => $pattern,
+            'host'     => $host,
+            'type'     => 'embed',
+            'category' => $known['category'] ?? '',
+            'service'  => $known['service'] ?? $host,
+            'known'    => $known !== null,
+            'pages'    => [$page],
+        ];
+    }
+
+    /**
+     * Match a third-party URL to the known base by host (dot-boundary) plus an
+     * optional path hint. Returns the identifier, or null when unrecognised.
+     *
+     * @return array{pattern:string,category:string,service:string}|null
+     */
+    private function identify_url(string $url): ?array
+    {
+        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+        if ($host === '') {
+            return null;
+        }
+        $path = strtolower((string) wp_parse_url($url, PHP_URL_PATH));
+        foreach (self::detection_map() as $d) {
+            foreach ($d['hosts'] as $needle) {
+                if ($host !== $needle && !str_ends_with($host, '.' . $needle)) {
+                    continue;
+                }
+                if (!empty($d['path']) && !str_contains($path, $d['path'])) {
+                    continue;
+                }
+                return ['pattern' => $d['pattern'], 'category' => $d['category'], 'service' => $d['service']];
+            }
+        }
+        return null;
     }
 
     /**

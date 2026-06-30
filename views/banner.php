@@ -84,26 +84,27 @@ $continue_html = $continue_pos !== ''
         </div>
 
         <div class="lrob-cc-buttons">
-            <?php if ($show_accept) : ?>
-                <button type="button" class="lrob-cc-btn lrob-cc-btn-accept" data-lrob-cc-action="accept-all">
-                    <?php echo esc_html($texts['accept']); ?>
-                </button>
-            <?php endif; ?>
-            <?php if ($show_deny && $deny_style === 'button') : ?>
-                <button type="button" class="lrob-cc-btn lrob-cc-btn-deny" data-lrob-cc-action="deny-all">
-                    <?php echo esc_html($texts['deny']); ?>
-                </button>
-            <?php endif; ?>
-            <?php if ($collapsed && $show_customize) : ?>
-                <button type="button" class="lrob-cc-btn lrob-cc-btn-customize" data-lrob-cc-action="customize"
-                        aria-expanded="false" aria-controls="lrob-cc-categories">
-                    <?php echo esc_html($texts['customize']); ?>
-                </button>
-            <?php endif; ?>
-            <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-lrob-cc-action="save"
-                    <?php echo ($collapsed || !$show_save) ? 'hidden' : ''; ?>>
-                <?php echo esc_html($texts['save']); ?>
-            </button>
+            <?php foreach ($button_order as $b) : ?>
+                <?php if ($b === 'accept' && $show_accept) : ?>
+                    <button type="button" class="lrob-cc-btn lrob-cc-btn-accept" data-lrob-cc-action="accept-all">
+                        <?php echo esc_html($texts['accept']); ?>
+                    </button>
+                <?php elseif ($b === 'deny' && $show_deny && $deny_style === 'button') : ?>
+                    <button type="button" class="lrob-cc-btn lrob-cc-btn-deny" data-lrob-cc-action="deny-all">
+                        <?php echo esc_html($texts['deny']); ?>
+                    </button>
+                <?php elseif ($b === 'customize' && $collapsed && $show_customize) : ?>
+                    <button type="button" class="lrob-cc-btn lrob-cc-btn-customize" data-lrob-cc-action="customize"
+                            aria-expanded="false" aria-controls="lrob-cc-categories">
+                        <?php echo esc_html($texts['customize']); ?>
+                    </button>
+                <?php elseif ($b === 'save') : ?>
+                    <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-lrob-cc-action="save"
+                            <?php echo ($collapsed || !$show_save) ? 'hidden' : ''; ?>>
+                        <?php echo esc_html($texts['save']); ?>
+                    </button>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
 
         <?php if ($continue_pos === 'under-buttons') : ?>

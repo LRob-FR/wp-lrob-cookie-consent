@@ -201,6 +201,15 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             </td></tr>
                     </table>
 
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Button order', 'lrob-cookie-consent'); ?> <?php $help(__('Drag to reorder the banner buttons. Hidden buttons are simply skipped.', 'lrob-cookie-consent')); ?></p>
+                    <?php $btn_labels = ['accept' => __('Accept', 'lrob-cookie-consent'), 'deny' => __('Refuse', 'lrob-cookie-consent'), 'customize' => __('Customize', 'lrob-cookie-consent'), 'save' => __('Save', 'lrob-cookie-consent')]; ?>
+                    <ul class="lrob-cc-btn-order" id="lrob-cc-btn-order">
+                        <?php foreach ((array) $o['button_order'] as $bk) : if (!isset($btn_labels[$bk])) { continue; } ?>
+                            <li draggable="true" data-key="<?php echo esc_attr($bk); ?>"><span class="lrob-cc-drag-handle" aria-hidden="true">⠿</span> <?php echo esc_html($btn_labels[$bk]); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <input type="hidden" id="lrob-cc-btn-order-input" data-field="button_order" name="<?php echo $name('button_order'); ?>" value="<?php echo esc_attr(implode(',', (array) $o['button_order'])); ?>" />
+
                     <h3><?php esc_html_e('Layout', 'lrob-cookie-consent'); ?></h3>
                     <p>
                         <label class="lrob-cc-check"><input type="checkbox" data-field="categories_collapsed" name="<?php echo $name('categories_collapsed'); ?>" value="1" <?php echo $checked('categories_collapsed'); ?> /> <?php esc_html_e('Hide category options behind a “Customize” button (simpler banner)', 'lrob-cookie-consent'); ?></label>

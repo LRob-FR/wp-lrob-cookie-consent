@@ -85,6 +85,10 @@ final class Banner
         $deny_style = (string) Options::get('deny_style');
         $deny_link_position = (string) Options::get('deny_link_position');
         $backdrop = (string) Options::get('backdrop');
+        $button_order = Options::get('button_order');
+        if (!is_array($button_order) || $button_order === []) {
+            $button_order = ['accept', 'deny', 'customize', 'save'];
+        }
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];

@@ -71,6 +71,7 @@ final class Options
             'show_customize'     => 1,          // "Customize" button (collapsed view only)
             'deny_style'         => 'button',   // button | link ("Continue without accepting")
             'deny_link_position' => 'under-buttons', // under-buttons | under-box | top | near-close
+            'button_order'       => ['accept', 'deny', 'customize', 'save'], // order in the button row
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")

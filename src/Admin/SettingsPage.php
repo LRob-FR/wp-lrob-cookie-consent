@@ -446,6 +446,25 @@ final class SettingsPage
         $out['text_continue'] = sanitize_text_field((string) ($in['text_continue'] ?? ''));
         $out['deny_style'] = in_array($in['deny_style'] ?? '', ['button', 'link'], true) ? $in['deny_style'] : 'button';
         $out['deny_link_position'] = in_array($in['deny_link_position'] ?? '', ['under-buttons', 'under-box', 'top', 'near-close'], true) ? $in['deny_link_position'] : 'under-buttons';
+
+        // Button order: comma list (from the drag UI) → validated, deduped, with
+        // any missing buttons appended so all four are always present.
+        $valid_btns = ['accept', 'deny', 'customize', 'save'];
+        $raw_order = $in['button_order'] ?? '';
+        $raw_order = is_string($raw_order) ? array_map('trim', explode(',', $raw_order)) : (is_array($raw_order) ? $raw_order : []);
+        $order = [];
+        foreach ($raw_order as $k) {
+            $k = sanitize_key((string) $k);
+            if (in_array($k, $valid_btns, true) && !in_array($k, $order, true)) {
+                $order[] = $k;
+            }
+        }
+        foreach ($valid_btns as $k) {
+            if (!in_array($k, $order, true)) {
+                $order[] = $k;
+            }
+        }
+        $out['button_order'] = $order;
         $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
         $out['revisit_text'] = sanitize_text_field((string) ($in['revisit_text'] ?? ''));
         $out['text_preset'] = sanitize_text_field((string) ($in['text_preset'] ?? ''));

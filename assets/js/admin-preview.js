@@ -136,6 +136,16 @@
 		preview.classList.toggle('lrob-cc-bd-dim', bd === 'dim');
 		preview.classList.toggle('lrob-cc-bd-blur', bd === 'blur');
 		preview.style.setProperty('--lrob-cc-blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
+
+		// Reorder preview buttons to match the configured order.
+		var order = (val('button_order') || 'accept,deny,customize,save').split(',');
+		var btnWrap = preview.querySelector('.lrob-cc-buttons');
+		if (btnWrap) {
+			order.forEach(function (k) {
+				var el = btnWrap.querySelector('[data-preview="' + k.trim() + '"]');
+				if (el) { btnWrap.appendChild(el); }
+			});
+		}
 		var cont = preview.querySelector('[data-preview="continue"]');
 		if (cont) {
 			var asLink = val('show_deny') && denyStyle === 'link';
@@ -1138,6 +1148,37 @@
 	$(document).on('click', '.lrob-cc-inline-remove', function () {
 		$(this).closest('.lrob-cc-inline-row').remove();
 	});
+
+	// --- Button order: drag to reorder ----------------------------------
+	(function () {
+		var list = document.getElementById('lrob-cc-btn-order');
+		var hidden = document.getElementById('lrob-cc-btn-order-input');
+		if (!list || !hidden) { return; }
+		var dragged = null;
+		function serialize() {
+			hidden.value = [].map.call(list.querySelectorAll('[data-key]'), function (li) { return li.getAttribute('data-key'); }).join(',');
+			update();
+		}
+		list.addEventListener('dragstart', function (e) {
+			var li = e.target.closest('[data-key]');
+			if (!li) { return; }
+			dragged = li;
+			li.classList.add('is-dragging');
+			e.dataTransfer.effectAllowed = 'move';
+		});
+		list.addEventListener('dragend', function () {
+			if (dragged) { dragged.classList.remove('is-dragging'); }
+			dragged = null;
+		});
+		list.addEventListener('dragover', function (e) {
+			e.preventDefault();
+			var li = e.target.closest('[data-key]');
+			if (!li || li === dragged || !dragged) { return; }
+			var rect = li.getBoundingClientRect();
+			list.insertBefore(dragged, (e.clientX - rect.left) > rect.width / 2 ? li.nextSibling : li);
+		});
+		list.addEventListener('drop', function (e) { e.preventDefault(); serialize(); });
+	})();
 
 	// --- Minimal confirm dialog (no window.confirm) ----------------------
 	$('form[data-lrob-cc-confirm]').on('submit', function (e) {

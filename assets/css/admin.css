@@ -170,7 +170,7 @@
 	/* A clearly-visible checkerboard stands in for page content behind the banner,
 	   so the backdrop dim/blur amount is estimable (you can see how much it softens
 	   the grid edges). */
-	background: repeating-conic-gradient(#c4c8cd 0% 25%, #eef0f2 0% 50%) 0 / 20px 20px;
+	background: repeating-conic-gradient(#c4c8cd 0% 25%, #eef0f2 0% 50%) 0 / 60px 60px;
 	border: 1px solid #dcdcde;
 	border-radius: 6px;
 	position: relative;

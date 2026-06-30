@@ -407,7 +407,14 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
                 <div class="lrob-cc-banner-preview">
                     <p class="lrob-cc-preview-label"><?php esc_html_e('Live preview', 'lrob-cookie-consent'); ?></p>
+                    <div class="lrob-cc-preview-states">
+                        <button type="button" class="button button-small button-primary" data-preview-state="main"><?php esc_html_e('Main view', 'lrob-cookie-consent'); ?></button>
+                        <button type="button" class="button button-small" data-preview-state="options"><?php esc_html_e('Options', 'lrob-cookie-consent'); ?></button>
+                        <button type="button" class="button button-small" data-preview-state="closed"><?php esc_html_e('Closed', 'lrob-cookie-consent'); ?></button>
+                        <button type="button" class="button button-small" id="lrob-cc-preview-refresh" title="<?php esc_attr_e('Show the banner again', 'lrob-cookie-consent'); ?>">&#x21bb;</button>
+                    </div>
                     <div class="lrob-cc-preview-stage">
+                        <p class="lrob-cc-preview-closed" hidden><?php esc_html_e('Banner closed — visitors would see the floating “Manage cookies” button.', 'lrob-cookie-consent'); ?></p>
                         <div id="lrob-cc-preview" class="lrob-cc-banner">
                             <div class="lrob-cc-inner" role="document">
                                 <div class="lrob-cc-header">

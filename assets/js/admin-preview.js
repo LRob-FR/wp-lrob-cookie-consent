@@ -74,6 +74,34 @@
 		if (node) { node.style.display = on ? '' : 'none'; }
 	}
 
+	// Preview can show the main view, the expanded "options" (customize) view, or
+	// the closed state — so the admin can check each without touching the front.
+	var previewMode = 'main';
+	function applyPreviewState(cats) {
+		var closedNote = document.querySelector('.lrob-cc-preview-closed');
+		if (previewMode === 'closed') {
+			preview.style.visibility = 'hidden';
+			if (closedNote) { closedNote.hidden = false; }
+			return;
+		}
+		preview.style.visibility = '';
+		if (closedNote) { closedNote.hidden = true; }
+		if (previewMode === 'options') {
+			if (cats) { cats.style.display = ''; }
+			show('save', true);
+			show('customize', false);
+		}
+	}
+	function setPreviewMode(mode) {
+		previewMode = mode;
+		document.querySelectorAll('[data-preview-state]').forEach(function (b) {
+			b.classList.toggle('button-primary', b.getAttribute('data-preview-state') === mode);
+		});
+		update();
+	}
+	$(document).on('click', '[data-preview-state]', function () { setPreviewMode(this.getAttribute('data-preview-state')); });
+	$('#lrob-cc-preview-refresh').on('click', function () { setPreviewMode('main'); });
+
 	function applyColors() {
 		var keys = ['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg'];
 		keys.forEach(function (k) { preview.style.removeProperty('--lrob-cc-' + k); });
@@ -178,6 +206,7 @@
 		}
 		var cats = preview.querySelector('[data-preview="cats"]');
 		if (cats) { cats.style.display = collapsed ? 'none' : ''; }
+		applyPreviewState(cats);
 
 		applyColors();
 		if (s.width) { preview.style.setProperty('--lrob-cc-width', s.width[val('popup_size')] || s.width.small); }

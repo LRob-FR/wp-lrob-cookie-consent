@@ -852,7 +852,6 @@
 		update();
 	}
 
-	function pathOf(u) { try { var x = new URL(u, location.href); return x.pathname + x.search; } catch (e) { return u; } }
 
 	function setScanBusy(on) {
 		if (scanBtn) { scanBtn.disabled = on; }
@@ -1003,7 +1002,7 @@
 		}
 		function runOne(item) {
 			active++;
-			setProgress(done, total, eta(), pathOf(item.url));
+			setProgress(done, total, eta()); // no per-URL text: long URLs made the line jump/blink
 			var t0 = (window.performance && performance.now) ? performance.now() : Date.now();
 			scanAjax('lrob_cc_scan_url', { url: item.url, insecure: insecure ? 1 : 0 }, { timeout: 20000 }).then(function (json) {
 				var dt = ((window.performance && performance.now) ? performance.now() : Date.now()) - t0;
@@ -1039,6 +1038,7 @@
 			if (active === 0 && queue.length === 0) { finish(); }
 		}
 		httpPump = pump;
+		if (scanCurrent) { scanCurrent.textContent = A.i18n.scanPhasePages || ''; }
 		pump();
 	}
 

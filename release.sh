@@ -119,8 +119,11 @@ scan_dead_css() {
 generate_pot() {
     step "make-pot"
     mkdir -p "$LANGUAGES_DIR"
+    # Blank the default wordpress.org "Report-Msgid-Bugs-To" header — the plugin
+    # isn't published there. Point it elsewhere if/when we publish to wp.org.
     wp i18n make-pot "$SCRIPT_DIR" "$LANGUAGES_DIR/${PLUGIN_SLUG}.pot" \
-        --domain="$PLUGIN_SLUG" --package-name="$PLUGIN_NAME" >/dev/null \
+        --domain="$PLUGIN_SLUG" --package-name="$PLUGIN_NAME" \
+        --headers='{"Report-Msgid-Bugs-To":""}' >/dev/null \
         || { fail "make-pot"; exit 1; }
     ok "${PLUGIN_SLUG}.pot"
 }

@@ -134,11 +134,14 @@
 		// Backdrop: reveal the blur strength only for "Dim + blur"; reflect dim/blur
 		// on the preview box (the live full-screen overlay can't render in-panel).
 		var bd = val('backdrop');
+		var dimOpt = document.getElementById('lrob-cc-backdrop-dim');
+		if (dimOpt) { dimOpt.hidden = bd !== 'dim' && bd !== 'blur'; }
 		var bdBlurOpt = document.getElementById('lrob-cc-backdrop-blur');
 		if (bdBlurOpt) { bdBlurOpt.hidden = bd !== 'blur'; }
 		preview.classList.toggle('lrob-cc-bd-dim', bd === 'dim');
 		preview.classList.toggle('lrob-cc-bd-blur', bd === 'blur');
 		preview.style.setProperty('--lrob-cc-blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
+		preview.style.setProperty('--lrob-cc-dim', (parseInt(val('backdrop_dim'), 10) || 0) / 100);
 
 		// Reorder preview buttons to match the configured order.
 		var order = (val('button_order') || 'accept,deny,customize,save').split(',');

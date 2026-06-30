@@ -17,6 +17,7 @@
 	--_btn-deny-text: var(--lrob-cc-btn-deny-text, var(--wp--preset--color--contrast, #1a1a1a));
 	--_radius: var(--lrob-cc-radius, 10px);
 	--_blur: var(--lrob-cc-blur, 0px);
+	--_dim: var(--lrob-cc-dim, 0.5);
 	--_pad: var(--lrob-cc-pad, 18px);
 	--_gap: var(--lrob-cc-gap, 12px);
 	--_width: var(--lrob-cc-width, 340px);
@@ -73,7 +74,7 @@
 	display: none;
 	position: fixed;
 	inset: 0;
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, var(--_dim, 0.5));
 }
 
 #lrob-cc-banner.lrob-cc-pos-bottom {

@@ -55,7 +55,8 @@ final class Options
             'font_size'          => 'medium',   // small|medium|large
             'shape'              => 'rounded',  // square|rounded|pill (corner radius)
             'backdrop'           => 'none',     // none | dim | blur — overlay behind the banner (any position)
-            'backdrop_blur'      => 4,          // blur strength (px) when backdrop = blur
+            'backdrop_dim'       => 50,         // overlay darkness (% black) when backdrop = dim or blur
+            'backdrop_blur'      => 6,          // blur strength (px) when backdrop = blur
             'logo'               => '',
             'align_title'        => 'left',     // left|center|right
             'align_text'         => 'left',

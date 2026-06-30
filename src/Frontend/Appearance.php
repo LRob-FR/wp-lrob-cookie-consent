@@ -100,6 +100,7 @@ final class Appearance
         $vars['--lrob-cc-title-size'] = $font['title'];
         $vars['--lrob-cc-radius'] = self::RADIUS[(string) Options::get('shape')] ?? self::RADIUS['rounded'];
         $vars['--lrob-cc-blur'] = max(0, (int) Options::get('backdrop_blur')) . 'px';
+        $vars['--lrob-cc-dim'] = (string) (max(0, min(100, (int) Options::get('backdrop_dim'))) / 100);
 
         $preset = (string) Options::get('offset_preset');
         if (isset(self::OFFSET_PRESETS[$preset])) {

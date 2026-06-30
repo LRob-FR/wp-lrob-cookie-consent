@@ -275,7 +275,11 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         'dim' => __('Dim', 'lrob-cookie-consent'),
                         'blur' => __('Dim + blur', 'lrob-cookie-consent'),
                     ]); ?>
-                    <p class="lrob-cc-backdrop-blur" id="lrob-cc-backdrop-blur"<?php echo $o['backdrop'] === 'blur' ? '' : ' hidden'; ?>>
+                    <p class="lrob-cc-backdrop-opt" id="lrob-cc-backdrop-dim"<?php echo in_array($o['backdrop'], ['dim', 'blur'], true) ? '' : ' hidden'; ?>>
+                        <label><?php esc_html_e('Darken (%)', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="0" max="100" data-field="backdrop_dim" name="<?php echo $name('backdrop_dim'); ?>" value="<?php echo esc_attr((string) $o['backdrop_dim']); ?>" class="small-text" /></label>
+                    </p>
+                    <p class="lrob-cc-backdrop-opt" id="lrob-cc-backdrop-blur"<?php echo $o['backdrop'] === 'blur' ? '' : ' hidden'; ?>>
                         <label><?php esc_html_e('Blur strength (px)', 'lrob-cookie-consent'); ?>
                             <input type="number" min="0" max="30" data-field="backdrop_blur" name="<?php echo $name('backdrop_blur'); ?>" value="<?php echo esc_attr((string) $o['backdrop_blur']); ?>" class="small-text" /></label>
                     </p>

@@ -158,6 +158,10 @@
 		// Refusal options only make sense when "Refuse" is shown.
 		var refuseRow = document.getElementById('lrob-cc-refuse-row');
 		if (refuseRow) { refuseRow.hidden = !val('show_deny'); }
+		// Save is irrelevant only when the options can never be reached (collapsed
+		// behind a Customize button that's turned off).
+		var saveRow = document.getElementById('lrob-cc-save-row');
+		if (saveRow) { saveRow.hidden = val('categories_collapsed') && !val('show_customize'); }
 
 		// Backdrop: reveal the blur strength only for "Dim + blur"; reflect dim/blur
 		// on the preview box (the live full-screen overlay can't render in-panel).

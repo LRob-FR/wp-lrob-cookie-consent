@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-30T10:10:19+00:00\n"
-"PO-Revision-Date: 2026-06-30 10:10+0000\n"
+"POT-Creation-Date: 2026-06-30T10:13:35+00:00\n"
+"PO-Revision-Date: 2026-06-30 10:13+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
 "Language: fr_FR\n"
@@ -992,7 +992,7 @@ msgstr ""
 "donnent leur consentement via Personnaliser → Enregistrer."
 
 #: views/admin-settings.php:166 views/admin-settings.php:169
-#: views/admin-settings.php:194
+#: views/admin-settings.php:192
 msgid "Show"
 msgstr "Afficher"
 
@@ -1066,10 +1066,22 @@ msgid "Arrow (→)"
 msgstr "Flèche (→)"
 
 #: views/admin-settings.php:191
+msgid "Customize button"
+msgstr "Bouton Personnaliser"
+
+#: views/admin-settings.php:191
+msgid ""
+"Shown only when category options are hidden behind a button (see Layout). It "
+"reveals the per-category choices."
+msgstr ""
+"Affiché uniquement lorsque les options de catégories sont masquées derrière "
+"un bouton (voir Disposition). Il révèle les choix par catégorie."
+
+#: views/admin-settings.php:194
 msgid "Save button"
 msgstr "Bouton Enregistrer"
 
-#: views/admin-settings.php:191
+#: views/admin-settings.php:194
 msgid ""
 "Always shown when the category options are visible (after “Customize”, or in "
 "the expanded layout) — it’s how a granular choice is confirmed, so it can’t "
@@ -1079,18 +1091,6 @@ msgstr ""
 "« Personnaliser », ou dans la disposition étendue) — c’est ainsi qu’un choix "
 "granulaire est confirmé, il ne peut donc pas être masqué. Vous pouvez le "
 "renommer."
-
-#: views/admin-settings.php:193
-msgid "Customize button"
-msgstr "Bouton Personnaliser"
-
-#: views/admin-settings.php:193
-msgid ""
-"Shown only when category options are hidden behind a button (see Layout). It "
-"reveals the per-category choices."
-msgstr ""
-"Affiché uniquement lorsque les options de catégories sont masquées derrière "
-"un bouton (voir Disposition). Il révèle les choix par catégorie."
 
 #: views/admin-settings.php:196
 msgid "Logo"

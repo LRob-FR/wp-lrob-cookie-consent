@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-30T10:10:19+00:00\n"
+"POT-Creation-Date: 2026-06-30T10:13:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: lrob-cookie-consent\n"
@@ -897,7 +897,7 @@ msgstr ""
 
 #: views/admin-settings.php:166
 #: views/admin-settings.php:169
-#: views/admin-settings.php:194
+#: views/admin-settings.php:192
 msgid "Show"
 msgstr ""
 
@@ -960,19 +960,19 @@ msgid "Arrow (→)"
 msgstr ""
 
 #: views/admin-settings.php:191
-msgid "Save button"
-msgstr ""
-
-#: views/admin-settings.php:191
-msgid "Always shown when the category options are visible (after “Customize”, or in the expanded layout) — it’s how a granular choice is confirmed, so it can’t be hidden. You can rename it."
-msgstr ""
-
-#: views/admin-settings.php:193
 msgid "Customize button"
 msgstr ""
 
-#: views/admin-settings.php:193
+#: views/admin-settings.php:191
 msgid "Shown only when category options are hidden behind a button (see Layout). It reveals the per-category choices."
+msgstr ""
+
+#: views/admin-settings.php:194
+msgid "Save button"
+msgstr ""
+
+#: views/admin-settings.php:194
+msgid "Always shown when the category options are visible (after “Customize”, or in the expanded layout) — it’s how a granular choice is confirmed, so it can’t be hidden. You can rename it."
 msgstr ""
 
 #: views/admin-settings.php:196

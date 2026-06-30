@@ -60,12 +60,15 @@
 	}
 }
 
-#lrob-cc-banner:not([hidden]) {
+/* Animate the inner box, not #lrob-cc-banner itself — a transform on the banner
+   would make it the containing block for the fixed backdrop, trapping the overlay
+   to the (corner-sized) banner instead of the viewport. */
+#lrob-cc-banner:not([hidden]) .lrob-cc-inner {
 	animation: lrob-cc-in var(--lrob-cc-anim-duration, 300ms) var(--lrob-cc-anim-ease, ease) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	#lrob-cc-banner:not([hidden]) {
+	#lrob-cc-banner:not([hidden]) .lrob-cc-inner {
 		animation: none;
 	}
 }
@@ -131,13 +134,13 @@
 
 /* Overlay shown for the centered modal, or when the backdrop control is on
    (dim/blur) in any position; blur applies only for the "blur" choice. */
-#lrob-cc-banner.lrob-cc-pos-center .lrob-cc-backdrop,
-#lrob-cc-banner.lrob-cc-bd-dim .lrob-cc-backdrop,
-#lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
+.lrob-cc-banner.lrob-cc-pos-center .lrob-cc-backdrop,
+.lrob-cc-banner.lrob-cc-bd-dim .lrob-cc-backdrop,
+.lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
 	display: block;
 }
 
-#lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
+.lrob-cc-banner.lrob-cc-bd-blur .lrob-cc-backdrop {
 	backdrop-filter: blur(var(--_blur));
 	-webkit-backdrop-filter: blur(var(--_blur));
 }

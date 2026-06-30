@@ -170,10 +170,14 @@
 		if (dimOpt) { dimOpt.hidden = bd !== 'dim' && bd !== 'blur'; }
 		var bdBlurOpt = document.getElementById('lrob-cc-backdrop-blur');
 		if (bdBlurOpt) { bdBlurOpt.hidden = bd !== 'blur'; }
-		preview.classList.toggle('lrob-cc-bd-dim', bd === 'dim');
-		preview.classList.toggle('lrob-cc-bd-blur', bd === 'blur');
-		preview.style.setProperty('--lrob-cc-blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
-		preview.style.setProperty('--lrob-cc-dim', (parseInt(val('backdrop_dim'), 10) || 0) / 100);
+		var pbd = document.querySelector('.lrob-cc-preview-bd');
+		if (pbd) {
+			pbd.hidden = !(bd === 'dim' || bd === 'blur');
+			pbd.style.background = 'rgba(0,0,0,' + ((parseInt(val('backdrop_dim'), 10) || 0) / 100) + ')';
+			var blurPx = (bd === 'blur' ? (parseInt(val('backdrop_blur'), 10) || 0) : 0) + 'px';
+			pbd.style.backdropFilter = 'blur(' + blurPx + ')';
+			pbd.style.webkitBackdropFilter = 'blur(' + blurPx + ')';
+		}
 
 		// "What we use" disclosure: reveal its options; the second heading is for two-list mode.
 		var disc = val('disclosure');

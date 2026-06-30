@@ -181,6 +181,18 @@
 	display: none;
 }
 
+/* Preview backdrop — full-screen/fixed on the front, but here scoped to the stage
+   (so it doesn't cover the admin page); driven inline by the preview JS. */
+.lrob-cc-preview-bd {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+}
+
+.lrob-cc-preview-bd[hidden] {
+	display: none;
+}
+
 .lrob-cc-preview-stage {
 	background: repeating-conic-gradient(#f0f0f0 0% 25%, #fafafa 0% 50%) 0 / 24px 24px;
 	border: 1px solid #dcdcde;

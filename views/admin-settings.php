@@ -414,6 +414,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <button type="button" class="button button-small" id="lrob-cc-preview-refresh" title="<?php esc_attr_e('Show the banner again', 'lrob-cookie-consent'); ?>">&#x21bb;</button>
                     </div>
                     <div class="lrob-cc-preview-stage">
+                        <div class="lrob-cc-preview-bd" hidden></div>
                         <p class="lrob-cc-preview-closed" hidden><?php esc_html_e('Banner closed — visitors would see the floating “Manage cookies” button.', 'lrob-cookie-consent'); ?></p>
                         <div id="lrob-cc-preview" class="lrob-cc-banner">
                             <div class="lrob-cc-inner" role="document">

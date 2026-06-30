@@ -236,6 +236,22 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         </label>
                     </p>
 
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Cookie details on the main view', 'lrob-cookie-consent'); ?> <?php $help(__('Show a read-only “what we use” dropdown on the banner’s main page (each category + the services it covers) — handy when you don’t offer per-category customization, e.g. only necessary cookies. One combined list, or two (necessary / optional).', 'lrob-cookie-consent')); ?></p>
+                    <?php $seg('disclosure', [
+                        'off' => __('Off', 'lrob-cookie-consent'),
+                        'one' => __('One list', 'lrob-cookie-consent'),
+                        'two' => __('Two lists', 'lrob-cookie-consent'),
+                    ]); ?>
+                    <div id="lrob-cc-disclosure-opts"<?php echo $o['disclosure'] === 'off' ? ' hidden' : ''; ?>>
+                        <p><label class="lrob-cc-check"><input type="checkbox" data-field="disclosure_open" name="<?php echo $name('disclosure_open'); ?>" value="1" <?php echo $checked('disclosure_open'); ?> /> <?php esc_html_e('Expanded by default', 'lrob-cookie-consent'); ?></label></p>
+                        <p>
+                            <label><?php esc_html_e('Heading', 'lrob-cookie-consent'); ?>
+                                <input type="text" data-field="text_disclosure" name="<?php echo $name('text_disclosure'); ?>" value="<?php echo esc_attr((string) $o['text_disclosure']); ?>" placeholder="<?php echo esc_attr($text_defaults['disclosure']); ?>" /></label>
+                            <label class="lrob-cc-disclosure-mandatory"<?php echo $o['disclosure'] === 'two' ? '' : ' hidden'; ?>><?php esc_html_e('Necessary heading', 'lrob-cookie-consent'); ?>
+                                <input type="text" data-field="text_disclosure_mandatory" name="<?php echo $name('text_disclosure_mandatory'); ?>" value="<?php echo esc_attr((string) $o['text_disclosure_mandatory']); ?>" placeholder="<?php echo esc_attr($text_defaults['disclosure_mandatory']); ?>" /></label>
+                        </p>
+                    </div>
+
                     <p class="lrob-cc-field-label"><?php esc_html_e('Footer links', 'lrob-cookie-consent'); ?> <?php $help(__('Links shown at the bottom of the banner — e.g. your Privacy Policy. Search an existing page or add any URL.', 'lrob-cookie-consent')); ?></p>
                     <div class="lrob-cc-link-search">
                         <input type="search" id="lrob-cc-link-search" placeholder="<?php esc_attr_e('Search a page to add…', 'lrob-cookie-consent'); ?>" autocomplete="off" />

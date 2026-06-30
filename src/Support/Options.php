@@ -80,6 +80,8 @@ final class Options
             'revisit_position'   => 'follow',   // follow (banner corner) | bottom-left | bottom-right | top-left | top-right
             'show_sources'       => 1,          // show visitors what each category blocks
             'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
+            'disclosure'         => 'off',      // off | one | two — read-only "what's used" accordion(s) on the main view
+            'disclosure_open'    => 0,          // expanded by default
 
             // Animation + timing
             'show_delay'         => 1000,       // ms before the banner first appears
@@ -108,6 +110,8 @@ final class Options
             'text_save'          => '',
             'text_customize'     => '',
             'text_continue'      => '',         // empty → "Continue without accepting"
+            'text_disclosure'    => '',         // empty → "What we use" (single / optional accordion header)
+            'text_disclosure_mandatory' => '',  // empty → "Necessary cookies" (mandatory accordion header)
             'text_preset'        => '',         // remembered preset id, or 'custom'
         ];
     }

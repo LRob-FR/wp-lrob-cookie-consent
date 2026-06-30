@@ -352,6 +352,34 @@
 .lrob-cc-continue-align-right { justify-content: flex-end; }
 .lrob-cc-continue-arrow { margin-left: 4px; }
 
+/* Read-only "what we use" disclosure accordion(s) on the main view. */
+.lrob-cc-disclosures {
+	margin-bottom: var(--_gap);
+}
+
+.lrob-cc-disclosure {
+	margin: 6px 0;
+}
+
+.lrob-cc-disclosure > summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.lrob-cc-disclosure ul {
+	margin: 6px 0 0;
+	padding-left: 18px;
+}
+
+.lrob-cc-disclosure li {
+	margin: 4px 0;
+}
+
+.lrob-cc-disc-svc {
+	opacity: 0.7;
+	font-size: 0.9em;
+}
+
 .lrob-cc-continue-under-box {
 	margin-top: 6px;
 }

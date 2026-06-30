@@ -309,7 +309,7 @@ final class SettingsPage
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
             'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_accept',
             'show_deny', 'show_customize', 'categories_collapsed', 'revisit_button',
-            'show_sources', 'watermark', 'anim_fade', 'keep_data_on_uninstall', 'continue_arrow'];
+            'show_sources', 'watermark', 'anim_fade', 'keep_data_on_uninstall', 'continue_arrow', 'disclosure_open'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }
@@ -444,6 +444,9 @@ final class SettingsPage
         $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
         $out['text_customize'] = sanitize_text_field((string) ($in['text_customize'] ?? ''));
         $out['text_continue'] = sanitize_text_field((string) ($in['text_continue'] ?? ''));
+        $out['text_disclosure'] = sanitize_text_field((string) ($in['text_disclosure'] ?? ''));
+        $out['text_disclosure_mandatory'] = sanitize_text_field((string) ($in['text_disclosure_mandatory'] ?? ''));
+        $out['disclosure'] = in_array($in['disclosure'] ?? '', ['off', 'one', 'two'], true) ? $in['disclosure'] : 'off';
         $out['deny_style'] = in_array($in['deny_style'] ?? '', ['button', 'link'], true) ? $in['deny_style'] : 'button';
         $out['deny_link_position'] = in_array($in['deny_link_position'] ?? '', ['under-buttons', 'under-box', 'top', 'near-close'], true) ? $in['deny_link_position'] : 'under-buttons';
         $out['continue_align'] = in_array($in['continue_align'] ?? '', ['left', 'center', 'right'], true) ? $in['continue_align'] : 'center';

@@ -143,6 +143,13 @@
 		preview.style.setProperty('--lrob-cc-blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
 		preview.style.setProperty('--lrob-cc-dim', (parseInt(val('backdrop_dim'), 10) || 0) / 100);
 
+		// "What we use" disclosure: reveal its options; the second heading is for two-list mode.
+		var disc = val('disclosure');
+		var discOpts = document.getElementById('lrob-cc-disclosure-opts');
+		if (discOpts) { discOpts.hidden = disc === 'off'; }
+		var discMand = document.querySelector('.lrob-cc-disclosure-mandatory');
+		if (discMand) { discMand.hidden = disc !== 'two'; }
+
 		// Reorder preview buttons to match the configured order.
 		var order = (val('button_order') || 'accept,deny,customize,save').split(',');
 		var btnWrap = preview.querySelector('.lrob-cc-buttons');

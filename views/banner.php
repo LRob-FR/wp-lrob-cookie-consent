@@ -47,6 +47,31 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
 
         <div id="lrob-cc-desc" class="lrob-cc-message"><?php echo wp_kses_post(wpautop($texts['message'])); ?></div>
 
+        <?php if (($disclosure ?? 'off') !== 'off') :
+            $open_attr = !empty($disclosure_open) ? ' open' : '';
+            $disc_item = static function (string $slug) use ($labels, $sources): string {
+                if (!isset($labels[$slug])) {
+                    return '';
+                }
+                $svc = !empty($sources[$slug]) ? ' <span class="lrob-cc-disc-svc">(' . esc_html(implode(', ', $sources[$slug])) . ')</span>' : '';
+                return '<li><strong>' . esc_html($labels[$slug]['title']) . '</strong> — ' . esc_html($labels[$slug]['desc']) . $svc . '</li>';
+            };
+        ?>
+            <div class="lrob-cc-disclosures">
+                <?php if ($disclosure === 'two') : ?>
+                    <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure_mandatory']); ?></summary>
+                        <ul><?php echo $disc_item('functional'); // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
+                    <?php if (!empty($optional)) : ?>
+                        <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure']); ?></summary>
+                            <ul><?php foreach ($optional as $c) { echo $disc_item($c); } // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
+                    <?php endif; ?>
+                <?php else : ?>
+                    <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure']); ?></summary>
+                        <ul><?php echo $disc_item('functional'); foreach ($optional as $c) { echo $disc_item($c); } // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
         <div id="lrob-cc-categories" class="lrob-cc-categories"<?php echo $collapsed ? ' hidden' : ''; ?>>
             <div class="lrob-cc-cat lrob-cc-cat-functional" data-cat-slug="functional">
                 <div class="lrob-cc-cat-head">

@@ -43,6 +43,8 @@ final class Banner
             'always'    => __('Always active', 'lrob-cookie-consent'),
             'customize' => __('Customize', 'lrob-cookie-consent'),
             'continue'  => __('Continue without accepting', 'lrob-cookie-consent'),
+            'disclosure' => __('What we use', 'lrob-cookie-consent'),
+            'disclosure_mandatory' => __('Necessary cookies', 'lrob-cookie-consent'),
         ];
     }
 
@@ -64,6 +66,8 @@ final class Banner
             'always'    => $d['always'],
             'customize' => $get('text_customize', $d['customize']),
             'continue'  => $get('text_continue', $d['continue']),
+            'disclosure' => $get('text_disclosure', $d['disclosure']),
+            'disclosure_mandatory' => $get('text_disclosure_mandatory', $d['disclosure_mandatory']),
         ];
     }
 
@@ -86,6 +90,8 @@ final class Banner
         $continue_align = (string) Options::get('continue_align');
         $continue_arrow = (int) Options::get('continue_arrow') === 1;
         $backdrop = (string) Options::get('backdrop');
+        $disclosure = (string) Options::get('disclosure');
+        $disclosure_open = (int) Options::get('disclosure_open') === 1;
         $button_order = Options::get('button_order');
         if (!is_array($button_order) || $button_order === []) {
             $button_order = ['accept', 'deny', 'customize'];

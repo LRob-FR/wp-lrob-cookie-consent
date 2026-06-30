@@ -15,6 +15,14 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// Refuse-as-link ("Continue without accepting") — same action as closing the
+// banner (deny all). Rendered at the admin-chosen position; the Deny button is
+// shown instead when the style is "button".
+$continue_pos = ($show_deny && ($deny_style ?? 'button') === 'link') ? ($deny_link_position ?? 'under-buttons') : '';
+$continue_html = $continue_pos !== ''
+    ? '<button type="button" class="lrob-cc-continue" data-lrob-cc-action="deny-all">' . esc_html($texts['continue']) . '</button>'
+    : '';
 ?>
 <div id="lrob-cc-banner" class="lrob-cc-banner lrob-cc-pos-<?php echo esc_attr($position); ?>"
      role="dialog" aria-modal="true" aria-labelledby="lrob-cc-title" aria-describedby="lrob-cc-desc" hidden>
@@ -25,9 +33,16 @@ if (!defined('ABSPATH')) {
                 <img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" />
             <?php endif; ?>
             <h2 id="lrob-cc-title" class="lrob-cc-title"><?php echo esc_html($texts['header']); ?></h2>
+            <?php if ($continue_pos === 'near-close') : ?>
+                <span class="lrob-cc-continue-wrap lrob-cc-continue-near"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
+            <?php endif; ?>
             <button type="button" class="lrob-cc-close" data-lrob-cc-action="close"
                     aria-label="<?php echo esc_attr($texts['close']); ?>">&times;</button>
         </div>
+
+        <?php if ($continue_pos === 'top') : ?>
+            <div class="lrob-cc-continue-wrap lrob-cc-continue-top"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+        <?php endif; ?>
 
         <div id="lrob-cc-desc" class="lrob-cc-message"><?php echo wp_kses_post(wpautop($texts['message'])); ?></div>
 
@@ -74,7 +89,7 @@ if (!defined('ABSPATH')) {
                     <?php echo esc_html($texts['accept']); ?>
                 </button>
             <?php endif; ?>
-            <?php if ($show_deny) : ?>
+            <?php if ($show_deny && $deny_style === 'button') : ?>
                 <button type="button" class="lrob-cc-btn lrob-cc-btn-deny" data-lrob-cc-action="deny-all">
                     <?php echo esc_html($texts['deny']); ?>
                 </button>
@@ -91,6 +106,10 @@ if (!defined('ABSPATH')) {
             </button>
         </div>
 
+        <?php if ($continue_pos === 'under-buttons') : ?>
+            <div class="lrob-cc-continue-wrap lrob-cc-continue-under-buttons"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+        <?php endif; ?>
+
         <?php if (!empty($footer_links) || !empty($watermark)) : ?>
             <div class="lrob-cc-footer">
                 <?php foreach ($footer_links as $link) : ?>
@@ -102,4 +121,7 @@ if (!defined('ABSPATH')) {
             </div>
         <?php endif; ?>
     </div>
+    <?php if ($continue_pos === 'under-box') : ?>
+        <div class="lrob-cc-continue-wrap lrob-cc-continue-under-box"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+    <?php endif; ?>
 </div>

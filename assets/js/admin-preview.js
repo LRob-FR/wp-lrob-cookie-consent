@@ -116,10 +116,34 @@
 		}
 
 		var collapsed = val('categories_collapsed');
+		var denyStyle = val('deny_style');
 		show('accept', val('show_accept'));
-		show('deny', val('show_deny'));
+		show('deny', val('show_deny') && denyStyle === 'button');
 		show('customize', collapsed && val('show_customize'));
 		show('save', !collapsed && val('show_save'));
+
+		// "Continue without accepting" link: text + show/hide + reposition to match
+		// the chosen location. The settings-side options are revealed only for the
+		// link style.
+		var linkOpts = document.querySelector('.lrob-cc-deny-link-opts');
+		if (linkOpts) { linkOpts.hidden = denyStyle !== 'link'; }
+		var cont = preview.querySelector('[data-preview="continue"]');
+		if (cont) {
+			var asLink = val('show_deny') && denyStyle === 'link';
+			cont.hidden = !asLink;
+			cont.textContent = val('text_continue') || cont.getAttribute('data-default') || '';
+			if (asLink) {
+				var inner = preview.querySelector('.lrob-cc-inner');
+				var header = preview.querySelector('.lrob-cc-header');
+				var buttons = preview.querySelector('.lrob-cc-buttons');
+				var msg = preview.querySelector('.lrob-cc-message');
+				var pos = val('deny_link_position');
+				if (pos === 'near-close' && header) { header.appendChild(cont); }
+				else if (pos === 'top' && inner && msg) { inner.insertBefore(cont, msg); }
+				else if (pos === 'under-box' && inner) { inner.appendChild(cont); }
+				else if (buttons && buttons.parentNode) { buttons.parentNode.insertBefore(cont, buttons.nextSibling); }
+			}
+		}
 		var cats = preview.querySelector('[data-preview="cats"]');
 		if (cats) { cats.style.display = collapsed ? 'none' : ''; }
 

@@ -42,6 +42,7 @@ final class Banner
             'close'     => __('Close', 'lrob-cookie-consent'),
             'always'    => __('Always active', 'lrob-cookie-consent'),
             'customize' => __('Customize', 'lrob-cookie-consent'),
+            'continue'  => __('Continue without accepting', 'lrob-cookie-consent'),
         ];
     }
 
@@ -62,6 +63,7 @@ final class Banner
             'close'     => $d['close'],
             'always'    => $d['always'],
             'customize' => $get('text_customize', $d['customize']),
+            'continue'  => $get('text_continue', $d['continue']),
         ];
     }
 
@@ -80,6 +82,8 @@ final class Banner
         $show_deny = (int) Options::get('show_deny') === 1;
         $show_save = (int) Options::get('show_save') === 1;
         $show_customize = (int) Options::get('show_customize') === 1;
+        $deny_style = (string) Options::get('deny_style');
+        $deny_link_position = (string) Options::get('deny_link_position');
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];

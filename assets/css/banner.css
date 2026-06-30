@@ -309,6 +309,45 @@
 	justify-content: var(--lrob-cc-align-buttons, flex-start);
 }
 
+/* "Continue without accepting" — a subtle text link doing the same as close. */
+.lrob-cc-continue {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	color: var(--lrob-cc-text);
+	font: inherit;
+	font-size: 0.85em;
+	text-decoration: underline;
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.lrob-cc-continue:hover,
+.lrob-cc-continue:focus {
+	opacity: 1;
+}
+
+.lrob-cc-continue-wrap {
+	display: flex;
+}
+
+.lrob-cc-continue-top,
+.lrob-cc-continue-under-buttons,
+.lrob-cc-continue-under-box {
+	justify-content: center;
+	margin-top: 8px;
+}
+
+.lrob-cc-continue-under-box {
+	margin-top: 6px;
+}
+
+.lrob-cc-continue-near {
+	align-items: center;
+	margin-right: 8px;
+}
+
 .lrob-cc-footer {
 	margin-top: var(--_gap);
 	font-size: 0.85em;

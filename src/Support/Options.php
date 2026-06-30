@@ -67,6 +67,8 @@ final class Options
             'show_deny'          => 1,          // symmetric Deny visible by default
             'show_save'          => 1,          // Save-preferences button
             'show_customize'     => 1,          // "Customize" button (collapsed view only)
+            'deny_style'         => 'button',   // button | link ("Continue without accepting")
+            'deny_link_position' => 'under-buttons', // under-buttons | under-box | top | near-close
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")
@@ -99,6 +101,7 @@ final class Options
             'text_deny'          => '',
             'text_save'          => '',
             'text_customize'     => '',
+            'text_continue'      => '',         // empty → "Continue without accepting"
             'text_preset'        => '',         // remembered preset id, or 'custom'
         ];
     }

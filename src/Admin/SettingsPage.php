@@ -439,6 +439,9 @@ final class SettingsPage
         $out['text_deny'] = sanitize_text_field((string) ($in['text_deny'] ?? ''));
         $out['text_save'] = sanitize_text_field((string) ($in['text_save'] ?? ''));
         $out['text_customize'] = sanitize_text_field((string) ($in['text_customize'] ?? ''));
+        $out['text_continue'] = sanitize_text_field((string) ($in['text_continue'] ?? ''));
+        $out['deny_style'] = in_array($in['deny_style'] ?? '', ['button', 'link'], true) ? $in['deny_style'] : 'button';
+        $out['deny_link_position'] = in_array($in['deny_link_position'] ?? '', ['under-buttons', 'under-box', 'top', 'near-close'], true) ? $in['deny_link_position'] : 'under-buttons';
         $out['text_message'] = wp_kses_post((string) ($in['text_message'] ?? ''));
         $out['revisit_text'] = sanitize_text_field((string) ($in['revisit_text'] ?? ''));
         $out['text_preset'] = sanitize_text_field((string) ($in['text_preset'] ?? ''));

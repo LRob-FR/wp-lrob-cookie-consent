@@ -167,7 +167,10 @@
 }
 
 .lrob-cc-preview-stage {
-	background: repeating-conic-gradient(#f0f0f0 0% 25%, #fafafa 0% 50%) 0 / 24px 24px;
+	/* A clearly-visible checkerboard stands in for page content behind the banner,
+	   so the backdrop dim/blur amount is estimable (you can see how much it softens
+	   the grid edges). */
+	background: repeating-conic-gradient(#c4c8cd 0% 25%, #eef0f2 0% 50%) 0 / 20px 20px;
 	border: 1px solid #dcdcde;
 	border-radius: 6px;
 	position: relative;
@@ -175,10 +178,12 @@
 	   banner inside doesn't collapse it) with a fixed, sane height — not a tall
 	   square — so it shows position + margins without forcing a scroll. */
 	width: 100%;
-	/* Full viewport height (not page height) so the whole banner — including the
-	   expanded cookie details — is visible while the sticky column follows scroll. */
-	height: calc(100vh - 150px);
-	min-height: 360px;
+	/* Tall, but never overlapping the sticky "Save all settings" bar. The worst
+	   case is the un-scrolled state, where the column sits at its natural position
+	   below the page header/tabs; the generous subtraction keeps the bottom clear
+	   of the save bar there too. The sticky column keeps it in view on scroll. */
+	height: calc(100vh - 250px);
+	min-height: 300px;
 	overflow: hidden;
 }
 

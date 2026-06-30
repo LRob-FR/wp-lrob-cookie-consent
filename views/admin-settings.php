@@ -370,16 +370,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
                 </p>
 
-                <div id="lrob-cc-scan-progress" class="lrob-cc-scan-progress" hidden>
-                    <progress id="lrob-cc-scan-bar" max="100" value="0"></progress>
-                    <span id="lrob-cc-scan-progress-text"></span>
-                    <span id="lrob-cc-scan-current" class="description"></span>
-                </div>
-
-                <div id="lrob-cc-scan-results"></div>
-
                 <div id="lrob-cc-scan-http-card" class="lrob-cc-scan-deeper" hidden>
-                    <h4><?php esc_html_e('Deeper scan — visit pages', 'lrob-cookie-consent'); ?> <?php $help(__('Loads your pages as a visitor would, catching resources injected by your theme or plugins that aren’t in the stored content. Findings add to what’s already listed above.', 'lrob-cookie-consent')); ?></h4>
+                    <h4><?php esc_html_e('Deeper scan — visit pages', 'lrob-cookie-consent'); ?> <?php $help(__('Loads your pages as a visitor would, catching resources injected by your theme or plugins that aren’t in the stored content. Findings add to the results below.', 'lrob-cookie-consent')); ?></h4>
                     <table class="lrob-cc-scan-types">
                         <thead><tr>
                             <th><label><input type="checkbox" id="lrob-cc-scan-all-types" checked /> <?php esc_html_e('Scan everything', 'lrob-cookie-consent'); ?></label></th>
@@ -413,6 +405,14 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
 
                     <p><button type="button" class="button button-primary" id="lrob-cc-scan-http-btn"><?php esc_html_e('Run deeper scan', 'lrob-cookie-consent'); ?></button></p>
                 </div>
+
+                <div id="lrob-cc-scan-progress" class="lrob-cc-scan-progress" hidden>
+                    <progress id="lrob-cc-scan-bar" max="100" value="0"></progress>
+                    <span id="lrob-cc-scan-progress-text"></span>
+                    <span id="lrob-cc-scan-current" class="description"></span>
+                </div>
+
+                <div id="lrob-cc-scan-results"></div>
             </div>
 
             <h3><?php esc_html_e('Categories', 'lrob-cookie-consent'); ?> <?php $help(__('Functional cookies (WordPress login, cart, CSRF/security tokens) are always allowed. The built-in categories below are fixed; rename their wording via translation. You can add your own custom categories.', 'lrob-cookie-consent')); ?></h3>

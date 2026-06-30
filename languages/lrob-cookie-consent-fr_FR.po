@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lrob-cookie-"
 "consent\n"
-"POT-Creation-Date: 2026-06-29T23:53:25+00:00\n"
+"POT-Creation-Date: 2026-06-30T07:42:16+00:00\n"
 "PO-Revision-Date: 2026-06-24 14:30+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
@@ -1331,57 +1331,57 @@ msgstr "Analyser mon site"
 msgid "Start over"
 msgstr "Recommencer"
 
-#: views/admin-settings.php:382
+#: views/admin-settings.php:374
 msgid "Deeper scan — visit pages"
 msgstr "Analyse approfondie — visiter les pages"
 
-#: views/admin-settings.php:382
+#: views/admin-settings.php:374
 msgid ""
 "Loads your pages as a visitor would, catching resources injected by your "
-"theme or plugins that aren’t in the stored content. Findings add to what’s "
-"already listed above."
+"theme or plugins that aren’t in the stored content. Findings add to the "
+"results below."
 msgstr ""
 "Charge vos pages comme le ferait un visiteur, captant les ressources "
 "injectées par votre thème ou vos extensions qui ne figurent pas dans le "
-"contenu enregistré. Les résultats s’ajoutent à ceux déjà listés ci-dessus."
+"contenu enregistré. Les résultats s’ajoutent à ceux ci-dessous."
 
-#: views/admin-settings.php:385
+#: views/admin-settings.php:377
 msgid "Scan everything"
 msgstr "Tout analyser"
 
-#: views/admin-settings.php:386
+#: views/admin-settings.php:378
 msgid "Limit"
 msgstr "Limite"
 
-#: views/admin-settings.php:387
+#: views/admin-settings.php:379
 msgid "Order"
 msgstr "Ordre"
 
-#: views/admin-settings.php:391
+#: views/admin-settings.php:383
 msgid "Home page"
 msgstr "Page d’accueil"
 
-#: views/admin-settings.php:392
+#: views/admin-settings.php:384
 msgid "always"
 msgstr "toujours"
 
-#: views/admin-settings.php:397
+#: views/admin-settings.php:389
 msgid "all"
 msgstr "toutes"
 
-#: views/admin-settings.php:398
+#: views/admin-settings.php:390
 msgid "newest"
 msgstr "plus récentes"
 
-#: views/admin-settings.php:398
+#: views/admin-settings.php:390
 msgid "oldest"
 msgstr "plus anciennes"
 
-#: views/admin-settings.php:405
+#: views/admin-settings.php:397
 msgid "Scan speed"
 msgstr "Vitesse d’analyse"
 
-#: views/admin-settings.php:408
+#: views/admin-settings.php:400
 msgid ""
 "How many pages to fetch at once. Higher is faster but loads your server more "
 "— the scan slows itself down automatically if your host can’t keep up."
@@ -1390,7 +1390,7 @@ msgstr ""
 "sollicite davantage votre serveur — l’analyse ralentit automatiquement si "
 "votre hébergeur ne suit pas."
 
-#: views/admin-settings.php:412
+#: views/admin-settings.php:404
 msgid ""
 "That is a lot of pages to fetch one by one — on a slow or limited host this "
 "can take a while."
@@ -1398,7 +1398,7 @@ msgstr ""
 "Cela fait beaucoup de pages à récupérer une à une — sur un serveur lent ou "
 "limité, cela peut prendre du temps."
 
-#: views/admin-settings.php:414
+#: views/admin-settings.php:406
 msgid "Run deeper scan"
 msgstr "Lancer l’analyse approfondie"
 

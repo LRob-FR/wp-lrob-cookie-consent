@@ -88,6 +88,7 @@ Anything added — option key, table, hook, CSS class — **must** follow these 
 
 ## Conventions to follow
 
+- **TOTAL CUSTOMIZABILITY — NON-NEGOTIABLE.** Every appearance setting *and every word/string shown to visitors on the front* MUST be customizable from the admin, each with a translatable default. No hardcoded front-facing text and no fixed appearance value: if it renders on the banner (titles, descriptions, "Always active", "What this includes", disclosure headings, every label, every spacing/size/colour/radius/etc.), there is an admin option for it. The **live preview IS the real banner** — it server-renders the actual configured categories and the actual detected/blocked listings, runs the real interactions, and is identical to what the visitor sees.
 - **Strict types**: every PHP file in `src/` starts with `declare(strict_types=1);`.
 - **Final classes** unless explicitly meant for subclassing.
 - **Constructor property promotion** — PHP 8.2+.

@@ -20,9 +20,11 @@ if (!defined('ABSPATH')) {
 // banner (deny all). Rendered at the admin-chosen position; the Deny button is
 // shown instead when the style is "button".
 $continue_pos = ($show_deny && ($deny_style ?? 'button') === 'link') ? ($deny_link_position ?? 'under-buttons') : '';
+$continue_arrow_html = !empty($continue_arrow) ? ' <span class="lrob-cc-continue-arrow" aria-hidden="true">&rarr;</span>' : '';
 $continue_html = $continue_pos !== ''
-    ? '<button type="button" class="lrob-cc-continue" data-lrob-cc-action="deny-all">' . esc_html($texts['continue']) . '</button>'
+    ? '<button type="button" class="lrob-cc-continue" data-lrob-cc-action="deny-all">' . esc_html($texts['continue']) . $continue_arrow_html . '</button>'
     : '';
+$continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? 'center');
 ?>
 <div id="lrob-cc-banner" class="lrob-cc-banner lrob-cc-pos-<?php echo esc_attr($position); ?><?php echo in_array($backdrop ?? 'none', ['dim', 'blur'], true) ? ' lrob-cc-bd-' . esc_attr($backdrop) : ''; ?>"
      role="dialog" aria-modal="true" aria-labelledby="lrob-cc-title" aria-describedby="lrob-cc-desc" hidden>
@@ -41,7 +43,7 @@ $continue_html = $continue_pos !== ''
         </div>
 
         <?php if ($continue_pos === 'top') : ?>
-            <div class="lrob-cc-continue-wrap lrob-cc-continue-top"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+            <div class="lrob-cc-continue-wrap lrob-cc-continue-top<?php echo $continue_align_cls; ?>"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
         <?php endif; ?>
 
         <div id="lrob-cc-desc" class="lrob-cc-message"><?php echo wp_kses_post(wpautop($texts['message'])); ?></div>
@@ -108,7 +110,7 @@ $continue_html = $continue_pos !== ''
         </div>
 
         <?php if ($continue_pos === 'under-buttons') : ?>
-            <div class="lrob-cc-continue-wrap lrob-cc-continue-under-buttons"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+            <div class="lrob-cc-continue-wrap lrob-cc-continue-under-buttons<?php echo $continue_align_cls; ?>"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
         <?php endif; ?>
 
         <?php if (!empty($footer_links) || !empty($watermark)) : ?>
@@ -123,6 +125,6 @@ $continue_html = $continue_pos !== ''
         <?php endif; ?>
     </div>
     <?php if ($continue_pos === 'under-box') : ?>
-        <div class="lrob-cc-continue-wrap lrob-cc-continue-under-box"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
+        <div class="lrob-cc-continue-wrap lrob-cc-continue-under-box<?php echo $continue_align_cls; ?>"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
     <?php endif; ?>
 </div>

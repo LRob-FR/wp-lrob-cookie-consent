@@ -127,6 +127,9 @@
 		// link style.
 		var linkOpts = document.querySelector('.lrob-cc-deny-link-opts');
 		if (linkOpts) { linkOpts.hidden = denyStyle !== 'link'; }
+		// Refusal options only make sense when "Refuse" is shown.
+		var refuseRow = document.getElementById('lrob-cc-refuse-row');
+		if (refuseRow) { refuseRow.hidden = !val('show_deny'); }
 
 		// Backdrop: reveal the blur strength only for "Dim + blur"; reflect dim/blur
 		// on the preview box (the live full-screen overlay can't render in-panel).
@@ -150,7 +153,7 @@
 		if (cont) {
 			var asLink = val('show_deny') && denyStyle === 'link';
 			cont.hidden = !asLink;
-			cont.textContent = val('text_continue') || cont.getAttribute('data-default') || '';
+			cont.textContent = (val('text_continue') || cont.getAttribute('data-default') || '') + (val('continue_arrow') ? ' →' : '');
 			if (asLink) {
 				var inner = preview.querySelector('.lrob-cc-inner');
 				var header = preview.querySelector('.lrob-cc-header');

@@ -137,8 +137,11 @@ merge_translations() {
     local po_files=("$LANGUAGES_DIR"/*.po)
     shopt -u nullglob
     [ ${#po_files[@]} -eq 0 ] && { warn "no .po files"; return 0; }
+    local rev; rev="$(date -u '+%Y-%m-%d %H:%M+0000')"
     for po in "${po_files[@]}"; do
         msgmerge --quiet --update --backup=none "$po" "$LANGUAGES_DIR/${PLUGIN_SLUG}.pot" 2>/dev/null
+        # Stamp the revision date at build time so it's never hand-set or stale.
+        sed -i "s|^\"PO-Revision-Date:.*|\"PO-Revision-Date: ${rev}\\\\n\"|" "$po"
         local obsolete; obsolete=$(grep -c '^#~ msgid' "$po" || true)
         obsolete=${obsolete:-0}
         if [ "$obsolete" -gt 0 ]; then

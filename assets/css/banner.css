@@ -343,9 +343,13 @@
 .lrob-cc-continue-top,
 .lrob-cc-continue-under-buttons,
 .lrob-cc-continue-under-box {
-	justify-content: center;
 	margin-top: 8px;
 }
+
+.lrob-cc-continue-align-left { justify-content: flex-start; }
+.lrob-cc-continue-align-center { justify-content: center; }
+.lrob-cc-continue-align-right { justify-content: flex-end; }
+.lrob-cc-continue-arrow { margin-left: 4px; }
 
 .lrob-cc-continue-under-box {
 	margin-top: 6px;

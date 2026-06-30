@@ -168,7 +168,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                         <tr><th><?php esc_html_e('Deny button', 'lrob-cookie-consent'); ?> <?php $help(__('Refuses every optional category, keeping only strictly-necessary (functional) cookies. If something is genuinely required — a CAPTCHA, a payment script — list it under the functional category so it is referenced but never blocked.', 'lrob-cookie-consent')); ?></th>
                             <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_deny" data-toggle-text="text_deny" name="<?php echo $name('show_deny'); ?>" value="1" <?php echo $checked('show_deny'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
                                 <input type="text" data-field="text_deny" name="<?php echo $name('text_deny'); ?>" value="<?php echo esc_attr((string) $o['text_deny']); ?>" placeholder="<?php echo esc_attr($text_defaults['deny']); ?>"<?php echo empty($o['show_deny']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
-                        <tr><th><?php esc_html_e('Refuse style', 'lrob-cookie-consent'); ?> <?php $help(__('Show refusal as a normal button, or as a subtle “Continue without accepting” link (same effect as closing the banner). A link nudges toward acceptance — note that GDPR/CNIL expect refusing to be as easy as accepting.', 'lrob-cookie-consent')); ?></th>
+                        <tr id="lrob-cc-refuse-row"><th><?php esc_html_e('Refuse style', 'lrob-cookie-consent'); ?> <?php $help(__('Show refusal as a normal button, or as a subtle “Continue without accepting” link (same effect as closing the banner). A link nudges toward acceptance — note that GDPR/CNIL expect refusing to be as easy as accepting.', 'lrob-cookie-consent')); ?></th>
                             <td><select data-field="deny_style" name="<?php echo $name('deny_style'); ?>">
                                     <option value="button" <?php selected($o['deny_style'], 'button'); ?>><?php esc_html_e('Button', 'lrob-cookie-consent'); ?></option>
                                     <option value="link" <?php selected($o['deny_style'], 'link'); ?>><?php esc_html_e('“Continue without accepting” link', 'lrob-cookie-consent'); ?></option>
@@ -181,6 +181,12 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                         <option value="near-close" <?php selected($o['deny_link_position'], 'near-close'); ?>><?php esc_html_e('Next to the × button', 'lrob-cookie-consent'); ?></option>
                                     </select>
                                     <input type="text" data-field="text_continue" name="<?php echo $name('text_continue'); ?>" value="<?php echo esc_attr((string) $o['text_continue']); ?>" placeholder="<?php echo esc_attr($text_defaults['continue']); ?>" />
+                                    <select data-field="continue_align" name="<?php echo $name('continue_align'); ?>">
+                                        <option value="left" <?php selected($o['continue_align'], 'left'); ?>><?php esc_html_e('Left', 'lrob-cookie-consent'); ?></option>
+                                        <option value="center" <?php selected($o['continue_align'], 'center'); ?>><?php esc_html_e('Center', 'lrob-cookie-consent'); ?></option>
+                                        <option value="right" <?php selected($o['continue_align'], 'right'); ?>><?php esc_html_e('Right', 'lrob-cookie-consent'); ?></option>
+                                    </select>
+                                    <label class="lrob-cc-check"><input type="checkbox" data-field="continue_arrow" name="<?php echo $name('continue_arrow'); ?>" value="1" <?php echo $checked('continue_arrow'); ?> /> <?php esc_html_e('Arrow (→)', 'lrob-cookie-consent'); ?></label>
                                 </span></td></tr>
                         <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?></th>
                             <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_save" data-toggle-text="text_save" name="<?php echo $name('show_save'); ?>" value="1" <?php echo $checked('show_save'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>

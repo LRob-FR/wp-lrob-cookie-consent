@@ -84,6 +84,8 @@ final class Banner
         $show_customize = (int) Options::get('show_customize') === 1;
         $deny_style = (string) Options::get('deny_style');
         $deny_link_position = (string) Options::get('deny_link_position');
+        $continue_align = (string) Options::get('continue_align');
+        $continue_arrow = (int) Options::get('continue_arrow') === 1;
         $backdrop = (string) Options::get('backdrop');
         $button_order = Options::get('button_order');
         if (!is_array($button_order) || $button_order === []) {

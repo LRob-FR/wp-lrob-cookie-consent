@@ -31,6 +31,7 @@ final class Options
             'categories'         => [],         // optional category defs [{slug,label,desc}]; empty = built-in defaults
             'cat_desc_overrides' => [],         // built-in slug => custom description (names stay fixed)
             'block_rules'        => '',         // one per line: pattern | category | service
+            'cookies'            => [],         // declared cookies for disclosure: [{name,service,party,category,desc}]
             'rules_mode'         => 'structured', // structured | raw (admin editor preference)
             'inline_scripts'     => [],         // [ ['code' => '', 'category' => ''], ... ]
             'reprompt_on_rule_change' => 0,     // off: re-prompt only when active categories change

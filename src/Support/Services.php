@@ -65,6 +65,9 @@ final class Services
      */
     public static function wordpressCookies(): array
     {
+        // [pattern (cookie-name prefix), service, category]. Category defaults to
+        // functional; WooCommerce's order-attribution (Sourcebuster) cookies are
+        // analytics, so they get a blockable category.
         $list = [
             ['pattern' => 'wordpress_logged_in_', 'service' => __('WordPress login session', 'lrob-cookie-consent')],
             ['pattern' => 'wp-settings-',          'service' => __('WordPress preferences', 'lrob-cookie-consent')],
@@ -72,11 +75,21 @@ final class Services
             ['pattern' => 'wp-postpass_',          'service' => __('Password-protected posts', 'lrob-cookie-consent')],
         ];
         if (class_exists('WooCommerce')) {
-            $list[] = ['pattern' => 'woocommerce_', 'service' => __('WooCommerce cart & checkout', 'lrob-cookie-consent')];
+            $list[] = ['pattern' => 'woocommerce_',          'service' => __('WooCommerce cart & checkout', 'lrob-cookie-consent')];
+            $list[] = ['pattern' => 'wp_woocommerce_session_', 'service' => __('WooCommerce session', 'lrob-cookie-consent')];
+            $list[] = ['pattern' => 'storeApi',              'service' => __('WooCommerce Store API (cart)', 'lrob-cookie-consent')];
+            // Order attribution sets sbjs_* (Sourcebuster) from JavaScript — a
+            // fetch-based scan can't see them, but we know WooCommerce sets them.
+            $list[] = ['pattern' => 'sbjs_', 'service' => __('WooCommerce order attribution (Sourcebuster)', 'lrob-cookie-consent'), 'category' => 'statistics'];
         }
         $out = [];
         foreach ($list as $c) {
-            $out[] = ['label' => $c['service'], 'pattern' => $c['pattern'], 'category' => 'functional', 'service' => $c['service']];
+            $out[] = [
+                'label'    => $c['service'],
+                'pattern'  => $c['pattern'],
+                'category' => $c['category'] ?? 'functional',
+                'service'  => $c['service'],
+            ];
         }
         return apply_filters('lrob_cc_wordpress_cookies', $out);
     }

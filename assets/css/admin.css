@@ -402,6 +402,7 @@
 .lrob-cc-master-toggle .lrob-cc-master-toggle-off { display: inline; }
 .lrob-cc-master-toggle input:checked ~ .lrob-cc-master-toggle-on { display: inline; }
 .lrob-cc-master-toggle input:checked ~ .lrob-cc-master-toggle-off { display: none; }
+.lrob-cc-master-saved { color: #1a7a34; font-weight: 700; }
 
 /* ============================ Tabs ============================ */
 .lrob-cc-tabs {
@@ -455,6 +456,27 @@
 @media (max-width: 1200px) {
 	.lrob-cc-cookies-grid { grid-template-columns: 1fr; }
 }
+
+/* Declared-cookies repeater. */
+.lrob-cc-cookie-row {
+	display: grid;
+	grid-template-columns: 1.3fr 0.8fr 1.1fr 1fr 1.6fr 28px;
+	gap: 6px;
+	align-items: center;
+	margin-bottom: 6px;
+}
+
+.lrob-cc-cookie-row input,
+.lrob-cc-cookie-row select { width: 100%; }
+
+.lrob-cc-cookie-head {
+	font-weight: 600;
+	font-size: 12px;
+	color: #50575e;
+}
+
+.lrob-cc-cookie-table code { font-size: 12px; }
+.lrob-cc-cookie-table .lrob-cc-scan-done { opacity: 0.55; }
 
 /* ============================ Collapsible sections ============================ */
 .lrob-cc-section {

@@ -51,6 +51,19 @@
 		if (ref) { ref.value = ref.value.split('#')[0] + hash; }
 	});
 
+	// --- Master enable toggle: apply instantly (no full save needed) -----
+	$('.lrob-cc-master-toggle input[data-field="enabled"]').on('change', function () {
+		var on = this.checked ? 1 : 0;
+		var saved = document.querySelector('.lrob-cc-master-saved');
+		fetch(A.ajaxUrl, {
+			method: 'POST', credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: 'action=lrob_cc_toggle_enabled&nonce=' + encodeURIComponent(A.toggleNonce || '') + '&enabled=' + on
+		}).then(function () {
+			if (saved) { saved.hidden = false; clearTimeout(saved._t); saved._t = setTimeout(function () { saved.hidden = true; }, 1500); }
+		}).catch(function () {});
+	});
+
 	// --- Segmented controls: reflect active state ------------------------
 	$(document).on('change', '.lrob-cc-segmented input[type="radio"]', function () {
 		$(this).closest('.lrob-cc-segmented').find('.lrob-cc-seg').removeClass('is-active');
@@ -589,6 +602,19 @@
 
 	// --- Site scan: DB-first, results accumulate; optional parallel HTTP deep scan ---
 	var scanResults = document.getElementById('lrob-cc-scan-results');
+	var scanSummaryEl = document.getElementById('lrob-cc-scan-summary');
+	var cookieResultsEl = document.getElementById('lrob-cc-cookie-results');
+	var scanStartedAt = 0;
+	var httpDoneCb = null; // chains the real-cookie scan after the page-visit pass
+	function nowTs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
+	function scanSummary(pages) {
+		if (!scanSummaryEl) { return; }
+		var secs = scanStartedAt ? Math.max(1, Math.round((nowTs() - scanStartedAt) / 1000)) : 0;
+		/* translators: %1$d: pages scanned, %2$d: seconds taken. */
+		var tpl = (A.i18n.scannedSummary || 'Scanned %1$d pages in %2$ds.');
+		scanSummaryEl.textContent = tpl.replace('%1$d', pages).replace('%2$d', secs);
+		scanSummaryEl.hidden = false;
+	}
 
 	// Persistent aggregate — DB and HTTP scans both merge here and never reset
 	// until "Start over". category + picked live here so repaints keep edits.
@@ -927,11 +953,16 @@
 	function runFullScan() {
 		clearScanNotice();
 		setScanBusy(true);
+		if (scanSummaryEl) { scanSummaryEl.hidden = true; }
+		if (cookieResultsEl) { cookieResultsEl.innerHTML = ''; }
+		cookieFound = {};
+		scanStartedAt = nowTs();
 		runDbScan(function () {
 			scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (json) {
 				var urls = (json.success && json.data && json.data.urls) || [];
-				if (!urls.length) { setScanBusy(false); renderResults(); return; }
-				httpPool(urls, false); // its finish() clears busy + renders
+				if (!urls.length) { setScanBusy(false); renderResults(); scanSummary(0); runCookieScan(); return; }
+				httpDoneCb = runCookieScan;
+				httpPool(urls, false); // its finish() clears busy + renders + chains the cookie scan
 			});
 		});
 	}
@@ -961,6 +992,8 @@
 			stopped = true; httpPump = null;
 			setScanBusy(false);
 			renderResults();
+			scanSummary(done);
+			if (httpDoneCb) { var _cb = httpDoneCb; httpDoneCb = null; _cb(); }
 			clearScanNotice();
 			if (fatal) { scanNotice(A.i18n.hostFailed || 'Host could not complete the scan.', true); }
 			else if (sslErrors > 0 && !insecure) {
@@ -1010,13 +1043,166 @@
 	if (scanBtn) { scanBtn.addEventListener('click', runFullScan); }
 	if (scanStartOver) {
 		scanStartOver.addEventListener('click', function () {
-			scanAgg = {}; scanCookies = [];
+			scanAgg = {}; scanCookies = []; cookieFound = {};
 			clearScanNotice();
+			if (cookieResultsEl) { cookieResultsEl.innerHTML = ''; }
 			renderResults();
 		});
 	}
 	if (scanSpeed && scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
 	if (scanTotalEl) { updateHttpUi(); }
+
+	// --- Phase 3: real-browser cookie scan ------------------------------
+	// Loads a minimal set of the site's own pages in hidden, same-origin iframes
+	// (our blocking bypassed via nonce) and reads document.cookie — the only way
+	// to see JS-set cookies. Each name is classified against the known-cookie map.
+	var cookieFound = {};
+
+	// Greedy set-cover: the fewest pages that together cover every detected host.
+	function cookieScanPages() {
+		var hostPages = {};
+		aggArray().forEach(function (r) {
+			var host = r.host || r.pattern;
+			(r.pages || []).forEach(function (p) {
+				hostPages[host] = hostPages[host] || [];
+				if (hostPages[host].indexOf(p) === -1) { hostPages[host].push(p); }
+			});
+		});
+		var uncovered = Object.keys(hostPages), chosen = [], guard = 0;
+		while (uncovered.length && chosen.length < 12 && guard++ < 60) {
+			var score = {};
+			uncovered.forEach(function (host) { hostPages[host].forEach(function (p) { score[p] = (score[p] || 0) + 1; }); });
+			var best = null, bestN = 0;
+			Object.keys(score).forEach(function (p) { if (score[p] > bestN) { bestN = score[p]; best = p; } });
+			if (!best) { break; }
+			chosen.push(best);
+			uncovered = uncovered.filter(function (host) { return hostPages[host].indexOf(best) === -1; });
+		}
+		var home = A.homeUrl || (location.origin + '/');
+		if (chosen.indexOf(home) === -1) { chosen.unshift(home); }
+		return chosen.slice(0, 12);
+	}
+
+	function withScanParam(url) {
+		return url + (url.indexOf('?') === -1 ? '?' : '&') + 'lrob_cc_scan=' + encodeURIComponent(A.cookieScanNonce || '');
+	}
+
+	function readCookieNames(doc) {
+		var out = [];
+		try {
+			(doc.cookie || '').split(';').forEach(function (pair) { var n = pair.split('=')[0].trim(); if (n) { out.push(n); } });
+		} catch (e) {}
+		return out;
+	}
+
+	function classifyCookie(name) {
+		var best = null, bestLen = -1;
+		(A.knownCookies || []).forEach(function (c) {
+			var hit = c.prefix ? name.indexOf(c.match) === 0 : name.toLowerCase() === String(c.match).toLowerCase();
+			if (hit && String(c.match).length > bestLen) { best = c; bestLen = String(c.match).length; }
+		});
+		return best;
+	}
+
+	function ingestCookieNames(names) {
+		names.forEach(function (name) {
+			if (cookieFound[name]) { return; }
+			var m = classifyCookie(name);
+			cookieFound[name] = { name: name, service: m ? m.service : '', category: m ? m.category : '', party: m ? m.party : 'first', desc: m ? m.desc : '', known: !!m };
+		});
+	}
+
+	function loadPageAndReadCookies(url) {
+		return new Promise(function (resolve) {
+			var iframe = document.createElement('iframe');
+			iframe.style.cssText = 'position:absolute;width:1024px;height:768px;left:-9999px;top:-9999px;border:0;';
+			var settled = false;
+			var timer = setTimeout(finish, 9000);
+			function finish() {
+				if (settled) { return; }
+				settled = true; clearTimeout(timer);
+				try { ingestCookieNames(readCookieNames(iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document))); } catch (e) {}
+				if (iframe.parentNode) { iframe.parentNode.removeChild(iframe); }
+				resolve();
+			}
+			iframe.addEventListener('load', function () {
+				setTimeout(function () {
+					try { var w = iframe.contentWindow; if (w) { w.scrollTo(0, 600); w.dispatchEvent(new Event('scroll')); w.dispatchEvent(new Event('mousemove')); } } catch (e) {}
+					setTimeout(finish, 1800); // re-read after interaction nudge
+				}, 1500);
+			});
+			iframe.src = withScanParam(url);
+			document.body.appendChild(iframe);
+		});
+	}
+
+	function runCookieScan() {
+		setScanBusy(true);
+		if (scanProgressText) { scanProgressText.textContent = ''; }
+		ingestCookieNames(readCookieNames(document)); // baseline: cookies already in this same-origin page
+		var pages = cookieScanPages(), i = 0;
+		(function next() {
+			if (i >= pages.length) { setScanBusy(false); renderCookieResults(); return; }
+			if (scanCurrent) { scanCurrent.textContent = (A.i18n.scanPhaseCookies || '') + ' ' + (i + 1) + '/' + pages.length; }
+			loadPageAndReadCookies(pages[i++]).then(function () { renderCookieResults(); next(); });
+		})();
+	}
+
+	function renderCookieResults() {
+		if (!cookieResultsEl) { return; }
+		var declared = {};
+		document.querySelectorAll('#lrob-cc-cookies input[name*="[name]"]').forEach(function (inp) { if (inp.value) { declared[inp.value] = true; } });
+		var cmp = A.cmpActive || [];
+		var warn = cmp.length
+			? '<div class="lrob-cc-hint lrob-cc-hint-warning">' + escapeHtml((A.i18n.cmpWarn || 'Another consent plugin is active (%s).').replace('%s', cmp.join(', '))) + '</div>'
+			: '<p class="description">' + escapeHtml(A.i18n.cmpWarnGeneric || '') + '</p>';
+		var names = Object.keys(cookieFound);
+		if (!names.length) {
+			cookieResultsEl.innerHTML = warn + '<p class="description">' + escapeHtml(A.i18n.cookiesNone || '') + '</p>';
+			return;
+		}
+		var rows = names.map(function (name) {
+			var c = cookieFound[name], added = !!declared[name];
+			return '<tr' + (added ? ' class="lrob-cc-scan-done"' : '') + '>' +
+				'<td><code>' + escapeHtml(name) + '</code></td>' +
+				'<td>' + escapeHtml(c.service || '') + '</td>' +
+				'<td>' + escapeHtml(c.party === 'third' ? (A.i18n.partyThird || 'external') : (A.i18n.partyFirst || 'this site')) + '</td>' +
+				'<td>' + (c.known ? '<span class="lrob-cc-badge is-known">' + escapeHtml(c.category || '') + '</span>' : '<span class="lrob-cc-badge">' + escapeHtml(A.i18n.cookieUnknown || 'review') + '</span>') + '</td>' +
+				'<td>' + (added ? '<span class="lrob-cc-badge is-added">' + escapeHtml(A.i18n.cookieAdded || 'declared') + '</span>' : '<button type="button" class="button button-small lrob-cc-cookie-declare" data-name="' + escapeHtml(name) + '">+</button>') + '</td>' +
+				'</tr>';
+		}).join('');
+		cookieResultsEl.innerHTML = warn +
+			'<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.cookiesFound || 'Cookies actually set:') + ' <button type="button" class="button button-small" id="lrob-cc-cookie-declare-all">' + escapeHtml(A.i18n.cookieAddAll || 'Declare all') + '</button></p>' +
+			'<table class="widefat striped lrob-cc-cookie-table"><thead><tr><th>cookie</th><th>service</th><th>set by</th><th>category</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+	}
+
+	// --- Declared-cookies repeater --------------------------------------
+	var cookiesWrap = document.getElementById('lrob-cc-cookies');
+	var cookieTpl = document.getElementById('lrob-cc-cookie-template');
+
+	function cookieRowExists(name) {
+		var found = false;
+		document.querySelectorAll('#lrob-cc-cookies input[name*="[name]"]').forEach(function (inp) { if (inp.value === name) { found = true; } });
+		return found;
+	}
+	function declareCookie(c) {
+		if (!c || !cookiesWrap || !cookieTpl || (c.name && cookieRowExists(c.name))) { return; }
+		var base = cookiesWrap.getAttribute('data-name');
+		var i = Date.now() + Math.floor(Math.random() * 1000);
+		var node = cookieTpl.content.firstElementChild.cloneNode(true);
+		var map = { '.lrob-cc-ck-name': 'name', '.lrob-cc-ck-party': 'party', '.lrob-cc-ck-service': 'service', '.lrob-cc-ck-category': 'category', '.lrob-cc-ck-desc': 'desc' };
+		Object.keys(map).forEach(function (sel) {
+			var el = node.querySelector(sel); if (!el) { return; }
+			el.setAttribute('name', base + '[cookies][' + i + '][' + map[sel] + ']');
+			var v = c[map[sel]];
+			if (v !== undefined && v !== '') { el.value = v; }
+		});
+		cookiesWrap.appendChild(node);
+	}
+	$('#lrob-cc-cookie-add').on('click', function () { declareCookie({ name: '', party: 'first' }); });
+	$(document).on('click', '.lrob-cc-cookie-remove', function () { $(this).closest('.lrob-cc-cookie-row').remove(); });
+	$(document).on('click', '.lrob-cc-cookie-declare', function () { declareCookie(cookieFound[this.getAttribute('data-name')]); renderCookieResults(); });
+	$(document).on('click', '#lrob-cc-cookie-declare-all', function () { Object.keys(cookieFound).forEach(function (n) { declareCookie(cookieFound[n]); }); renderCookieResults(); });
 
 	// --- Logo: WordPress media library ----------------------------------
 	var logoFrame;
@@ -1274,10 +1460,15 @@
 						{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
 						{ v: '0', l: A.i18n.wizNoKeep || 'No' }
 					], val('log_consent') ? '1' : '0') +
-						'<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizDurations || 'How long should a choice be remembered?') + '</p>' +
-						wizDuration('accept_days', A.i18n.wizDurAccept || 'After accepting', A.i18n.wizDurAcceptTip || 'How long an acceptance is kept before the banner asks again.') +
-						wizDuration('deny_days', A.i18n.wizDurDeny || 'After refusing', A.i18n.wizDurDenyTip || 'How long a refusal is kept. The CNIL advises at least 6 months.');
-					bindRadio(b, 'log', function (v) { setField('log_consent', v === '1'); });
+						'<div data-wiz-retention' + (val('log_consent') ? '' : ' hidden') + '>' +
+							'<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizRetention || 'How long should consent logs be kept in the database?') + '</p>' +
+							wizDuration('log_retention_days', A.i18n.wizRetentionLabel || 'Keep logs for', A.i18n.wizRetentionTip || 'Logs are deleted automatically after this. Important on large sites — keep at least as long as a consent lasts. 0 = keep forever.') +
+						'</div>';
+					bindRadio(b, 'log', function (v) {
+						setField('log_consent', v === '1');
+						var r = b.querySelector('[data-wiz-retention]');
+						if (r) { r.hidden = v !== '1'; }
+					});
 					b.querySelectorAll('[data-wizdur-value], [data-wizdur-unit]').forEach(function (el) {
 						var handler = function () { wizDurApply(b, el.getAttribute('data-wizdur-key')); };
 						el.addEventListener('input', handler);

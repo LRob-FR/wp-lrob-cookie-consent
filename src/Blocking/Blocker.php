@@ -43,6 +43,12 @@ final class Blocker
 
     private function should_buffer(): bool
     {
+        // Real-cookie scan: an admin loads the page (in a hidden iframe) with
+        // blocking off so trackers actually run and set their cookies. Gated by a
+        // nonce + capability so only the scanning admin gets the unblocked render.
+        if (self::is_scan_bypass()) {
+            return false;
+        }
         if (is_admin() || wp_doing_ajax() || wp_doing_cron()) {
             return false;
         }
@@ -167,6 +173,16 @@ final class Blocker
             }
         }
         return null;
+    }
+
+    /** True when the current request is an authorised real-cookie-scan render. */
+    public static function is_scan_bypass(): bool
+    {
+        if (empty($_GET['lrob_cc_scan'])) {
+            return false;
+        }
+        $nonce = sanitize_text_field(wp_unslash((string) $_GET['lrob_cc_scan']));
+        return current_user_can(LROB_CC_CAPABILITY) && wp_verify_nonce($nonce, 'lrob_cc_scan_cookies') !== false;
     }
 
     private function attr_value(string $attrs, string $name): string

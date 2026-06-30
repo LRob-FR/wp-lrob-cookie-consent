@@ -37,6 +37,7 @@ final class SettingsPage
         add_action('wp_ajax_lrob_cc_scan_db', [$this, 'handle_scan_db']);
         add_action('wp_ajax_lrob_cc_search_pages', [$this, 'handle_search_pages']);
         add_action('wp_ajax_lrob_cc_preview', [$this, 'handle_preview']);
+        add_action('wp_ajax_lrob_cc_toggle_enabled', [$this, 'handle_toggle_enabled']);
         add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
     }
 
@@ -113,6 +114,19 @@ final class SettingsPage
         Rules::flush();
 
         wp_send_json_success(['css' => $css, 'html' => $html]);
+    }
+
+    /** Flip the master enable switch immediately, without a full form save. */
+    public function handle_toggle_enabled(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_send_json_error(['message' => __('Not allowed.', 'lrob-cookie-consent')], 403);
+        }
+        check_ajax_referer('lrob_cc_toggle', 'nonce');
+        $o = Options::all();
+        $o['enabled'] = empty($_POST['enabled']) ? 0 : 1;
+        update_option(Options::OPTION_KEY, $o);
+        wp_send_json_success(['enabled' => $o['enabled']]);
     }
 
     public function handle_scan_targets(): void
@@ -210,6 +224,8 @@ final class SettingsPage
             'texts'      => Presets::text(),
             'services'   => Services::common(),
             'wpCookies'  => Services::wordpressCookies(),
+            'knownCookies' => \LRob\CookieConsent\Support\Cookies::known(),
+            'cmpActive'  => \LRob\CookieConsent\Support\Cookies::activeCmpPlugins(),
             'wizard'     => Services::wizard(),
             'wizardSettings' => [
                 'tone' => [
@@ -243,6 +259,9 @@ final class SettingsPage
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'scanNonce'  => wp_create_nonce('lrob_cc_scan'),
             'previewNonce' => wp_create_nonce('lrob_cc_preview'),
+            'toggleNonce' => wp_create_nonce('lrob_cc_toggle'),
+            'cookieScanNonce' => wp_create_nonce('lrob_cc_scan_cookies'),
+            'homeUrl'    => home_url('/'),
             'i18n'       => [
                 'confirmPurge' => __('Delete all consent log entries? This cannot be undone.', 'lrob-cookie-consent'),
                 'confirm'      => __('Confirm', 'lrob-cookie-consent'),
@@ -268,11 +287,9 @@ final class SettingsPage
                 'scanSpeedUnit' => __('pages at once', 'lrob-cookie-consent'),
                 'scanSpeedTip' => __('How many pages to fetch at once. The scan slows itself down if your host can’t keep up.', 'lrob-cookie-consent'),
                 'wizKeepWording' => __('Keep my current wording', 'lrob-cookie-consent'),
-                'wizDurations' => __('How long should a choice be remembered?', 'lrob-cookie-consent'),
-                'wizDurAccept' => __('After accepting', 'lrob-cookie-consent'),
-                'wizDurDeny'   => __('After refusing', 'lrob-cookie-consent'),
-                'wizDurAcceptTip' => __('How long an acceptance is kept before the banner asks again.', 'lrob-cookie-consent'),
-                'wizDurDenyTip' => __('How long a refusal is kept. The CNIL advises at least 6 months.', 'lrob-cookie-consent'),
+                'wizRetention' => __('How long should consent logs be kept in the database?', 'lrob-cookie-consent'),
+                'wizRetentionLabel' => __('Keep logs for', 'lrob-cookie-consent'),
+                'wizRetentionTip' => __('Logs are deleted automatically after this. Important on large sites — keep at least as long as a consent lasts. 0 = keep forever.', 'lrob-cookie-consent'),
                 'durDays'      => __('days', 'lrob-cookie-consent'),
                 'durMonths'    => __('months', 'lrob-cookie-consent'),
                 'durYears'     => __('years', 'lrob-cookie-consent'),
@@ -323,9 +340,21 @@ final class SettingsPage
                 'hostSlowdown' => __('Your host is limiting requests — slowing the scan down.', 'lrob-cookie-consent'),
                 'hostFailed'   => __('Your host could not complete the page-visit scan (it may have very limited resources). The results found so far are still valid.', 'lrob-cookie-consent'),
                 'scanComplete' => __('Scan complete.', 'lrob-cookie-consent'),
+                /* translators: %1$d: number of pages scanned, %2$d: seconds taken. */
+                'scannedSummary' => __('Scanned %1$d pages in %2$ds.', 'lrob-cookie-consent'),
                 'scanSpeed'    => __('Scan speed', 'lrob-cookie-consent'),
                 'scanPhaseDb'  => __('Reading your content…', 'lrob-cookie-consent'),
                 'scanPhasePages' => __('Visiting your pages…', 'lrob-cookie-consent'),
+                'scanPhaseCookies' => __('Reading actual cookies in your browser…', 'lrob-cookie-consent'),
+                'cookiesFound' => __('Cookies actually set (read in your browser):', 'lrob-cookie-consent'),
+                'cookiesNone'  => __('No first-party cookies were read. Trackers may load only after interaction, or another consent tool may be blocking them.', 'lrob-cookie-consent'),
+                'cmpWarn'      => __('Another consent/cookie plugin is active (%s). It will hold trackers back and skew this scan — deactivate it before scanning.', 'lrob-cookie-consent'),
+                'cmpWarnGeneric' => __('For an accurate scan, no other cookie-consent tool should be active — it would stop trackers from setting their cookies.', 'lrob-cookie-consent'),
+                'cookieAddAll' => __('Declare all', 'lrob-cookie-consent'),
+                'cookieAdded'  => __('declared', 'lrob-cookie-consent'),
+                'partyFirst'   => __('this site', 'lrob-cookie-consent'),
+                'partyThird'   => __('external', 'lrob-cookie-consent'),
+                'cookieUnknown' => __('Unknown — review', 'lrob-cookie-consent'),
                 'all'          => __('all', 'lrob-cookie-consent'),
                 'slowHost'     => __('Scanning is slow (over 1s per page). A faster web host would help.', 'lrob-cookie-consent'),
                 'slowHostLink' => __('See LRob hosting', 'lrob-cookie-consent'),
@@ -429,6 +458,30 @@ final class SettingsPage
         }
 
         $out['block_rules'] = sanitize_textarea_field((string) ($in['block_rules'] ?? ''));
+
+        // Declared cookies (for the visitor disclosure). Dedup by name.
+        $out['cookies'] = [];
+        if (isset($in['cookies']) && is_array($in['cookies'])) {
+            $seen = [];
+            foreach ($in['cookies'] as $c) {
+                if (!is_array($c)) {
+                    continue;
+                }
+                $cname = sanitize_text_field((string) ($c['name'] ?? ''));
+                if ($cname === '' || isset($seen[$cname])) {
+                    continue;
+                }
+                $seen[$cname] = true;
+                $cat = sanitize_key((string) ($c['category'] ?? ''));
+                $out['cookies'][] = [
+                    'name'     => $cname,
+                    'service'  => sanitize_text_field((string) ($c['service'] ?? '')),
+                    'party'    => (($c['party'] ?? '') === 'third') ? 'third' : 'first',
+                    'category' => Categories::is_valid($cat) ? $cat : 'functional',
+                    'desc'     => sanitize_text_field((string) ($c['desc'] ?? '')),
+                ];
+            }
+        }
 
         $out['inline_scripts'] = [];
         if (isset($in['inline_scripts']) && is_array($in['inline_scripts'])) {

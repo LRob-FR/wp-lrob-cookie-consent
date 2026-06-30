@@ -112,6 +112,20 @@ final class Banner
         foreach ($compiled['inline'] as $in) {
             $sources[$in['category']][] = $in['name'] !== '' ? $in['name'] : __('Inline script', 'lrob-cookie-consent');
         }
+        // Declared cookies — the actual cookies shown to visitors, labelled by
+        // who sets them (this site / external).
+        $declared = is_array(Options::get('cookies')) ? Options::get('cookies') : [];
+        foreach ($declared as $ck) {
+            if (!is_array($ck) || ($ck['name'] ?? '') === '') {
+                continue;
+            }
+            $cat = (string) ($ck['category'] ?? 'functional');
+            $party = ($ck['party'] ?? 'first') === 'third'
+                ? __('external', 'lrob-cookie-consent')
+                : __('this site', 'lrob-cookie-consent');
+            $svc = trim((string) ($ck['service'] ?? ''));
+            $sources[$cat][] = ($svc !== '' ? $svc . ' — ' : '') . (string) $ck['name'] . ' (' . $party . ')';
+        }
         foreach ($sources as $cat => $list) {
             $sources[$cat] = array_values(array_unique($list));
         }

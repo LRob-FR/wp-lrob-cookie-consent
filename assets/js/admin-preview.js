@@ -120,7 +120,7 @@
 		show('accept', val('show_accept'));
 		show('deny', val('show_deny') && denyStyle === 'button');
 		show('customize', collapsed && val('show_customize'));
-		show('save', !collapsed && val('show_save'));
+		show('save', !collapsed); // mandatory + contextual; shown with the category options
 
 		// "Continue without accepting" link: text + show/hide + reposition to match
 		// the chosen location. The settings-side options are revealed only for the

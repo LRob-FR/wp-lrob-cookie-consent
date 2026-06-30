@@ -188,9 +188,8 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                     </select>
                                     <label class="lrob-cc-check"><input type="checkbox" data-field="continue_arrow" name="<?php echo $name('continue_arrow'); ?>" value="1" <?php echo $checked('continue_arrow'); ?> /> <?php esc_html_e('Arrow (→)', 'lrob-cookie-consent'); ?></label>
                                 </span></td></tr>
-                        <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?></th>
-                            <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_save" data-toggle-text="text_save" name="<?php echo $name('show_save'); ?>" value="1" <?php echo $checked('show_save'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
-                                <input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($text_defaults['save']); ?>"<?php echo empty($o['show_save']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
+                        <tr><th><?php esc_html_e('Save button', 'lrob-cookie-consent'); ?> <?php $help(__('Always shown when the category options are visible (after “Customize”, or in the expanded layout) — it’s how a granular choice is confirmed, so it can’t be hidden. You can rename it.', 'lrob-cookie-consent')); ?></th>
+                            <td><input type="text" data-field="text_save" name="<?php echo $name('text_save'); ?>" value="<?php echo esc_attr((string) $o['text_save']); ?>" placeholder="<?php echo esc_attr($text_defaults['save']); ?>" /></td></tr>
                         <tr><th><?php esc_html_e('Customize button', 'lrob-cookie-consent'); ?> <?php $help(__('Shown only when category options are hidden behind a button (see Layout). It reveals the per-category choices.', 'lrob-cookie-consent')); ?></th>
                             <td><label class="lrob-cc-btn-toggle"><input type="checkbox" data-field="show_customize" data-toggle-text="text_customize" name="<?php echo $name('show_customize'); ?>" value="1" <?php echo $checked('show_customize'); ?> /> <?php esc_html_e('Show', 'lrob-cookie-consent'); ?></label>
                                 <input type="text" data-field="text_customize" name="<?php echo $name('text_customize'); ?>" value="<?php echo esc_attr((string) $o['text_customize']); ?>" placeholder="<?php echo esc_attr($text_defaults['customize']); ?>"<?php echo empty($o['show_customize']) ? ' readonly class="lrob-cc-readonly"' : ''; ?> /></td></tr>
@@ -208,7 +207,7 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     </table>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Button order', 'lrob-cookie-consent'); ?> <?php $help(__('Drag to reorder the banner buttons. Hidden buttons are simply skipped.', 'lrob-cookie-consent')); ?></p>
-                    <?php $btn_labels = ['accept' => __('Accept', 'lrob-cookie-consent'), 'deny' => __('Refuse', 'lrob-cookie-consent'), 'customize' => __('Customize', 'lrob-cookie-consent'), 'save' => __('Save', 'lrob-cookie-consent')]; ?>
+                    <?php $btn_labels = ['accept' => __('Accept', 'lrob-cookie-consent'), 'deny' => __('Refuse', 'lrob-cookie-consent'), 'customize' => __('Customize', 'lrob-cookie-consent')]; ?>
                     <ul class="lrob-cc-btn-order" id="lrob-cc-btn-order">
                         <?php foreach ((array) $o['button_order'] as $bk) : if (!isset($btn_labels[$bk])) { continue; } ?>
                             <li draggable="true" data-key="<?php echo esc_attr($bk); ?>"><span class="lrob-cc-drag-handle" aria-hidden="true">⠿</span> <?php echo esc_html($btn_labels[$bk]); ?></li>

@@ -7,7 +7,6 @@
  * @var list<string> $optional
  * @var string $position
  * @var bool $show_deny
- * @var bool $show_save
  * @var bool $collapsed
  * @var string $logo
  */
@@ -100,13 +99,12 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
                             aria-expanded="false" aria-controls="lrob-cc-categories">
                         <?php echo esc_html($texts['customize']); ?>
                     </button>
-                <?php elseif ($b === 'save') : ?>
-                    <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-lrob-cc-action="save"
-                            <?php echo ($collapsed || !$show_save) ? 'hidden' : ''; ?>>
-                        <?php echo esc_html($texts['save']); ?>
-                    </button>
                 <?php endif; ?>
             <?php endforeach; ?>
+            <?php // Save is mandatory and contextual: hidden until the categories show (revealed by Customize, or always in the expanded layout). ?>
+            <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-lrob-cc-action="save"<?php echo $collapsed ? ' hidden' : ''; ?>>
+                <?php echo esc_html($texts['save']); ?>
+            </button>
         </div>
 
         <?php if ($continue_pos === 'under-buttons') : ?>

@@ -308,17 +308,16 @@ final class SettingsPage
 
         $bool = ['enabled', 'respect_dnt', 'dnt_hide_banner', 'show_to_logged_in', 'block_iframes',
             'reprompt_on_rule_change', 'log_consent', 'store_user_agent', 'store_wp_user', 'show_accept',
-            'show_deny', 'show_save', 'show_customize', 'categories_collapsed', 'revisit_button',
+            'show_deny', 'show_customize', 'categories_collapsed', 'revisit_button',
             'show_sources', 'watermark', 'anim_fade', 'keep_data_on_uninstall', 'continue_arrow'];
         foreach ($bool as $key) {
             $out[$key] = empty($in[$key]) ? 0 : 1;
         }
         // Guardrail: the visitor must keep a way to give consent. With "Accept"
         // hidden in the collapsed banner, the only positive path is Customize →
-        // Save, so keep those available.
+        // Save (Save is always available), so keep Customize on.
         if ($out['show_accept'] === 0 && $out['categories_collapsed'] === 1) {
             $out['show_customize'] = 1;
-            $out['show_save'] = 1;
         }
 
         $out['consent_type'] = 'optin';
@@ -451,7 +450,7 @@ final class SettingsPage
 
         // Button order: comma list (from the drag UI) → validated, deduped, with
         // any missing buttons appended so all four are always present.
-        $valid_btns = ['accept', 'deny', 'customize', 'save'];
+        $valid_btns = ['accept', 'deny', 'customize'];
         $raw_order = $in['button_order'] ?? '';
         $raw_order = is_string($raw_order) ? array_map('trim', explode(',', $raw_order)) : (is_array($raw_order) ? $raw_order : []);
         $order = [];

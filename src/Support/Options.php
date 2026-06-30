@@ -68,13 +68,12 @@ final class Options
             // Buttons + disclosure
             'show_accept'        => 1,          // one-click "Accept all" visible by default
             'show_deny'          => 1,          // symmetric Deny visible by default
-            'show_save'          => 1,          // Save-preferences button
             'show_customize'     => 1,          // "Customize" button (collapsed view only)
             'deny_style'         => 'button',   // button | link ("Continue without accepting")
             'deny_link_position' => 'under-buttons', // under-buttons | under-box | top | near-close
             'continue_align'     => 'center',   // left | center | right — alignment of the Continue link
             'continue_arrow'     => 1,          // append a "→" to the Continue link
-            'button_order'       => ['accept', 'deny', 'customize', 'save'], // order in the button row
+            'button_order'       => ['accept', 'deny', 'customize'], // Save is contextual, not reorderable
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")

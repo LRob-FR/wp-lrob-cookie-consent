@@ -80,7 +80,6 @@ final class Banner
         $position = (string) Options::get('position');
         $show_accept = (int) Options::get('show_accept') === 1;
         $show_deny = (int) Options::get('show_deny') === 1;
-        $show_save = (int) Options::get('show_save') === 1;
         $show_customize = (int) Options::get('show_customize') === 1;
         $deny_style = (string) Options::get('deny_style');
         $deny_link_position = (string) Options::get('deny_link_position');
@@ -89,7 +88,7 @@ final class Banner
         $backdrop = (string) Options::get('backdrop');
         $button_order = Options::get('button_order');
         if (!is_array($button_order) || $button_order === []) {
-            $button_order = ['accept', 'deny', 'customize', 'save'];
+            $button_order = ['accept', 'deny', 'customize'];
         }
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');

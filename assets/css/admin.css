@@ -159,38 +159,11 @@
 	margin: 0 0 8px;
 }
 
-.lrob-cc-preview-states {
-	display: flex;
-	gap: 6px;
-	margin-bottom: 8px;
-}
-
-.lrob-cc-preview-closed {
+/* The real banner's backdrop is fixed/full-screen on the front; the preview JS
+   lifts it into the stage, and this scopes it there so it doesn't cover the
+   admin page. */
+.lrob-cc-preview-stage .lrob-cc-backdrop {
 	position: absolute;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	padding: 24px;
-	margin: 0;
-	color: #646970;
-}
-
-.lrob-cc-preview-closed[hidden] {
-	display: none;
-}
-
-/* Preview backdrop — full-screen/fixed on the front, but here scoped to the stage
-   (so it doesn't cover the admin page); driven inline by the preview JS. */
-.lrob-cc-preview-bd {
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-}
-
-.lrob-cc-preview-bd[hidden] {
-	display: none;
 }
 
 .lrob-cc-preview-stage {
@@ -215,15 +188,16 @@
 	width: auto;
 }
 
-/* Replays the front entrance animation (keyframe lives in banner.css). */
-.lrob-cc-preview-stage .lrob-cc-banner.is-animating {
-	animation: lrob-cc-in var(--lrob-cc-anim-duration, 300ms) var(--lrob-cc-anim-ease, ease) both;
-}
-
 .lrob-cc-preview-stage .lrob-cc-inner {
 	width: var(--lrob-cc-width, 340px);
 	max-width: 100%;
 	margin: 0;
+}
+
+/* Replay the entrance animation only on animation changes / refresh (keyframe in
+   banner.css) — ordinary re-renders update in place so the change stays visible. */
+.lrob-cc-preview-stage.is-replaying .lrob-cc-inner {
+	animation: lrob-cc-in var(--lrob-cc-anim-duration, 300ms) var(--lrob-cc-anim-ease, ease) both;
 }
 
 /* Gap from the edge = the user's offset only, nothing forced — so the preview

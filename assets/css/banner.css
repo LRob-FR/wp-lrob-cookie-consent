@@ -379,7 +379,9 @@
 }
 
 .lrob-cc-disc-svc {
-	opacity: 0.7;
+	margin: 2px 0 4px;
+	padding-left: 16px;
+	opacity: 0.75;
 	font-size: 0.9em;
 }
 
@@ -461,8 +463,8 @@
 	border-radius: 999px;
 	padding: 7px 12px;
 	cursor: pointer;
-	background: var(--lrob-cc-btn-bg, var(--wp--preset--color--contrast, #1a1a1a));
-	color: var(--lrob-cc-btn-text, var(--wp--preset--color--base, #ffffff));
+	background: var(--lrob-cc-revisit-bg, var(--lrob-cc-btn-bg, var(--wp--preset--color--contrast, #1a1a1a)));
+	color: var(--lrob-cc-revisit-text, var(--lrob-cc-btn-text, var(--wp--preset--color--base, #ffffff)));
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
 

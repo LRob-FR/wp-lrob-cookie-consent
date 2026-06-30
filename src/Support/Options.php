@@ -78,6 +78,8 @@ final class Options
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")
             'revisit_position'   => 'follow',   // follow (banner corner) | bottom-left | bottom-right | top-left | top-right
+            'revisit_bg'         => '',         // empty → follow the banner's accept-button colour
+            'revisit_text_color' => '',         // empty → follow the banner's accept-button text colour
             'show_sources'       => 1,          // show visitors what each category blocks
             'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
             'disclosure'         => 'off',      // off | one | two — read-only "what's used" accordion(s) on the main view

@@ -53,8 +53,18 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
                 if (!isset($labels[$slug])) {
                     return '';
                 }
-                $svc = !empty($sources[$slug]) ? ' <span class="lrob-cc-disc-svc">(' . esc_html(implode(', ', $sources[$slug])) . ')</span>' : '';
-                return '<li><strong>' . esc_html($labels[$slug]['title']) . '</strong> — ' . esc_html($labels[$slug]['desc']) . $svc . '</li>';
+                $h = '<li><strong>' . esc_html($labels[$slug]['title']) . '</strong>';
+                if ($labels[$slug]['desc'] !== '') {
+                    $h .= ' — ' . esc_html($labels[$slug]['desc']);
+                }
+                if (!empty($sources[$slug])) {
+                    $h .= '<ul class="lrob-cc-disc-svc">';
+                    foreach ($sources[$slug] as $s) {
+                        $h .= '<li>' . esc_html($s) . '</li>';
+                    }
+                    $h .= '</ul>';
+                }
+                return $h . '</li>';
             };
         ?>
             <div class="lrob-cc-disclosures">

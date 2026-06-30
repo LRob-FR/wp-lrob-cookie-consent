@@ -234,6 +234,10 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                                 <option value="top-left" <?php selected($o['revisit_position'], 'top-left'); ?>><?php esc_html_e('Top left', 'lrob-cookie-consent'); ?></option>
                             </select>
                         </label>
+                        <label><?php esc_html_e('Button background', 'lrob-cookie-consent'); ?>
+                            <input type="text" class="lrob-cc-color" data-field="revisit_bg" name="<?php echo $name('revisit_bg'); ?>" value="<?php echo esc_attr((string) $o['revisit_bg']); ?>" data-default-label="<?php esc_attr_e('Follow banner', 'lrob-cookie-consent'); ?>" /></label>
+                        <label><?php esc_html_e('Button text', 'lrob-cookie-consent'); ?>
+                            <input type="text" class="lrob-cc-color" data-field="revisit_text_color" name="<?php echo $name('revisit_text_color'); ?>" value="<?php echo esc_attr((string) $o['revisit_text_color']); ?>" data-default-label="<?php esc_attr_e('Follow banner', 'lrob-cookie-consent'); ?>" /></label>
                     </p>
 
                     <p class="lrob-cc-field-label"><?php esc_html_e('Cookie details on the main view', 'lrob-cookie-consent'); ?> <?php $help(__('Show a read-only “what we use” dropdown on the banner’s main page (each category + the services it covers) — handy when you don’t offer per-category customization, e.g. only necessary cookies. One combined list, or two (necessary / optional).', 'lrob-cookie-consent')); ?></p>
@@ -406,39 +410,11 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                 </div>
 
                 <div class="lrob-cc-banner-preview">
-                    <p class="lrob-cc-preview-label"><?php esc_html_e('Live preview', 'lrob-cookie-consent'); ?></p>
-                    <div class="lrob-cc-preview-states">
-                        <button type="button" class="button button-small button-primary" data-preview-state="main"><?php esc_html_e('Main view', 'lrob-cookie-consent'); ?></button>
-                        <button type="button" class="button button-small" data-preview-state="options"><?php esc_html_e('Options', 'lrob-cookie-consent'); ?></button>
-                        <button type="button" class="button button-small" data-preview-state="closed"><?php esc_html_e('Closed', 'lrob-cookie-consent'); ?></button>
-                        <button type="button" class="button button-small" id="lrob-cc-preview-refresh" title="<?php esc_attr_e('Show the banner again', 'lrob-cookie-consent'); ?>">&#x21bb;</button>
-                    </div>
-                    <div class="lrob-cc-preview-stage">
-                        <div class="lrob-cc-preview-bd" hidden></div>
-                        <p class="lrob-cc-preview-closed" hidden><?php esc_html_e('Banner closed — visitors would see the floating “Manage cookies” button.', 'lrob-cookie-consent'); ?></p>
-                        <div id="lrob-cc-preview" class="lrob-cc-banner">
-                            <div class="lrob-cc-inner" role="document">
-                                <div class="lrob-cc-header">
-                                    <img class="lrob-cc-logo" data-preview="logo" alt="" hidden />
-                                    <h2 class="lrob-cc-title" data-preview="header"></h2>
-                                </div>
-                                <div class="lrob-cc-message" data-preview="message"></div>
-                                <div class="lrob-cc-categories" data-preview="cats">
-                                    <?php foreach ($optional as $cat) : ?>
-                                        <div class="lrob-cc-cat"><div class="lrob-cc-cat-head"><span class="lrob-cc-cat-title"><?php echo esc_html($labels[$cat]['title']); ?></span><span class="lrob-cc-switch"><span class="lrob-cc-switch-ui"></span></span></div></div>
-                                    <?php endforeach; ?>
-                                </div>
-                                <div class="lrob-cc-buttons">
-                                    <button type="button" class="lrob-cc-btn lrob-cc-btn-accept" data-preview="accept"></button>
-                                    <button type="button" class="lrob-cc-btn lrob-cc-btn-deny" data-preview="deny"></button>
-                                    <button type="button" class="lrob-cc-btn lrob-cc-btn-customize" data-preview="customize"><?php echo esc_html($texts['customize']); ?></button>
-                                    <button type="button" class="lrob-cc-btn lrob-cc-btn-save" data-preview="save"></button>
-                                </div>
-                                <button type="button" class="lrob-cc-continue" data-preview="continue" data-default="<?php echo esc_attr($text_defaults['continue']); ?>" hidden></button>
-                                <div class="lrob-cc-footer" data-preview="footer"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <p class="lrob-cc-preview-label"><?php esc_html_e('Live preview', 'lrob-cookie-consent'); ?>
+                        <button type="button" class="button button-small" id="lrob-cc-preview-refresh" title="<?php esc_attr_e('Replay as a fresh visitor', 'lrob-cookie-consent'); ?>">&#x21bb; <?php esc_html_e('Replay', 'lrob-cookie-consent'); ?></button>
+                        <span class="description"><?php esc_html_e('The real banner — click it like a visitor would.', 'lrob-cookie-consent'); ?></span></p>
+                    <style id="lrob-cc-preview-style"></style>
+                    <div class="lrob-cc-preview-stage" id="lrob-cc-preview-stage"></div>
                 </div>
             </div>
         </section>

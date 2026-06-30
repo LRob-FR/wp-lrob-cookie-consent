@@ -7,7 +7,6 @@
 	'use strict';
 
 	var A = window.lrobCcAdmin || {};
-	var preview = document.getElementById('lrob-cc-preview');
 
 	// A submit <input name="submit"> shadows form.submit(); always submit safely.
 	function submitForm(form) {
@@ -59,225 +58,132 @@
 	});
 
 	// --- Live preview ----------------------------------------------------
-	function setText(slot, value, fallbackEl) {
-		var node = preview.querySelector('[data-preview="' + slot + '"]');
-		if (!node) { return; }
-		var ph = fallbackEl ? fallbackEl.getAttribute('placeholder') : '';
-		var text = value || ph || '';
-		// The message keeps line breaks (the front runs it through wpautop).
-		if (slot === 'message') { node.innerHTML = escapeHtml(text).replace(/\n/g, '<br>'); }
-		else { node.textContent = text; }
-	}
+	var previewStage = document.getElementById('lrob-cc-preview-stage');
+	var previewStyle = document.getElementById('lrob-cc-preview-style');
 
-	function show(slot, on) {
-		var node = preview.querySelector('[data-preview="' + slot + '"]');
-		if (node) { node.style.display = on ? '' : 'none'; }
-	}
-
-	// Preview can show the main view, the expanded "options" (customize) view, or
-	// the closed state — so the admin can check each without touching the front.
-	var previewMode = 'main';
-	function applyPreviewState(cats) {
-		var closedNote = document.querySelector('.lrob-cc-preview-closed');
-		if (previewMode === 'closed') {
-			preview.style.visibility = 'hidden';
-			if (closedNote) { closedNote.hidden = false; }
-			return;
-		}
-		preview.style.visibility = '';
-		if (closedNote) { closedNote.hidden = true; }
-		if (previewMode === 'options') {
-			if (cats) { cats.style.display = ''; }
-			show('save', true);
-			show('customize', false);
-		}
-	}
-	function setPreviewMode(mode) {
-		previewMode = mode;
-		document.querySelectorAll('[data-preview-state]').forEach(function (b) {
-			b.classList.toggle('button-primary', b.getAttribute('data-preview-state') === mode);
-		});
-		update();
-	}
-	$(document).on('click', '[data-preview-state]', function () { setPreviewMode(this.getAttribute('data-preview-state')); });
-	$('#lrob-cc-preview-refresh').on('click', function () { setPreviewMode('main'); });
-
-	function applyColors() {
-		var keys = ['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg'];
-		keys.forEach(function (k) { preview.style.removeProperty('--lrob-cc-' + k); });
-
-		var theme = val('theme');
-		if (A.palettes && A.palettes[theme]) {
-			var pal = A.palettes[theme];
-			Object.keys(pal).forEach(function (k) { preview.style.setProperty('--lrob-cc-' + k, pal[k]); });
-		} else if (theme === 'custom') {
-			var map = {
-				'bg': 'color_bg', 'text': 'color_text', 'title': 'color_title', 'border': 'color_border',
-				'btn-bg': 'color_btn_bg', 'btn-text': 'color_btn_text',
-				'btn-deny-bg': 'color_btn_deny_bg', 'btn-deny-text': 'color_btn_deny_text',
-				'btn-hover-bg': 'color_btn_hover_bg', 'btn-deny-hover-bg': 'color_btn_deny_hover_bg'
-			};
-			Object.keys(map).forEach(function (k) {
-				var v = val(map[k]);
-				if (v) { preview.style.setProperty('--lrob-cc-' + k, v); }
-			});
-		}
-	}
-
-	function update() {
-		if (!preview) { return; }
-		var s = A.scales || {};
-
-		setText('header', val('text_header'), field('text_header'));
-		setText('message', val('text_message'), field('text_message'));
-		setText('accept', val('text_accept'), field('text_accept'));
-		setText('deny', val('text_deny'), field('text_deny'));
-		setText('save', val('text_save'), field('text_save'));
-		setText('customize', val('text_customize'), field('text_customize'));
-
-		var logo = preview.querySelector('[data-preview="logo"]');
-		if (logo) {
-			var logoUrl = val('logo');
-			logo.src = logoUrl || '';
-			logo.hidden = !logoUrl;
-			preview.style.setProperty('--lrob-cc-logo-height', (parseInt(val('logo_height'), 10) || 36) + 'px');
-		}
-
-		var collapsed = val('categories_collapsed');
+	// Admin-side field visibility (reveal/hide settings rows) — separate from the
+	// preview render.
+	function adminFieldToggles() {
 		var denyStyle = val('deny_style');
-		show('accept', val('show_accept'));
-		show('deny', val('show_deny') && denyStyle === 'button');
-		show('customize', collapsed && val('show_customize'));
-		show('save', !collapsed); // mandatory + contextual; shown with the category options
-
-		// "Continue without accepting" link: text + show/hide + reposition to match
-		// the chosen location. The settings-side options are revealed only for the
-		// link style.
 		var linkOpts = document.querySelector('.lrob-cc-deny-link-opts');
 		if (linkOpts) { linkOpts.hidden = denyStyle !== 'link'; }
-		// Refusal options only make sense when "Refuse" is shown.
 		var refuseRow = document.getElementById('lrob-cc-refuse-row');
 		if (refuseRow) { refuseRow.hidden = !val('show_deny'); }
-		// Save is irrelevant only when the options can never be reached (collapsed
-		// behind a Customize button that's turned off).
 		var saveRow = document.getElementById('lrob-cc-save-row');
 		if (saveRow) { saveRow.hidden = val('categories_collapsed') && !val('show_customize'); }
-
-		// Backdrop: reveal the blur strength only for "Dim + blur"; reflect dim/blur
-		// on the preview box (the live full-screen overlay can't render in-panel).
 		var bd = val('backdrop');
 		var dimOpt = document.getElementById('lrob-cc-backdrop-dim');
 		if (dimOpt) { dimOpt.hidden = bd !== 'dim' && bd !== 'blur'; }
 		var bdBlurOpt = document.getElementById('lrob-cc-backdrop-blur');
 		if (bdBlurOpt) { bdBlurOpt.hidden = bd !== 'blur'; }
-		var pbd = document.querySelector('.lrob-cc-preview-bd');
-		if (pbd) {
-			pbd.hidden = !(bd === 'dim' || bd === 'blur');
-			pbd.style.background = 'rgba(0,0,0,' + ((parseInt(val('backdrop_dim'), 10) || 0) / 100) + ')';
-			var blurPx = (bd === 'blur' ? (parseInt(val('backdrop_blur'), 10) || 0) : 0) + 'px';
-			pbd.style.backdropFilter = 'blur(' + blurPx + ')';
-			pbd.style.webkitBackdropFilter = 'blur(' + blurPx + ')';
-		}
-
-		// "What we use" disclosure: reveal its options; the second heading is for two-list mode.
-		var disc = val('disclosure');
 		var discOpts = document.getElementById('lrob-cc-disclosure-opts');
-		if (discOpts) { discOpts.hidden = disc === 'off'; }
+		if (discOpts) { discOpts.hidden = val('disclosure') === 'off'; }
 		var discMand = document.querySelector('.lrob-cc-disclosure-mandatory');
-		if (discMand) { discMand.hidden = disc !== 'two'; }
-
-		// Reorder preview buttons to match the configured order.
-		var order = (val('button_order') || 'accept,deny,customize,save').split(',');
-		var btnWrap = preview.querySelector('.lrob-cc-buttons');
-		if (btnWrap) {
-			order.forEach(function (k) {
-				var el = btnWrap.querySelector('[data-preview="' + k.trim() + '"]');
-				if (el) { btnWrap.appendChild(el); }
-			});
-		}
-		var cont = preview.querySelector('[data-preview="continue"]');
-		if (cont) {
-			var asLink = val('show_deny') && denyStyle === 'link';
-			cont.hidden = !asLink;
-			cont.textContent = (val('text_continue') || cont.getAttribute('data-default') || '') + (val('continue_arrow') ? ' →' : '');
-			if (asLink) {
-				var inner = preview.querySelector('.lrob-cc-inner');
-				var header = preview.querySelector('.lrob-cc-header');
-				var buttons = preview.querySelector('.lrob-cc-buttons');
-				var msg = preview.querySelector('.lrob-cc-message');
-				var pos = val('deny_link_position');
-				if (pos === 'near-close' && header) { header.appendChild(cont); }
-				else if (pos === 'top' && inner && msg) { inner.insertBefore(cont, msg); }
-				else if (pos === 'under-box' && inner) { inner.appendChild(cont); }
-				else if (buttons && buttons.parentNode) { buttons.parentNode.insertBefore(cont, buttons.nextSibling); }
-			}
-		}
-		var cats = preview.querySelector('[data-preview="cats"]');
-		if (cats) { cats.style.display = collapsed ? 'none' : ''; }
-		applyPreviewState(cats);
-
-		applyColors();
-		if (s.width) { preview.style.setProperty('--lrob-cc-width', s.width[val('popup_size')] || s.width.small); }
-		var dens = (s.density || {})[val('density')] || (s.density || {}).cozy;
-		if (dens) { preview.style.setProperty('--lrob-cc-pad', dens.pad); preview.style.setProperty('--lrob-cc-gap', dens.gap); }
-		var font = (s.font || {})[val('font_size')] || (s.font || {}).medium;
-		if (font) { preview.style.setProperty('--lrob-cc-font-size', font.font); preview.style.setProperty('--lrob-cc-title-size', font.title); }
-		if (s.radius) { preview.style.setProperty('--lrob-cc-radius', s.radius[val('shape')] || s.radius.rounded); }
-
-		// Reflect position + edge margins in the square preview stage.
-		['top-left', 'top', 'top-right', 'center', 'bottom-left', 'bottom', 'bottom-right'].forEach(function (p) {
-			preview.classList.remove('lrob-cc-pos-' + p);
-		});
-		preview.classList.add('lrob-cc-pos-' + (val('position') || 'bottom-right'));
-		var presets = { snug: '12px', 'default': '24px', spacious: '44px' };
-		var op = val('offset_preset');
-		var ox, oy;
-		if (presets[op]) { ox = oy = presets[op]; }
-		else { var u = val('offset_unit') || 'px'; ox = (parseInt(val('offset_x'), 10) || 0) + u; oy = (parseInt(val('offset_y'), 10) || 0) + u; }
-		preview.style.setProperty('--lrob-cc-offset-x', ox);
-		preview.style.setProperty('--lrob-cc-offset-y', oy);
-
-		// Entrance animation vars (mirror Appearance::inline_css).
-		preview.style.setProperty('--lrob-cc-anim-duration', (parseInt(val('anim_speed'), 10) || 0) + 'ms');
-		preview.style.setProperty('--lrob-cc-anim-opacity', val('anim_fade') ? '0' : '1');
-		var mv = val('anim_move'), ax = '0', ay = '0', asc = '1', dd = '110%';
-		if (mv === 'slide') {
-			var dir = val('anim_direction');
-			if (dir === 'top') { ay = '-' + dd; } else if (dir === 'left') { ax = '-' + dd; } else if (dir === 'right') { ax = dd; } else { ay = dd; }
-		} else if (mv === 'zoom') { asc = '0.6'; }
-		preview.style.setProperty('--lrob-cc-anim-x', ax);
-		preview.style.setProperty('--lrob-cc-anim-y', ay);
-		preview.style.setProperty('--lrob-cc-anim-scale', asc);
-
-		preview.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
-		preview.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
-		preview.style.setProperty('--lrob-cc-align-footer', val('align_footer') || 'center');
-		var bmap = { left: 'flex-start', center: 'center', right: 'flex-end' };
-		preview.style.setProperty('--lrob-cc-align-buttons', bmap[val('align_buttons')] || 'flex-start');
-
-		var footerSlot = preview.querySelector('[data-preview="footer"]');
-		if (footerSlot) {
-			var fh = '';
-			document.querySelectorAll('#lrob-cc-links .lrob-cc-link-row').forEach(function (row) {
-				var l = (row.querySelector('.lrob-cc-link-label') || {}).value || '';
-				var u = (row.querySelector('.lrob-cc-link-url') || {}).value || '';
-				if (l && u) { fh += '<a href="#" onclick="return false">' + escapeHtml(l) + '</a> '; }
-			});
-			if (val('watermark')) {
-				fh += '<a class="lrob-cc-watermark" href="#" onclick="return false">' + escapeHtml(A.i18n.watermark || 'Cookie Consent by LRob') + '</a>';
-			}
-			footerSlot.innerHTML = fh;
-			footerSlot.style.display = fh ? '' : 'none';
-		}
-
+		if (discMand) { discMand.hidden = val('disclosure') !== 'two'; }
 		$('[data-theme-only="custom"]').toggle(val('theme') === 'custom');
+	}
+
+	// The preview IS the real banner: a debounced server re-render from the current
+	// (unsaved) form values, byte-identical to the front.
+	var previewTimer, previewBusy = false, previewAgain = false, previewReplay = false;
+	function schedulePreview(replay) {
+		if (replay) { previewReplay = true; }
+		clearTimeout(previewTimer);
+		previewTimer = setTimeout(function () { renderPreview(); }, 250);
+	}
+	function renderPreview(replayNow) {
+		if (!previewStage) { return; }
+		if (previewBusy) { previewAgain = true; if (replayNow) { previewReplay = true; } return; }
+		var form = document.querySelector('form[action="options.php"]');
+		if (!form) { return; }
+		var replay = !!(replayNow || previewReplay);
+		previewReplay = false;
+		previewBusy = true;
+		var body = $(form).serialize() + '&action=lrob_cc_preview&nonce=' + encodeURIComponent(A.previewNonce || '');
+		fetch(A.ajaxUrl, {
+			method: 'POST', credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body
+		}).then(function (r) { return r.json(); }).then(function (json) {
+			previewBusy = false;
+			if (json && json.success && json.data) {
+				if (previewStyle) { previewStyle.textContent = json.data.css || ''; }
+				// Replay the entrance animation only when asked (animation settings or
+				// refresh) — ordinary tweaks update in place so you can see the change.
+				previewStage.classList.toggle('is-replaying', replay);
+				previewStage.innerHTML = json.data.html || '';
+				var banner = previewStage.querySelector('#lrob-cc-preview');
+				if (banner) { banner.hidden = false; } // server marks it hidden; reveal it here
+				applyPreviewBackdrop();
+			}
+			if (previewAgain) { previewAgain = false; schedulePreview(); }
+		}).catch(function () { previewBusy = false; });
+	}
+	function replayPreviewAnim() { renderPreview(true); }
+
+	// Lift the (fixed, full-screen) backdrop to the stage so dim/blur shows inside
+	// the panel rather than over the admin page.
+	function applyPreviewBackdrop() {
+		var banner = previewStage.querySelector('#lrob-cc-preview');
+		var bdEl = previewStage.querySelector('.lrob-cc-backdrop');
+		if (bdEl && bdEl.parentNode !== previewStage) { previewStage.insertBefore(bdEl, banner); }
+		if (!bdEl) { return; }
+		var bd = val('backdrop');
+		if (bd === 'dim' || bd === 'blur') {
+			bdEl.style.display = 'block';
+			bdEl.style.background = 'rgba(0,0,0,' + ((parseInt(val('backdrop_dim'), 10) || 0) / 100) + ')';
+			var bp = (bd === 'blur' ? (parseInt(val('backdrop_blur'), 10) || 0) : 0) + 'px';
+			bdEl.style.backdropFilter = 'blur(' + bp + ')';
+			bdEl.style.webkitBackdropFilter = 'blur(' + bp + ')';
+		} else {
+			bdEl.style.display = 'none';
+		}
+	}
+
+	// Interactions on the real banner (preview only: no cookies/logging/blocking).
+	$(previewStage).on('click', '[data-lrob-cc-action]', function (e) {
+		e.preventDefault();
+		var banner = previewStage.querySelector('#lrob-cc-preview');
+		if (!banner) { return; }
+		if (this.getAttribute('data-lrob-cc-action') === 'customize') {
+			var cats = banner.querySelector('.lrob-cc-categories');
+			if (cats) { cats.hidden = false; }
+			this.hidden = true;
+			var saveBtn = banner.querySelector('.lrob-cc-btn-save');
+			if (saveBtn) { saveBtn.hidden = false; }
+		} else {
+			banner.hidden = true; // accept / deny / save / close → dismiss
+			showPreviewRevisit();
+		}
+	});
+	$(previewStage).on('click', '.lrob-cc-revisit', function () { renderPreview(); });
+
+	function showPreviewRevisit() {
+		if (!val('revisit_button') || previewStage.querySelector('.lrob-cc-revisit')) { return; }
+		var rp = val('revisit_position');
+		if (!rp || rp === 'follow') { rp = val('position') || 'bottom-right'; }
+		var v = rp.indexOf('top') === 0 ? 'top' : 'bottom';
+		var h = rp.indexOf('left') !== -1 ? 'left' : 'right';
+		var b = document.createElement('button');
+		b.type = 'button';
+		b.className = 'lrob-cc-revisit lrob-cc-revisit-' + v + '-' + h;
+		b.textContent = val('revisit_text') || (A.i18n && A.i18n.manageCookies) || 'Manage cookies';
+		previewStage.appendChild(b);
 	}
 
 	function field(name) {
 		return document.querySelector('[data-field="' + name + '"]');
 	}
 
+	function update() {
+		adminFieldToggles();
+		schedulePreview();
+	}
 	$(document).on('input change', '[data-field]', update);
+	// Catch everything else (rules, categories, footer links, inline scripts…).
+	$(document).on('input change', 'form[action="options.php"] :input', function () { schedulePreview(); });
+	// Animation settings replay the entrance animation; the refresh button too.
+	$(document).on('input change', '[data-field^="anim_"], [name*="[anim_"]', function () { schedulePreview(true); });
+	$('#lrob-cc-preview-refresh').on('click', function () { renderPreview(true); });
 
 	// Button "Show" toggles grey out their text field (readonly, so the value
 	// is preserved across saves).
@@ -333,15 +239,8 @@
 	$(document).on('change', '[name="' + A.optionName + '[anim_move]"]', updateAnimDir);
 	updateAnimDir();
 
-	// Replay the entrance animation in the preview (button + on any setting change).
-	function replayPreviewAnim() {
-		if (!preview) { return; }
-		preview.classList.remove('is-animating');
-		void preview.offsetWidth; // force reflow so the animation restarts
-		preview.classList.add('is-animating');
-	}
-	$('#lrob-cc-anim-replay').on('click', replayPreviewAnim);
-	$(document).on('change', '[data-field]', replayPreviewAnim);
+	// Replay button re-renders the banner fresh (which replays the entrance animation).
+	$('#lrob-cc-anim-replay').on('click', function () { renderPreview(true); });
 
 	// Warn when proof retention is shorter than the consent lifetime.
 	function checkRetention() {

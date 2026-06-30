@@ -36,6 +36,7 @@ final class SettingsPage
         add_action('wp_ajax_lrob_cc_scan_url', [$this, 'handle_scan_url']);
         add_action('wp_ajax_lrob_cc_scan_db', [$this, 'handle_scan_db']);
         add_action('wp_ajax_lrob_cc_search_pages', [$this, 'handle_search_pages']);
+        add_action('wp_ajax_lrob_cc_preview', [$this, 'handle_preview']);
         add_filter('plugin_action_links_' . LROB_CC_BASENAME, [$this, 'action_links']);
     }
 
@@ -85,6 +86,33 @@ final class SettingsPage
         $url = admin_url('options-general.php?page=' . self::SLUG);
         array_unshift($links, '<a href="' . esc_url($url) . '">' . esc_html__('Configure', 'lrob-cookie-consent') . '</a>');
         return $links;
+    }
+
+    /**
+     * Render the REAL banner from the (unsaved) form values, scoped to the
+     * preview, so the live preview is identical to the front.
+     */
+    public function handle_preview(): void
+    {
+        if (!current_user_can(LROB_CC_CAPABILITY)) {
+            wp_send_json_error(['message' => __('Not allowed.', 'lrob-cookie-consent')], 403);
+        }
+        check_ajax_referer('lrob_cc_preview', 'nonce');
+
+        $in = (isset($_POST[Options::OPTION_KEY]) && is_array($_POST[Options::OPTION_KEY]))
+            ? wp_unslash($_POST[Options::OPTION_KEY]) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput — sanitize() handles it
+            : [];
+        $sanitized = $this->sanitize($in);
+
+        $apply = static fn () => $sanitized;
+        add_filter('option_' . Options::OPTION_KEY, $apply);
+        Rules::flush();
+        $css = Appearance::inline_css('#lrob-cc-preview', false);
+        $html = str_replace('id="lrob-cc-banner"', 'id="lrob-cc-preview"', Banner::render());
+        remove_filter('option_' . Options::OPTION_KEY, $apply);
+        Rules::flush();
+
+        wp_send_json_success(['css' => $css, 'html' => $html]);
     }
 
     public function handle_scan_targets(): void
@@ -212,6 +240,7 @@ final class SettingsPage
             ],
             'ajaxUrl'    => admin_url('admin-ajax.php'),
             'scanNonce'  => wp_create_nonce('lrob_cc_scan'),
+            'previewNonce' => wp_create_nonce('lrob_cc_preview'),
             'i18n'       => [
                 'confirmPurge' => __('Delete all consent log entries? This cannot be undone.', 'lrob-cookie-consent'),
                 'confirm'      => __('Confirm', 'lrob-cookie-consent'),
@@ -433,7 +462,7 @@ final class SettingsPage
             $out[$key] = $color ?: $d[$key];
         }
         // Hover colours may be left empty (= auto-darken default).
-        foreach (['color_btn_hover_bg', 'color_btn_deny_hover_bg'] as $key) {
+        foreach (['color_btn_hover_bg', 'color_btn_deny_hover_bg', 'revisit_bg', 'revisit_text_color'] as $key) {
             $raw = (string) ($in[$key] ?? '');
             $out[$key] = $raw === '' ? '' : (sanitize_hex_color($raw) ?: '');
         }

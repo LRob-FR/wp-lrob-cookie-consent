@@ -67,7 +67,7 @@ final class Appearance
         return ['width' => self::WIDTH, 'density' => self::DENSITY, 'font' => self::FONT, 'radius' => self::RADIUS];
     }
 
-    public static function inline_css(): string
+    public static function inline_css(string $selector = '#lrob-cc-banner', bool $with_body = true): string
     {
         $vars = [];
 
@@ -101,6 +101,17 @@ final class Appearance
         $vars['--lrob-cc-radius'] = self::RADIUS[(string) Options::get('shape')] ?? self::RADIUS['rounded'];
         $vars['--lrob-cc-blur'] = max(0, (int) Options::get('backdrop_blur')) . 'px';
         $vars['--lrob-cc-dim'] = (string) (max(0, min(100, (int) Options::get('backdrop_dim'))) / 100);
+
+        // Floating "Manage cookies" button — own colours, else it falls back to the
+        // banner's button colours in CSS.
+        $rbg = sanitize_hex_color((string) Options::get('revisit_bg'));
+        if ($rbg) {
+            $vars['--lrob-cc-revisit-bg'] = $rbg;
+        }
+        $rtext = sanitize_hex_color((string) Options::get('revisit_text_color'));
+        if ($rtext) {
+            $vars['--lrob-cc-revisit-text'] = $rtext;
+        }
 
         $preset = (string) Options::get('offset_preset');
         if (isset(self::OFFSET_PRESETS[$preset])) {
@@ -151,7 +162,12 @@ final class Appearance
         // floating "Manage cookies" button (which lives outside the banner)
         // follows the same margins and the banner's chosen colors — not raw,
         // sometimes-reversed theme tokens.
-        $body_keys = ['--lrob-cc-offset-x', '--lrob-cc-offset-y', '--lrob-cc-bg', '--lrob-cc-text', '--lrob-cc-border', '--lrob-cc-btn-bg', '--lrob-cc-btn-text'];
+        if (!$with_body) {
+            // Preview: everything (incl. offsets/colours) on the one selector.
+            return $selector . '{' . $decl . '}';
+        }
+
+        $body_keys = ['--lrob-cc-offset-x', '--lrob-cc-offset-y', '--lrob-cc-bg', '--lrob-cc-text', '--lrob-cc-border', '--lrob-cc-btn-bg', '--lrob-cc-btn-text', '--lrob-cc-revisit-bg', '--lrob-cc-revisit-text'];
         $body_decl = '';
         foreach ($body_keys as $k) {
             if (isset($vars[$k])) {
@@ -159,7 +175,7 @@ final class Appearance
             }
         }
 
-        return '#lrob-cc-banner{' . $decl . '}body{' . $body_decl . '}';
+        return $selector . '{' . $decl . '}body{' . $body_decl . '}';
     }
 
     private static function align(string $value, string $default = 'left'): string

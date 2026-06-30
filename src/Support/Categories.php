@@ -13,6 +13,10 @@ final class Categories
 {
     public const FUNCTIONAL = 'functional';
 
+    // Sentinel "category" for a rule the admin wants permanently off: always
+    // blocked, never offered to visitors and never activated by any consent.
+    public const OFF = 'off';
+
     private const DEFAULTS = ['preferences', 'statistics', 'marketing', 'embed', 'security'];
 
     public static function default_label(string $slug): string
@@ -95,7 +99,7 @@ final class Categories
 
     public static function is_valid(string $slug): bool
     {
-        return in_array($slug, self::all(), true);
+        return $slug === self::OFF || in_array($slug, self::all(), true);
     }
 
     /**

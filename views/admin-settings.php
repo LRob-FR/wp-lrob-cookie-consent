@@ -165,7 +165,6 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                             <button type="button" class="button button-primary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
                             <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
                         </p>
-                        <p><label class="lrob-cc-check"><input type="checkbox" id="lrob-cc-scan-wp" /> <?php esc_html_e('My site has logins, comments or a cart — declare its WordPress cookies', 'lrob-cookie-consent'); ?></label></p>
 
                         <p class="lrob-cc-scan-speed-wrap">
                             <label for="lrob-cc-scan-speed"><?php esc_html_e('Scan speed', 'lrob-cookie-consent'); ?></label>
@@ -347,6 +346,8 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                             }
                             printf('<option value="%s" %s>%s</option>', esc_attr($cat), selected($selected, $cat, false), esc_html($label));
                         }
+                        // Force-off: the matching script is always blocked, never offered for consent.
+                        printf('<option value="off" %s>%s</option>', selected($selected, 'off', false), esc_html__('🚫 Off — always blocked', 'lrob-cookie-consent'));
                     };
                     ?>
 

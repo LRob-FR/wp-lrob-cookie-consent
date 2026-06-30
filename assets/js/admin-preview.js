@@ -972,7 +972,7 @@
 	function httpPool(urls, insecure) {
 		var queue = urls.map(function (u) { return { url: u, tries: 0 }; });
 		var total = queue.length, done = 0, active = 0, stopped = false, fatal = false;
-		var times = [], sslErrors = 0, consecFail = 0, slowShown = false;
+		var times = [], sslErrors = 0, consecFail = 0, slowShown = false, poolStart = nowTs();
 
 		function conc() { return Math.max(1, parseInt(scanSpeed ? scanSpeed.value : 2, 10) || 2); }
 		function eta() {
@@ -1016,7 +1016,6 @@
 				} else {
 					consecFail = 0;
 					times.push(dt); if (times.length > 8) { times.shift(); }
-					if (!slowShown && dt > 1000) { slowShown = true; slowHostNotice(); }
 					if (json.success && json.data) {
 						if (json.data.error === 'ssl') { sslErrors++; }
 						var changed = false;
@@ -1027,6 +1026,9 @@
 				}
 				done++;
 				active--;
+				// Throughput-based: warn only if the real wall-clock per page is slow
+				// (accounts for concurrency — 200 pages in 36s is NOT slow).
+				if (!slowShown && done >= 5 && (nowTs() - poolStart) / done > 1200) { slowShown = true; slowHostNotice(); }
 				setProgress(done, total, eta());
 				pump();
 			});
@@ -1240,7 +1242,6 @@
 
 	// --- Declare the site's own WordPress cookies (functional, never blocked) ---
 	$('#lrob-cc-add-wp-cookies').on('click', declareWpCookies);
-	$('#lrob-cc-scan-wp').on('change', function () { if (this.checked) { declareWpCookies(); } });
 
 	// --- Guided setup wizard (multi-section) ----------------------------
 	$(document).on('click', '.lrob-cc-wizard-open', openWizard);
@@ -1257,7 +1258,6 @@
 	function openWizard() {
 		var WS = A.wizardSettings || {};
 		var serviceSel = {};
-		var wantWpCookies = true; // declare first-party WordPress cookies by default
 		var screens = [];
 
 		// Patterns already in the rules — pre-check known services. Custom rules
@@ -1377,10 +1377,8 @@
 				b.innerHTML =
 					'<p><button type="button" class="button button-primary" data-wiz-scan>' + escapeHtml(A.i18n.wizScanBtn || 'Scan my site') + '</button> <span data-wiz-scan-status class="description"></span></p>' +
 					'<p class="lrob-cc-scan-speed-wrap"><label>' + escapeHtml(A.i18n.scanSpeed || 'Scan speed') + ' <input type="range" data-wiz-speed min="1" max="8" value="2" step="1" /></label> <span data-wiz-speed-val>2</span> ' + escapeHtml(A.i18n.scanSpeedUnit || 'pages at once') + ' ' + tipHtml(A.i18n.scanSpeedTip || 'How many pages to fetch at once. The scan slows itself down if your host cannot keep up.') + '</p>' +
-					'<p><label class="lrob-cc-check"><input type="checkbox" data-wiz-wp' + (wantWpCookies ? ' checked' : '') + ' /> ' + escapeHtml(A.i18n.wizWpCookies || 'My site has logins, comments or a cart — declare its WordPress cookies') + '</label></p>' +
+					'<div class="lrob-cc-wiz-progress" data-wiz-progress hidden><progress data-wiz-bar max="100" value="0"></progress><span data-wiz-eta class="description"></span></div>' +
 					'<div data-wiz-scan-results></div>';
-				var wpCb = b.querySelector('[data-wiz-wp]');
-				if (wpCb) { wpCb.addEventListener('change', function () { wantWpCookies = wpCb.checked; }); }
 				var status = b.querySelector('[data-wiz-scan-status]');
 				var resEl = b.querySelector('[data-wiz-scan-results]');
 				var speed = b.querySelector('[data-wiz-speed]');
@@ -1554,12 +1552,6 @@
 				var svc = serviceSel[p] || {};
 				if (!ruleRowByPattern(p)) { addRuleRow(p, svc.category || '', svc.service || svc.host || ''); }
 			});
-			// Declare first-party WordPress cookies if requested.
-			if (wantWpCookies) {
-				(A.wpCookies || []).forEach(function (c) {
-					if (!ruleRowByPattern(c.pattern)) { addRuleRow(c.pattern, c.category, c.service); }
-				});
-			}
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');
 			close();

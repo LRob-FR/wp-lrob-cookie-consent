@@ -164,6 +164,7 @@
 	function buildPlaceholders() {
 		document.querySelectorAll('iframe.lrob-cc-blocked').forEach(function (el) {
 			var category = el.getAttribute('data-category');
+			if (category === 'off') { return; } // force-off: stay hidden, no click-to-load
 			if (!category || hasConsent(category)) { enableCategory(category); return; }
 			if (el.parentNode.querySelector('.lrob-cc-placeholder[data-category="' + category + '"]')) { return; }
 
@@ -328,6 +329,7 @@
 
 	// Grant + load a single blocked item without finalising the whole banner.
 	function grantCategory(category) {
+		if (category === 'off') { return; } // force-off can never be granted
 		var data = stored() || emptyConsent();
 		if (category !== 'functional') { data[category] = true; }
 		persist(data, 'service', false);

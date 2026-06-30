@@ -61,7 +61,8 @@ final class Assets
         return [
             'cookieName'    => 'lrob_cc_consent',
             'statusCookie'  => 'lrob_cc_status',
-            'cookieDays'    => (int) Options::get('cookie_days'),
+            'acceptDays'    => (int) Options::get('accept_days'),
+            'denyDays'      => (int) Options::get('deny_days'),
             'version'       => Rules::version(),
             // Only categories actually proposed (that block something) are tracked,
             // so consent isn't asked or recorded for empty categories.

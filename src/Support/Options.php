@@ -20,7 +20,8 @@ final class Options
         return [
             'enabled'            => 1,
             'consent_type'       => 'optin',   // v1: opt-in only (strict EU model)
-            'cookie_days'        => 395,        // ~13 months (CNIL renewal recommendation)
+            'accept_days'        => 365,        // remember an acceptance ~12 months before re-asking
+            'deny_days'          => 180,        // remember a refusal 6 months (CNIL July 2025 minimum)
             'respect_dnt'        => 1,          // honour DNT/GPC as "deny optional"
             'dnt_hide_banner'    => 0,          // still ask by default (DNT is ambiguous)
             'show_to_logged_in'  => 1,          // banner behaves the same for admins

@@ -324,8 +324,10 @@ final class SettingsPage
         $out['consent_type'] = 'optin';
         $out['ip_storage'] = in_array($in['ip_storage'] ?? '', ['hashed', 'full'], true) ? $in['ip_storage'] : 'hashed';
         // Emptying a duration field restores its default instead of falling to 0/1.
-        $cd = (string) ($in['cookie_days'] ?? '');
-        $out['cookie_days'] = $cd === '' ? $d['cookie_days'] : max(1, (int) $cd);
+        $ad = (string) ($in['accept_days'] ?? '');
+        $out['accept_days'] = $ad === '' ? $d['accept_days'] : max(1, (int) $ad);
+        $dd = (string) ($in['deny_days'] ?? '');
+        $out['deny_days'] = $dd === '' ? $d['deny_days'] : max(1, (int) $dd);
         $lr = (string) ($in['log_retention_days'] ?? '');
         $out['log_retention_days'] = $lr === '' ? $d['log_retention_days'] : max(0, (int) $lr);
         $out['rules_mode'] =in_array($in['rules_mode'] ?? '', ['structured', 'raw'], true) ? $in['rules_mode'] : 'structured';

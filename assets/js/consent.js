@@ -10,7 +10,15 @@
 	var COOKIE = D.cookieName || 'lrob_cc_consent';
 	var STATUS = D.statusCookie || 'lrob_cc_status';
 	var VERSION = D.version || '';
-	var DAYS = parseInt(D.cookieDays, 10) || 365;
+	var ACCEPT_DAYS = parseInt(D.acceptDays, 10) || 365;
+	var DENY_DAYS = parseInt(D.denyDays, 10) || 180;
+
+	// Remember a refusal (no optional category allowed) for DENY_DAYS, any
+	// acceptance for ACCEPT_DAYS — the banner re-asks once the cookie lapses.
+	function retentionDays(consent) {
+		var accepted = OPTIONAL.some(function (cat) { return !!consent[cat]; });
+		return accepted ? ACCEPT_DAYS : DENY_DAYS;
+	}
 
 	// --- Cookies ---------------------------------------------------------
 	function setCookie(name, value, days) {
@@ -233,10 +241,11 @@
 		consent.cid = (prior && prior.cid) ? prior.cid : (consent.cid || genId());
 		consent.ts = Math.floor(Date.now() / 1000);
 		consent.version = VERSION;
-		setCookie(COOKIE, JSON.stringify(consent), DAYS);
+		var days = retentionDays(consent);
+		setCookie(COOKIE, JSON.stringify(consent), days);
 		// A provisional grant (loading one blocked item) records consent but keeps
 		// the banner asking until the visitor formally decides everything else.
-		if (dismiss !== false) { setCookie(STATUS, 'dismissed', DAYS); }
+		if (dismiss !== false) { setCookie(STATUS, 'dismissed', days); }
 
 		OPTIONAL.forEach(function (cat) { if (consent[cat]) { enableCategory(cat); } });
 		syncBodyClasses(consent);

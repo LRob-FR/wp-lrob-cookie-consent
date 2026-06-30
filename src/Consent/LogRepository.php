@@ -25,7 +25,7 @@ final class LogRepository
     {
         global $wpdb;
         $now = time();
-        $days = max(1, (int) Options::get('cookie_days'));
+        $days = self::retention_days($row['choices']);
         $wpdb->insert(
             Schema::table_name(),
             [
@@ -44,6 +44,25 @@ final class LogRepository
             ],
             ['%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
         );
+    }
+
+    /**
+     * Renewal window: a refusal (no optional category allowed) is remembered for
+     * deny_days, any acceptance for accept_days — mirroring the consent cookie.
+     */
+    private static function retention_days(string $choices_json): int
+    {
+        $choices = json_decode($choices_json, true);
+        $accepted = false;
+        if (is_array($choices)) {
+            foreach ($choices as $v) {
+                if ((int) $v === 1) {
+                    $accepted = true;
+                    break;
+                }
+            }
+        }
+        return max(1, (int) Options::get($accepted ? 'accept_days' : 'deny_days'));
     }
 
     public function count(): int

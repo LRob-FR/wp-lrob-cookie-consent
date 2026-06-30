@@ -103,8 +103,14 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                     <td><input type="text" value="<?php esc_attr_e('Opt-in (EU / GDPR)', 'lrob-cookie-consent'); ?>" disabled />
                         <p class="description"><?php esc_html_e('Opt-in only in v1: nothing optional loads until the visitor agrees.', 'lrob-cookie-consent'); ?></p></td></tr>
 
-                <tr><th><?php esc_html_e('Consent duration (days)', 'lrob-cookie-consent'); ?></th>
-                    <td><input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['cookie_days']); ?>" name="<?php echo $name('cookie_days'); ?>" value="<?php echo esc_attr((string) $o['cookie_days']); ?>" /> <button type="button" class="button lrob-cc-default-btn" data-target="<?php echo $name('cookie_days'); ?>"><?php esc_html_e('Default', 'lrob-cookie-consent'); ?></button> <span class="description"><?php esc_html_e('~13 months (CNIL)', 'lrob-cookie-consent'); ?></span></td></tr>
+                <tr><th><?php esc_html_e('Remember a choice for (days)', 'lrob-cookie-consent'); ?> <?php $help(__('How long the visitor’s decision is remembered before the banner asks again. The consent cookie and the proof’s renewal date follow these. Separate from the proof log’s retention.', 'lrob-cookie-consent')); ?></th>
+                    <td>
+                        <label class="lrob-cc-dur"><?php esc_html_e('After accepting', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['accept_days']); ?>" name="<?php echo $name('accept_days'); ?>" value="<?php echo esc_attr((string) $o['accept_days']); ?>" /></label>
+                        <label class="lrob-cc-dur"><?php esc_html_e('After refusing', 'lrob-cookie-consent'); ?>
+                            <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['deny_days']); ?>" name="<?php echo $name('deny_days'); ?>" value="<?php echo esc_attr((string) $o['deny_days']); ?>" /></label>
+                        <p class="lrob-cc-hint"><?php esc_html_e('As of July 2025, the CNIL advises keeping a refusal for at least 6 months (180 days).', 'lrob-cookie-consent'); ?></p>
+                    </td></tr>
 
                 <tr><th><?php esc_html_e('Show to logged-in users', 'lrob-cookie-consent'); ?></th>
                     <td><label><input type="checkbox" name="<?php echo $name('show_to_logged_in'); ?>" value="1" <?php echo $checked('show_to_logged_in'); ?> /> <?php esc_html_e('Run consent + blocking for logged-in users too (off = logged-in users see the unmodified site)', 'lrob-cookie-consent'); ?></label></td></tr>

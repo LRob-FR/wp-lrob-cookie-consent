@@ -355,6 +355,10 @@ final class SettingsPage
                 'partyFirst'   => __('this site', 'lrob-cookie-consent'),
                 'partyThird'   => __('external', 'lrob-cookie-consent'),
                 'cookieUnknown' => __('Unknown — review', 'lrob-cookie-consent'),
+                'ckFound'      => __('found by scan', 'lrob-cookie-consent'),
+                'ckAdded'      => __('added by you', 'lrob-cookie-consent'),
+                /* translators: %d: number of cookies found. */
+                'cookiesMerged' => __('%d cookies read and added below — review their categories, then save.', 'lrob-cookie-consent'),
                 'all'          => __('all', 'lrob-cookie-consent'),
                 'slowHost'     => __('Scanning is slow (over 1s per page). A faster web host would help.', 'lrob-cookie-consent'),
                 'slowHostLink' => __('See LRob hosting', 'lrob-cookie-consent'),
@@ -479,6 +483,7 @@ final class SettingsPage
                     'party'    => (($c['party'] ?? '') === 'third') ? 'third' : 'first',
                     'category' => Categories::is_valid($cat) ? $cat : 'functional',
                     'desc'     => sanitize_text_field((string) ($c['desc'] ?? '')),
+                    'source'   => (($c['source'] ?? '') === 'scan') ? 'scan' : 'user',
                 ];
             }
         }

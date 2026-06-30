@@ -453,14 +453,16 @@
 .lrob-cc-cookies-grid > :nth-child(3) { order: 2; } /* Declaration */
 .lrob-cc-cookies-grid > :nth-child(4) { order: 4; } /* Consent behaviour */
 
-@media (max-width: 1200px) {
+@media (max-width: 1500px) {
 	.lrob-cc-cookies-grid { grid-template-columns: 1fr; }
 }
 
-/* Declared-cookies repeater. */
+/* Declared-cookies lists (internal / external). */
+.lrob-cc-cookie-list { margin: 4px 0 8px; }
+
 .lrob-cc-cookie-row {
 	display: grid;
-	grid-template-columns: 1.3fr 0.8fr 1.1fr 1fr 1.6fr 28px;
+	grid-template-columns: auto 1.2fr 1.1fr 1fr 1.6fr 28px;
 	gap: 6px;
 	align-items: center;
 	margin-bottom: 6px;
@@ -469,14 +471,30 @@
 .lrob-cc-cookie-row input,
 .lrob-cc-cookie-row select { width: 100%; }
 
-.lrob-cc-cookie-head {
-	font-weight: 600;
-	font-size: 12px;
+.lrob-cc-ck-badge {
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	padding: 2px 6px;
+	border-radius: 3px;
+	white-space: nowrap;
+	background: #e0e0e0;
 	color: #50575e;
 }
 
-.lrob-cc-cookie-table code { font-size: 12px; }
-.lrob-cc-cookie-table .lrob-cc-scan-done { opacity: 0.55; }
+.lrob-cc-ck-scan { background: #cfe8f5; color: #0a4b66; }
+.lrob-cc-ck-user { background: #e7e7ea; color: #50575e; }
+
+.lrob-cc-cookie-group-title {
+	font-weight: 600;
+	margin: 14px 0 6px;
+	color: #1d2327;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.lrob-cc-cookie-group-title .dashicons { color: #2271b1; }
 
 /* ============================ Collapsible sections ============================ */
 .lrob-cc-section {

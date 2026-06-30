@@ -1138,73 +1138,84 @@
 		});
 	}
 
+	// Drop the readable (non-HttpOnly) cookies first, so a stale cookie left by a
+	// now-disabled plugin doesn't get mis-detected — only what's actually re-set
+	// by a live script survives. Also stops trackers following the admin around.
+	function clearReadableCookies() {
+		var host = location.hostname;
+		var domains = ['', host, '.' + host];
+		var parts = host.split('.');
+		if (parts.length > 2) { domains.push('.' + parts.slice(-2).join('.')); }
+		(document.cookie || '').split(';').forEach(function (pair) {
+			var name = pair.split('=')[0].trim();
+			if (!name) { return; }
+			domains.forEach(function (d) {
+				document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + (d ? '; domain=' + d : '');
+			});
+		});
+	}
+
 	function runCookieScan() {
 		setScanBusy(true);
 		if (scanProgressText) { scanProgressText.textContent = ''; }
-		ingestCookieNames(readCookieNames(document)); // baseline: cookies already in this same-origin page
+		clearReadableCookies();
+		ingestCookieNames(scanCookies); // Set-Cookie (server / HttpOnly) cookies from the page-visit pass
 		var pages = cookieScanPages(), i = 0;
 		(function next() {
-			if (i >= pages.length) { setScanBusy(false); renderCookieResults(); return; }
+			if (i >= pages.length) {
+				setScanBusy(false);
+				Object.keys(cookieFound).forEach(function (n) { declareCookie(cookieFound[n]); }); // merge into the grouped lists
+				cookieScanSummary();
+				return;
+			}
 			if (scanCurrent) { scanCurrent.textContent = (A.i18n.scanPhaseCookies || '') + ' ' + (i + 1) + '/' + pages.length; }
-			loadPageAndReadCookies(pages[i++]).then(function () { renderCookieResults(); next(); });
+			loadPageAndReadCookies(pages[i++]).then(function () { next(); });
 		})();
 	}
 
-	function renderCookieResults() {
+	function cookieScanSummary() {
 		if (!cookieResultsEl) { return; }
-		var declared = {};
-		document.querySelectorAll('#lrob-cc-cookies input[name*="[name]"]').forEach(function (inp) { if (inp.value) { declared[inp.value] = true; } });
 		var cmp = A.cmpActive || [];
 		var warn = cmp.length
 			? '<div class="lrob-cc-hint lrob-cc-hint-warning">' + escapeHtml((A.i18n.cmpWarn || 'Another consent plugin is active (%s).').replace('%s', cmp.join(', '))) + '</div>'
-			: '<p class="description">' + escapeHtml(A.i18n.cmpWarnGeneric || '') + '</p>';
-		var names = Object.keys(cookieFound);
-		if (!names.length) {
-			cookieResultsEl.innerHTML = warn + '<p class="description">' + escapeHtml(A.i18n.cookiesNone || '') + '</p>';
-			return;
-		}
-		var rows = names.map(function (name) {
-			var c = cookieFound[name], added = !!declared[name];
-			return '<tr' + (added ? ' class="lrob-cc-scan-done"' : '') + '>' +
-				'<td><code>' + escapeHtml(name) + '</code></td>' +
-				'<td>' + escapeHtml(c.service || '') + '</td>' +
-				'<td>' + escapeHtml(c.party === 'third' ? (A.i18n.partyThird || 'external') : (A.i18n.partyFirst || 'this site')) + '</td>' +
-				'<td>' + (c.known ? '<span class="lrob-cc-badge is-known">' + escapeHtml(c.category || '') + '</span>' : '<span class="lrob-cc-badge">' + escapeHtml(A.i18n.cookieUnknown || 'review') + '</span>') + '</td>' +
-				'<td>' + (added ? '<span class="lrob-cc-badge is-added">' + escapeHtml(A.i18n.cookieAdded || 'declared') + '</span>' : '<button type="button" class="button button-small lrob-cc-cookie-declare" data-name="' + escapeHtml(name) + '">+</button>') + '</td>' +
-				'</tr>';
-		}).join('');
-		cookieResultsEl.innerHTML = warn +
-			'<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.cookiesFound || 'Cookies actually set:') + ' <button type="button" class="button button-small" id="lrob-cc-cookie-declare-all">' + escapeHtml(A.i18n.cookieAddAll || 'Declare all') + '</button></p>' +
-			'<table class="widefat striped lrob-cc-cookie-table"><thead><tr><th>cookie</th><th>service</th><th>set by</th><th>category</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+			: '';
+		var n = Object.keys(cookieFound).length;
+		var msg = n
+			? (A.i18n.cookiesMerged || '%d cookies read and added below.').replace('%d', n)
+			: (A.i18n.cookiesNone || '');
+		cookieResultsEl.innerHTML = warn + '<p class="description">' + escapeHtml(msg) + '</p>';
 	}
 
-	// --- Declared-cookies repeater --------------------------------------
-	var cookiesWrap = document.getElementById('lrob-cc-cookies');
+	// --- Declared-cookies repeater (two grouped lists: internal / external) ---
 	var cookieTpl = document.getElementById('lrob-cc-cookie-template');
 
 	function cookieRowExists(name) {
 		var found = false;
-		document.querySelectorAll('#lrob-cc-cookies input[name*="[name]"]').forEach(function (inp) { if (inp.value === name) { found = true; } });
+		document.querySelectorAll('.lrob-cc-ck-name').forEach(function (inp) { if (inp.value === name) { found = true; } });
 		return found;
 	}
 	function declareCookie(c) {
-		if (!c || !cookiesWrap || !cookieTpl || (c.name && cookieRowExists(c.name))) { return; }
-		var base = cookiesWrap.getAttribute('data-name');
+		if (!c || !cookieTpl) { return; }
+		var party = (c.party === 'third') ? 'third' : 'first';
+		var wrap = document.getElementById('lrob-cc-cookies-' + party);
+		if (!wrap || (c.name && cookieRowExists(c.name))) { return; }
+		var base = wrap.getAttribute('data-name');
 		var i = Date.now() + Math.floor(Math.random() * 1000);
 		var node = cookieTpl.content.firstElementChild.cloneNode(true);
-		var map = { '.lrob-cc-ck-name': 'name', '.lrob-cc-ck-party': 'party', '.lrob-cc-ck-service': 'service', '.lrob-cc-ck-category': 'category', '.lrob-cc-ck-desc': 'desc' };
+		var src = c.source || 'user';
+		var badge = node.querySelector('.lrob-cc-ck-badge');
+		if (badge) { badge.textContent = src === 'scan' ? (A.i18n.ckFound || 'found by scan') : (A.i18n.ckAdded || 'added by you'); badge.className = 'lrob-cc-ck-badge lrob-cc-ck-' + src; }
+		var map = { '.lrob-cc-ck-name': ['name', c.name], '.lrob-cc-ck-service': ['service', c.service], '.lrob-cc-ck-category': ['category', c.category], '.lrob-cc-ck-desc': ['desc', c.desc], '.lrob-cc-ck-party': ['party', party], '.lrob-cc-ck-source': ['source', src] };
 		Object.keys(map).forEach(function (sel) {
 			var el = node.querySelector(sel); if (!el) { return; }
-			el.setAttribute('name', base + '[cookies][' + i + '][' + map[sel] + ']');
-			var v = c[map[sel]];
+			el.setAttribute('name', base + '[cookies][' + i + '][' + map[sel][0] + ']');
+			var v = map[sel][1];
 			if (v !== undefined && v !== '') { el.value = v; }
 		});
-		cookiesWrap.appendChild(node);
+		wrap.appendChild(node);
 	}
-	$('#lrob-cc-cookie-add').on('click', function () { declareCookie({ name: '', party: 'first' }); });
+	$(document).on('click', '.lrob-cc-cookie-add', function () { declareCookie({ name: '', party: this.getAttribute('data-party') || 'first', source: 'user' }); });
 	$(document).on('click', '.lrob-cc-cookie-remove', function () { $(this).closest('.lrob-cc-cookie-row').remove(); });
-	$(document).on('click', '.lrob-cc-cookie-declare', function () { declareCookie(cookieFound[this.getAttribute('data-name')]); renderCookieResults(); });
-	$(document).on('click', '#lrob-cc-cookie-declare-all', function () { Object.keys(cookieFound).forEach(function (n) { declareCookie(cookieFound[n]); }); renderCookieResults(); });
 
 	// --- Logo: WordPress media library ----------------------------------
 	var logoFrame;

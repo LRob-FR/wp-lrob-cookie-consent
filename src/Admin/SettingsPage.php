@@ -206,6 +206,7 @@ final class SettingsPage
             'palettes'   => Appearance::palettes(),
             'scales'     => Appearance::scales(),
             'colorPresets' => Presets::styles()['colors'] ?? [],
+            'layoutPresets' => Presets::layouts(),
             'texts'      => Presets::text(),
             'services'   => Services::common(),
             'wizard'     => Services::wizard(),
@@ -261,6 +262,18 @@ final class SettingsPage
                 'wizNext'      => __('Next', 'lrob-cookie-consent'),
                 'wizFinish'    => __('Finish & save', 'lrob-cookie-consent'),
                 'wizClose'     => __('Close', 'lrob-cookie-consent'),
+                'loading'      => __('Loading…', 'lrob-cookie-consent'),
+                'manageCookies' => __('Manage cookies', 'lrob-cookie-consent'),
+                'wizLayout'    => __('Layout', 'lrob-cookie-consent'),
+                'wizScanTitle' => __('Scan your site for trackers', 'lrob-cookie-consent'),
+                'wizScanHint'  => __('We look through your content for third-party scripts and embeds you may need to block.', 'lrob-cookie-consent'),
+                'wizScanBtn'   => __('Scan my site', 'lrob-cookie-consent'),
+                'wizScanFound' => __('Found — tick what to block:', 'lrob-cookie-consent'),
+                'wizSummary'   => __('Ready to go', 'lrob-cookie-consent'),
+                'wizSumLook'   => __('Look', 'lrob-cookie-consent'),
+                'wizSumTone'   => __('Wording', 'lrob-cookie-consent'),
+                'wizSumRules'  => __('Trackers to block', 'lrob-cookie-consent'),
+                'wizSumLog'    => __('Proof of consent', 'lrob-cookie-consent'),
                 'wizYesKeep'   => __('Yes, keep proof', 'lrob-cookie-consent'),
                 'wizNoKeep'    => __('No', 'lrob-cookie-consent'),
                 'wizKeepCurrent' => __('Keep current', 'lrob-cookie-consent'),
@@ -314,6 +327,7 @@ final class SettingsPage
         $category_rows = Categories::custom(); // only customs are editable; defaults are immutable
         $text_presets = Presets::text();
         $color_presets = Presets::styles()['colors'] ?? [];
+        $layout_presets = Presets::layouts();
         $services = Services::common();
         $scan_types = Scanner::scan_types();
         $log = $this->log;
@@ -443,6 +457,10 @@ final class SettingsPage
         $out['backdrop_dim'] = min(100, max(0, (int) ($in['backdrop_dim'] ?? $d['backdrop_dim'])));
         $out['backdrop_blur'] = min(30, max(0, (int) ($in['backdrop_blur'] ?? $d['backdrop_blur'])));
         $out['revisit_position'] = in_array($in['revisit_position'] ?? '', ['follow', 'bottom-left', 'bottom-right', 'top-left', 'top-right'], true) ? $in['revisit_position'] : 'follow';
+        $out['revisit_shape'] = in_array($in['revisit_shape'] ?? '', ['square', 'rounded', 'pill', 'custom'], true) ? $in['revisit_shape'] : 'pill';
+        $out['revisit_radius'] = min(999, max(0, (int) ($in['revisit_radius'] ?? $d['revisit_radius'])));
+        $out['logo_position'] = in_array($in['logo_position'] ?? '', ['left', 'center', 'right'], true) ? $in['logo_position'] : 'left';
+        $out['layout_preset'] = sanitize_text_field((string) ($in['layout_preset'] ?? ''));
         $out['offset_preset'] = in_array($in['offset_preset'] ?? '', ['snug', 'default', 'spacious', 'custom'], true) ? $in['offset_preset'] : 'default';
         $out['offset_x'] = min(200, max(0, (int) ($in['offset_x'] ?? $d['offset_x'])));
         $out['offset_y'] = min(200, max(0, (int) ($in['offset_y'] ?? $d['offset_y'])));
@@ -462,8 +480,9 @@ final class SettingsPage
             $color = sanitize_hex_color((string) ($in[$key] ?? ''));
             $out[$key] = $color ?: $d[$key];
         }
-        // Hover colours may be left empty (= auto-darken default).
-        foreach (['color_btn_hover_bg', 'color_btn_deny_hover_bg', 'revisit_bg', 'revisit_text_color'] as $key) {
+        // Hover colours may be left empty (= auto-darken default); close colour
+        // empty = inherit text.
+        foreach (['color_btn_hover_bg', 'color_btn_deny_hover_bg', 'revisit_bg', 'revisit_text_color', 'color_close'] as $key) {
             $raw = (string) ($in[$key] ?? '');
             $out[$key] = $raw === '' ? '' : (sanitize_hex_color($raw) ?: '');
         }

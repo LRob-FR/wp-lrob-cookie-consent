@@ -153,8 +153,7 @@
 	top: 40px;
 }
 
-.lrob-cc-preview-label,
-.lrob-cc-preset-label {
+.lrob-cc-preview-label {
 	font-weight: 600;
 	margin: 0 0 8px;
 }
@@ -329,10 +328,218 @@
 	margin: 0;
 }
 
-.lrob-cc-tabs .nav-tab .dashicons {
-	vertical-align: text-bottom;
-	margin-right: 2px;
+/* ============================ Page shell ============================ */
+.lrob-cc-admin .lrob-cc-form { max-width: 1200px; }
+
+.lrob-cc-page-header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin: 6px 0 4px;
 }
+
+.lrob-cc-page-title {
+	margin: 0;
+	font-size: 1.6em;
+	line-height: 1.2;
+}
+
+.lrob-cc-page-credit {
+	font-size: 0.55em;
+	font-weight: 400;
+	color: #646970;
+	margin-left: 8px;
+	vertical-align: middle;
+	letter-spacing: 0.02em;
+}
+
+.lrob-cc-page-credit a { color: #2271b1; text-decoration: none; }
+.lrob-cc-page-credit a:hover { text-decoration: underline; }
+
+.lrob-cc-page-actions {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+/* Master on/off switch, mirroring email-toolkit's inline header toggle. */
+.lrob-cc-master-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	user-select: none;
+}
+
+.lrob-cc-master-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+
+.lrob-cc-master-toggle-ui {
+	position: relative;
+	width: 40px;
+	height: 22px;
+	border-radius: 999px;
+	background: #c3c4c7;
+	transition: background 0.15s ease;
+	flex: 0 0 auto;
+}
+
+.lrob-cc-master-toggle-ui::after {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	transition: transform 0.15s ease;
+}
+
+.lrob-cc-master-toggle input:checked + .lrob-cc-master-toggle-ui { background: #2271b1; }
+.lrob-cc-master-toggle input:checked + .lrob-cc-master-toggle-ui::after { transform: translateX(18px); }
+.lrob-cc-master-toggle input:focus-visible + .lrob-cc-master-toggle-ui { outline: 2px solid #2271b1; outline-offset: 2px; }
+.lrob-cc-master-toggle-on { color: #1a7a34; }
+.lrob-cc-master-toggle-off { color: #b32d2e; }
+.lrob-cc-master-toggle .lrob-cc-master-toggle-on { display: none; }
+.lrob-cc-master-toggle .lrob-cc-master-toggle-off { display: inline; }
+.lrob-cc-master-toggle input:checked ~ .lrob-cc-master-toggle-on { display: inline; }
+.lrob-cc-master-toggle input:checked ~ .lrob-cc-master-toggle-off { display: none; }
+
+/* ============================ Tabs ============================ */
+.lrob-cc-tabs {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+	margin: 16px 0 20px;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.lrob-cc-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 9px 16px;
+	margin-bottom: -1px;
+	border: 1px solid transparent;
+	border-bottom: none;
+	border-radius: 6px 6px 0 0;
+	color: #50575e;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.lrob-cc-tab:hover { color: #1d2327; background: #f0f0f1; }
+
+.lrob-cc-tab.is-active {
+	background: #fff;
+	border-color: #c3c4c7;
+	color: #1d2327;
+}
+
+.lrob-cc-tab .dashicons { vertical-align: text-bottom; }
+
+/* ============================ Collapsible sections ============================ */
+.lrob-cc-section {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	margin: 0 0 14px;
+}
+
+.lrob-cc-section > summary {
+	list-style: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 14px 18px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.lrob-cc-section > summary::-webkit-details-marker { display: none; }
+
+.lrob-cc-section > summary::after {
+	content: "\f140"; /* dashicons chevron down */
+	font-family: dashicons;
+	margin-left: auto;
+	color: #787c82;
+	transition: transform 0.15s ease;
+}
+
+.lrob-cc-section[open] > summary::after { transform: rotate(180deg); }
+.lrob-cc-section > summary .dashicons { color: #2271b1; }
+
+.lrob-cc-section-sub {
+	font-weight: 400;
+	color: #787c82;
+	font-size: 13px;
+}
+
+.lrob-cc-section-body {
+	padding: 4px 18px 18px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.lrob-cc-section-body > .form-table:first-child { margin-top: 6px; }
+
+/* Inline rows of small fields (replaces stacked paragraphs). */
+.lrob-cc-inline-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 20px;
+	align-items: center;
+	margin: 8px 0;
+}
+
+/* ============================ Presets ============================ */
+.lrob-cc-preset.is-active {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	font-weight: 600;
+}
+
+.lrob-cc-preset-custom { font-style: italic; }
+
+/* ============================ Colour grid ============================ */
+.lrob-cc-color-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 8px 18px;
+	margin: 10px 0;
+}
+
+.lrob-cc-color-field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.lrob-cc-color-field > span { font-size: 13px; }
+
+/* Manage-cookies bubble inside the preview: scope the (front: fixed) button to
+   the stage so it shows in the preview box, not the real viewport corner. */
+.lrob-cc-preview-stage .lrob-cc-revisit { position: absolute; }
+
+/* ============================ Wizard ============================ */
+.lrob-cc-wiz-preview { margin-top: 14px; }
+
+/* Wizard preview reuses the checkerboard stage but at a contained height. */
+.lrob-cc-wiz-stage {
+	height: 240px;
+	min-height: 0;
+	margin-top: 0;
+}
+
+.lrob-cc-wiz-summary { max-width: 520px; margin: 8px 0; }
+.lrob-cc-wiz-summary th { width: 40%; }
+.lrob-cc-wiz-options { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
 
 .lrob-cc-rule-row {
 	display: flex;
@@ -687,14 +894,18 @@
 .lrob-cc-modal {
 	background: #fff;
 	border-radius: 8px;
-	width: 480px;
+	width: 560px;
 	max-width: calc(100vw - 32px);
+	max-height: calc(100vh - 48px);
+	display: flex;
+	flex-direction: column;
 	box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
 	overflow: hidden;
 }
 
 .lrob-cc-modal-body {
 	padding: 24px;
+	overflow-y: auto;
 }
 
 .lrob-cc-modal-body h2 {

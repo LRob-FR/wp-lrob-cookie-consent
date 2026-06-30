@@ -29,10 +29,10 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
      role="dialog" aria-modal="true" aria-labelledby="lrob-cc-title" aria-describedby="lrob-cc-desc" hidden>
     <div class="lrob-cc-backdrop" data-lrob-cc-action="close" tabindex="-1" aria-hidden="true"></div>
     <div class="lrob-cc-inner" role="document">
+        <?php if ($logo !== '') : ?>
+            <div class="lrob-cc-logo-row"><img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" /></div>
+        <?php endif; ?>
         <div class="lrob-cc-header">
-            <?php if ($logo !== '') : ?>
-                <img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" />
-            <?php endif; ?>
             <h2 id="lrob-cc-title" class="lrob-cc-title"><?php echo esc_html($texts['header']); ?></h2>
             <?php if ($continue_pos === 'near-close') : ?>
                 <span class="lrob-cc-continue-wrap lrob-cc-continue-near"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>

@@ -29,15 +29,15 @@
 	// by appending the hash to _wp_http_referer (WP keeps URL fragments through
 	// the redirect). Naturally resets to General when you navigate elsewhere.
 	function activateTab(tab) {
-		if (!tab || !document.querySelector('.lrob-cc-panel[data-panel="' + tab + '"]')) { tab = 'general'; }
-		$('.lrob-cc-tabs .nav-tab').removeClass('nav-tab-active');
-		$('.lrob-cc-tabs .nav-tab[data-tab="' + tab + '"]').addClass('nav-tab-active');
+		if (!tab || !document.querySelector('.lrob-cc-panel[data-panel="' + tab + '"]')) { tab = 'cookies'; }
+		$('.lrob-cc-tabs .lrob-cc-tab').removeClass('is-active');
+		$('.lrob-cc-tabs .lrob-cc-tab[data-tab="' + tab + '"]').addClass('is-active');
 		$('.lrob-cc-panel').attr('hidden', true);
 		$('.lrob-cc-panel[data-panel="' + tab + '"]').removeAttr('hidden');
 		if (tab === 'banner' && typeof replayPreviewAnim === 'function') { replayPreviewAnim(); }
 	}
 
-	$('.lrob-cc-tabs .nav-tab').on('click', function (e) {
+	$('.lrob-cc-tabs .lrob-cc-tab').on('click', function (e) {
 		e.preventDefault();
 		var tab = this.getAttribute('data-tab');
 		if (history.replaceState) { history.replaceState(null, '', '#' + tab); } else { window.location.hash = tab; }
@@ -84,6 +84,10 @@
 		var discOptH = document.querySelector('.lrob-cc-disclosure-optional-h');
 		if (discOptH) { discOptH.hidden = !dOpt; }
 		$('[data-theme-only="custom"]').toggle(val('theme') === 'custom');
+		var revisitOpts = document.getElementById('lrob-cc-revisit-opts');
+		if (revisitOpts) { revisitOpts.hidden = !val('revisit_button'); }
+		var revisitRadius = document.getElementById('lrob-cc-revisit-radius');
+		if (revisitRadius) { revisitRadius.hidden = val('revisit_shape') !== 'custom'; }
 	}
 
 	// The preview IS the real banner: a debounced server re-render from the current
@@ -160,7 +164,7 @@
 		var s = A.scales || {};
 		var setVar = function (n, v) { if (v || v === 0) { banner.style.setProperty('--lrob-cc-' + n, v); } };
 
-		['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg', 'revisit-bg', 'revisit-text'].forEach(function (k) { banner.style.removeProperty('--lrob-cc-' + k); });
+		['bg', 'text', 'title', 'border', 'close', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg', 'revisit-bg', 'revisit-text'].forEach(function (k) { banner.style.removeProperty('--lrob-cc-' + k); });
 		var theme = val('theme');
 		if (A.palettes && A.palettes[theme]) {
 			var pal = A.palettes[theme];
@@ -169,8 +173,24 @@
 			var cmap = { 'bg': 'color_bg', 'text': 'color_text', 'title': 'color_title', 'border': 'color_border', 'btn-bg': 'color_btn_bg', 'btn-text': 'color_btn_text', 'btn-deny-bg': 'color_btn_deny_bg', 'btn-deny-text': 'color_btn_deny_text', 'btn-hover-bg': 'color_btn_hover_bg', 'btn-deny-hover-bg': 'color_btn_deny_hover_bg' };
 			Object.keys(cmap).forEach(function (k) { setVar(k, val(cmap[k])); });
 		}
+		setVar('close', val('color_close'));
 		setVar('revisit-bg', val('revisit_bg'));
 		setVar('revisit-text', val('revisit_text_color'));
+
+		// Logo alignment.
+		var logoMap = { left: 'flex-start', center: 'center', right: 'flex-end' };
+		banner.style.setProperty('--lrob-cc-logo-align', logoMap[val('logo_position')] || 'flex-start');
+
+		// Manage-cookies bubble: shape/colours live on the stage (the bubble is a
+		// sibling of the preview banner, appended on close).
+		var rsh = val('revisit_shape');
+		var rrad = rsh === 'square' ? '0px' : rsh === 'rounded' ? '10px' : rsh === 'pill' ? '999px'
+			: (parseInt(val('revisit_radius'), 10) || 0) + 'px';
+		if (previewStage) {
+			previewStage.style.setProperty('--lrob-cc-revisit-radius', rrad);
+			previewStage.style.setProperty('--lrob-cc-revisit-bg', val('revisit_bg') || '');
+			previewStage.style.setProperty('--lrob-cc-revisit-text', val('revisit_text_color') || '');
+		}
 
 		if (s.width) { setVar('width', s.width[val('popup_size')] || s.width.small); }
 		var dens = (s.density || {})[val('density')] || (s.density || {}).cozy;
@@ -409,6 +429,38 @@
 		var id = this.getAttribute('data-preset-id');
 		var preset = (A.colorPresets || []).filter(function (p) { return p.id === id; })[0];
 		if (preset && preset.options) { applyOptions(preset.options); }
+		markActivePreset(this);
+	});
+
+	// Highlight the chosen preset button among its row siblings.
+	function markActivePreset(btn) {
+		var row = btn.closest('.lrob-cc-preset-row');
+		if (!row) { return; }
+		row.querySelectorAll('.lrob-cc-preset').forEach(function (b) { b.classList.remove('is-active'); });
+		btn.classList.add('is-active');
+	}
+
+	// Layout presets: one click sets position/size/spacing/corners/backdrop/anim.
+	$('.lrob-cc-preset-row[data-preset-group="layout"] .lrob-cc-preset').on('click', function () {
+		var id = this.getAttribute('data-preset-id');
+		markActivePreset(this);
+		if (id === 'custom') { setField('layout_preset', 'custom'); return; }
+		var preset = (A.layoutPresets || []).filter(function (p) { return p.id === id; })[0];
+		if (preset && preset.options) { applyOptions(preset.options); }
+		setField('layout_preset', id);
+		schedulePreview(true); // backdrop/animation are structural in the preview
+	});
+
+	// The "Custom" buttons in text/colours just stop pretending a preset is active.
+	$('.lrob-cc-preset-row[data-preset-group="text"] .lrob-cc-preset-custom').on('click', function () {
+		setField('text_preset', 'custom');
+		markActivePreset(this);
+	});
+
+	// Touching any layout control drops the layout preset back to "custom".
+	$(document).on('change', '[data-field="position"],[data-field="popup_size"],[data-field="density"],[data-field="font_size"],[data-field="shape"],[data-field="backdrop"],[data-field="offset_preset"],[data-field^="anim_"],[data-field^="align_"]', function () {
+		var el = document.querySelector('[data-field="layout_preset"]');
+		if (el) { el.value = 'custom'; }
 	});
 
 	// --- Block-rule editor: guided rows <-> raw textarea ----------------
@@ -953,88 +1005,140 @@
 		if (rulesTextarea) {
 			rulesTextarea.value.split('\n').forEach(function (l) { var p = l.split('|')[0].trim(); if (p) { existingPatterns[p] = true; } });
 		}
-		var allServices = [];
-		(A.wizard || []).forEach(function (step) { (step.services || []).forEach(function (s) { allServices.push(s); }); });
+		// Live preview pane (the real banner) inside the wizard.
+		function wizPreview(box) {
+			if (!box) { return; }
+			box.innerHTML = '<p class="description">' + escapeHtml(A.i18n.loading || 'Loading…') + '</p>';
+			var form = document.querySelector('form[action="options.php"]');
+			if (!form) { return; }
+			var reqBody = $(form).serialize() + '&action=lrob_cc_preview&nonce=' + encodeURIComponent(A.previewNonce || '');
+			fetch(A.ajaxUrl, { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: reqBody })
+				.then(function (r) { return r.json(); }).then(function (json) {
+					if (json && json.success && json.data) {
+						box.innerHTML = '<style>' + (json.data.css || '') + '</style><div class="lrob-cc-preview-stage lrob-cc-wiz-stage">' + (json.data.html || '') + '</div>';
+						var bn = box.querySelector('#lrob-cc-preview'); if (bn) { bn.hidden = false; }
+					}
+				}).catch(function () {});
+		}
 
-		// 2. Tone (text preset) — remembers the last chosen preset; "Keep current"
-		// is pre-selected when the texts were customised or already match.
-		if (WS.tone && (A.texts || []).length) {
-			var presetIds = (A.texts || []).map(function (p) { return p.id; });
-			var current = val('text_preset');
-			// First run = no preset chosen and no custom wording yet → there is
-			// nothing to "keep", so default to the first preset instead.
-			var firstRun = !current && !val('text_header') && !val('text_message');
-			var toneChoices = (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; });
-			if (!firstRun) { toneChoices.unshift({ v: '__keep', l: A.i18n.wizKeepCurrent || 'Keep current' }); }
-			var tone = { choice: presetIds.indexOf(current) !== -1 ? current : (firstRun ? (presetIds[0] || '') : '__keep') };
-			screens.push({
-				title: WS.tone.question, hint: WS.tone.hint,
-				render: function (b) { b.innerHTML = radioGroup('tone', toneChoices, tone.choice); bindRadio(b, 'tone', function (v) { tone.choice = v; }); },
-				apply: function () {
-					if (tone.choice === '__keep') { return; }
-					var p = (A.texts || []).filter(function (x) { return x.id === tone.choice; })[0];
-					if (!p) { return; }
-					['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } });
-					setField('text_preset', tone.choice);
+		// 1. Look & feel — layout preset + theme + position + wording, applied live
+		// with a real preview. Pre-selected from the current settings.
+		screens.push({
+			title: (WS.look && WS.look.question) || 'Choose how the banner looks',
+			render: function (b) {
+				var html = '<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizLayout || 'Layout') + '</p><div class="lrob-cc-preset-row">';
+				(A.layoutPresets || []).forEach(function (p) {
+					html += '<button type="button" class="button lrob-cc-wiz-layout' + (val('layout_preset') === p.id ? ' is-active' : '') + '" data-id="' + escapeHtml(p.id) + '">' + escapeHtml(p.label) + '</button>';
+				});
+				html += '</div>';
+				html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.colorsLabel) || 'Colors') + '</p>' + radioGroup('theme', (WS.look && WS.look.colors) || [], val('theme'));
+				html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.positionLabel) || 'Position') + '</p>' + radioGroup('position', (WS.look && WS.look.positions) || [], val('position'));
+				if ((A.texts || []).length) {
+					html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.tone && WS.tone.question) || 'Wording') + '</p>' + radioGroup('tone', (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }), val('text_preset'));
 				}
-			});
-		}
-
-		// 3. Look (colors + position) — pre-selected to the current settings.
-		if (WS.look) {
-			var look = { theme: val('theme'), position: val('position') };
-			screens.push({
-				title: WS.look.question,
-				render: function (b) {
-					b.innerHTML = '<p class="lrob-cc-field-label">' + escapeHtml(WS.look.colorsLabel || 'Colors') + '</p>' +
-						radioGroup('theme', WS.look.colors || [], look.theme) +
-						'<p class="lrob-cc-field-label">' + escapeHtml(WS.look.positionLabel || 'Position') + '</p>' +
-						radioGroup('position', WS.look.positions || [], look.position);
-					bindRadio(b, 'theme', function (v) { look.theme = v; });
-					bindRadio(b, 'position', function (v) { look.position = v; });
-				},
-				apply: function () {
-					if (look.theme) { setField('theme', look.theme); }
-					if (look.position) { setField('position', look.position); }
-				}
-			});
-		}
-
-		// 4. Logging — pre-selected to the current setting.
-		if (WS.logging) {
-			var log = { choice: val('log_consent') ? '1' : '0' };
-			screens.push({
-				title: WS.logging.question, hint: WS.logging.hint,
-				render: function (b) { b.innerHTML = radioGroup('log', [
-					{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
-					{ v: '0', l: A.i18n.wizNoKeep || 'No' }
-				], log.choice); bindRadio(b, 'log', function (v) { log.choice = v; }); },
-				apply: function () { setField('log_consent', log.choice === '1'); }
-			});
-		}
-
-		// 5. Service questions (blocking) — pre-checked for rules you already have.
-		(A.wizard || []).forEach(function (step) {
-			(step.services || []).forEach(function (svc) { if (existingPatterns[svc.pattern]) { serviceSel[svc.pattern] = svc; } });
-			screens.push({
-				title: step.question, hint: step.hint,
-				render: function (b) {
-					var html = '<div class="lrob-cc-wiz-options">';
-					(step.services || []).forEach(function (svc) {
-						html += '<label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wiz-svc" data-pattern="' +
-							escapeHtml(svc.pattern) + '"' + (serviceSel[svc.pattern] ? ' checked' : '') + '/> ' + escapeHtml(svc.label) + '</label>';
+				html += '<div class="lrob-cc-wiz-preview" data-wiz-preview></div>';
+				b.innerHTML = html;
+				var prev = b.querySelector('[data-wiz-preview]');
+				function refresh() { wizPreview(prev); }
+				b.querySelectorAll('.lrob-cc-wiz-layout').forEach(function (btn) {
+					btn.addEventListener('click', function () {
+						b.querySelectorAll('.lrob-cc-wiz-layout').forEach(function (x) { x.classList.remove('is-active'); });
+						btn.classList.add('is-active');
+						var p = (A.layoutPresets || []).filter(function (x) { return x.id === btn.getAttribute('data-id'); })[0];
+						if (p) { applyOptions(p.options); setField('layout_preset', p.id); }
+						refresh();
 					});
-					b.innerHTML = html + '</div>';
-					b.querySelectorAll('.lrob-cc-wiz-svc').forEach(function (cb) {
+				});
+				bindRadio(b, 'theme', function (v) { setField('theme', v); refresh(); });
+				bindRadio(b, 'position', function (v) { setField('position', v); refresh(); });
+				bindRadio(b, 'tone', function (v) {
+					var p = (A.texts || []).filter(function (x) { return x.id === v; })[0];
+					if (p) { ['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } }); setField('text_preset', v); }
+					refresh();
+				});
+				refresh();
+			},
+			apply: function () {}
+		});
+
+		// 2. Scan — run the real database scan and tick what to block.
+		var scanFound = {};
+		screens.push({
+			title: A.i18n.wizScanTitle || 'Scan your site for trackers',
+			hint: A.i18n.wizScanHint || 'We look through your content for third-party scripts and embeds you may need to block.',
+			render: function (b) {
+				b.innerHTML = '<p><button type="button" class="button button-primary" data-wiz-scan>' + escapeHtml(A.i18n.wizScanBtn || 'Scan my site') + '</button> <span data-wiz-scan-status class="description"></span></p><div data-wiz-scan-results></div>';
+				var status = b.querySelector('[data-wiz-scan-status]');
+				var resEl = b.querySelector('[data-wiz-scan-results]');
+				function renderHits() {
+					var keys = Object.keys(scanFound);
+					if (!keys.length) { resEl.innerHTML = '<p class="description">' + escapeHtml(A.i18n.noneFound || 'No third-party resources found.') + '</p>'; return; }
+					var html = '<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizScanFound || 'Found — tick what to block:') + '</p><div class="lrob-cc-wiz-options">';
+					keys.forEach(function (p) {
+						var r = scanFound[p];
+						html += '<label class="lrob-cc-check"><input type="checkbox" class="lrob-cc-wiz-svc" data-pattern="' + escapeHtml(p) + '"' + (serviceSel[p] ? ' checked' : '') + '/> ' +
+							escapeHtml(r.service || r.host || p) + ' <span class="lrob-cc-badge' + (r.known ? ' is-known' : '') + '">' + escapeHtml(r.category || '') + '</span></label>';
+					});
+					resEl.innerHTML = html + '</div>';
+					resEl.querySelectorAll('.lrob-cc-wiz-svc').forEach(function (cb) {
 						cb.addEventListener('change', function () {
 							var p = cb.getAttribute('data-pattern');
-							var svc = (step.services || []).filter(function (s) { return s.pattern === p; })[0];
-							if (cb.checked) { serviceSel[p] = svc; } else { delete serviceSel[p]; }
+							if (cb.checked) { serviceSel[p] = scanFound[p]; } else { delete serviceSel[p]; }
 						});
 					});
+				}
+				if (Object.keys(scanFound).length) { renderHits(); }
+				b.querySelector('[data-wiz-scan]').addEventListener('click', function () {
+					var btn = this; btn.disabled = true; status.textContent = A.i18n.scanning || 'Scanning…';
+					(function batch(offset) {
+						scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
+							if (!json.success || !json.data) { status.textContent = A.i18n.scanError || 'Scan failed.'; btn.disabled = false; return; }
+							var d = json.data;
+							(d.resources || []).forEach(function (r) {
+								if (!scanFound[r.pattern]) { scanFound[r.pattern] = r; serviceSel[r.pattern] = r; }
+							});
+							if (!d.done) { batch(d.processed); return; }
+							status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; renderHits();
+						});
+					})(0);
+				});
+			},
+			apply: function () {}
+		});
+
+		// 3. Logging — applied live so the summary reflects it.
+		if (WS.logging) {
+			screens.push({
+				title: WS.logging.question, hint: WS.logging.hint,
+				render: function (b) {
+					b.innerHTML = radioGroup('log', [
+						{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
+						{ v: '0', l: A.i18n.wizNoKeep || 'No' }
+					], val('log_consent') ? '1' : '0');
+					bindRadio(b, 'log', function (v) { setField('log_consent', v === '1'); });
 				},
 				apply: function () {}
 			});
+		}
+
+		// 4. Summary — review everything, go Back to change, then Finish.
+		screens.push({
+			title: A.i18n.wizSummary || 'Ready to go',
+			render: function (b) {
+				var lay = val('layout_preset');
+				var rows = [
+					[A.i18n.wizSumLook || 'Look', ((lay && lay !== 'custom') ? lay + ' · ' : '') + val('theme') + ' · ' + val('position')],
+					[A.i18n.wizSumTone || 'Wording', val('text_preset') || 'custom'],
+					[A.i18n.wizSumRules || 'Trackers to block', String(Object.keys(serviceSel).length)],
+					[A.i18n.wizSumLog || 'Proof of consent', val('log_consent') ? (A.i18n.wizYes || 'Yes') : (A.i18n.wizNo || 'No / skip')]
+				];
+				var html = '<table class="widefat striped lrob-cc-wiz-summary"><tbody>';
+				rows.forEach(function (r) { html += '<tr><th>' + escapeHtml(r[0]) + '</th><td>' + escapeHtml(r[1]) + '</td></tr>'; });
+				html += '</tbody></table><div class="lrob-cc-wiz-preview" data-wiz-preview></div>';
+				b.innerHTML = html;
+				wizPreview(b.querySelector('[data-wiz-preview]'));
+			},
+			apply: function () {}
 		});
 
 		if (!screens.length) { return; }
@@ -1085,13 +1189,11 @@
 		function finish() {
 			screens.forEach(function (s) { if (s.apply) { s.apply(); } });
 
-			// Sync only the wizard's known services: add the checked ones, remove
-			// the unchecked ones. Any other (custom) rule is left untouched.
-			allServices.forEach(function (svc) {
-				var want = !!serviceSel[svc.pattern];
-				var row = ruleRowByPattern(svc.pattern);
-				if (want && !row) { addRuleRow(svc.pattern, svc.category, svc.service); }
-				else if (!want && row) { row.remove(); }
+			// Add every ticked detection as a block rule (skip ones already present).
+			// Existing custom rules are never removed.
+			Object.keys(serviceSel).forEach(function (p) {
+				var svc = serviceSel[p] || {};
+				if (!ruleRowByPattern(p)) { addRuleRow(p, svc.category || '', svc.service || svc.host || ''); }
 			});
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');

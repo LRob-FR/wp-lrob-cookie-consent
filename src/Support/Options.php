@@ -58,11 +58,13 @@ final class Options
             'backdrop_dim'       => 50,         // overlay darkness (% black) when backdrop = dim or blur
             'backdrop_blur'      => 6,          // blur strength (px) when backdrop = blur
             'logo'               => '',
+            'logo_position'      => 'left',     // left|center|right — logo placement in the header
             'align_title'        => 'left',     // left|center|right
             'align_text'         => 'left',
             'align_buttons'      => 'left',
             'align_footer'       => 'center',   // footer links default centred
             'logo_height'        => 36,         // px max-height of the banner logo
+            'layout_preset'      => '',         // remembered layout-preset id, or 'custom'
             'footer_links'       => [],         // [ ['label'=>'', 'url'=>''], ... ]
 
             // Buttons + disclosure
@@ -78,6 +80,8 @@ final class Options
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")
             'revisit_position'   => 'follow',   // follow (banner corner) | bottom-left | bottom-right | top-left | top-right
+            'revisit_shape'      => 'pill',     // square | rounded | pill | custom (custom reveals a radius)
+            'revisit_radius'     => 999,        // px corner radius when revisit_shape = custom
             'revisit_bg'         => '',         // empty → follow the banner's accept-button colour
             'revisit_text_color' => '',         // empty → follow the banner's accept-button text colour
             'show_sources'       => 1,          // show visitors what each category blocks
@@ -104,6 +108,7 @@ final class Options
             'color_btn_deny_text'  => '#1a1a1a',
             'color_btn_hover_bg'   => '',        // empty → auto (darken on hover)
             'color_btn_deny_hover_bg' => '',     // empty → auto (darken on hover)
+            'color_close'          => '',        // close (×) button colour; empty → inherit text colour
 
             // Texts (empty → translated fallback at render)
             'text_header'        => '',

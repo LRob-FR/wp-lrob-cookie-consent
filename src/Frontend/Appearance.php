@@ -91,6 +91,12 @@ final class Appearance
             }
         }
 
+        // Close (×) colour applies regardless of theme; empty → inherit text.
+        $close = sanitize_hex_color((string) Options::get('color_close'));
+        if ($close) {
+            $vars['--lrob-cc-close'] = $close;
+        }
+
         $vars['--lrob-cc-width'] = self::WIDTH[(string) Options::get('popup_size')] ?? self::WIDTH['small'];
         $density = self::DENSITY[(string) Options::get('density')] ?? self::DENSITY['cozy'];
         $vars['--lrob-cc-pad'] = $density['pad'];
@@ -112,6 +118,12 @@ final class Appearance
         if ($rtext) {
             $vars['--lrob-cc-revisit-text'] = $rtext;
         }
+        $shape = (string) Options::get('revisit_shape');
+        $radii = ['square' => '0px', 'rounded' => '10px', 'pill' => '999px'];
+        $vars['--lrob-cc-revisit-radius'] = $radii[$shape]
+            ?? (max(0, (int) Options::get('revisit_radius')) . 'px');
+
+        $vars['--lrob-cc-logo-align'] = self::ALIGN_FLEX[(string) Options::get('logo_position')] ?? 'flex-start';
 
         $preset = (string) Options::get('offset_preset');
         if (isset(self::OFFSET_PRESETS[$preset])) {
@@ -167,7 +179,7 @@ final class Appearance
             return $selector . '{' . $decl . '}';
         }
 
-        $body_keys = ['--lrob-cc-offset-x', '--lrob-cc-offset-y', '--lrob-cc-bg', '--lrob-cc-text', '--lrob-cc-border', '--lrob-cc-btn-bg', '--lrob-cc-btn-text', '--lrob-cc-revisit-bg', '--lrob-cc-revisit-text'];
+        $body_keys = ['--lrob-cc-offset-x', '--lrob-cc-offset-y', '--lrob-cc-bg', '--lrob-cc-text', '--lrob-cc-border', '--lrob-cc-btn-bg', '--lrob-cc-btn-text', '--lrob-cc-revisit-bg', '--lrob-cc-revisit-text', '--lrob-cc-revisit-radius'];
         $body_decl = '';
         foreach ($body_keys as $k) {
             if (isset($vars[$k])) {

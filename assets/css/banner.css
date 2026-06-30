@@ -168,6 +168,12 @@
 	margin-bottom: var(--_gap);
 }
 
+.lrob-cc-logo-row {
+	display: flex;
+	justify-content: var(--lrob-cc-logo-align, flex-start);
+	margin-bottom: var(--_gap);
+}
+
 .lrob-cc-logo {
 	max-height: var(--lrob-cc-logo-height, 36px);
 	width: auto;
@@ -188,7 +194,7 @@
 	font-size: 1.5rem;
 	line-height: 1;
 	cursor: pointer;
-	color: var(--_text);
+	color: var(--lrob-cc-close, var(--_text));
 	padding: 4px;
 }
 
@@ -470,7 +476,7 @@
 	font-weight: 600;
 	line-height: 1;
 	border: 1px solid var(--lrob-cc-border, rgba(0, 0, 0, 0.15));
-	border-radius: 999px;
+	border-radius: var(--lrob-cc-revisit-radius, 999px);
 	padding: 7px 12px;
 	cursor: pointer;
 	background: var(--lrob-cc-revisit-bg, var(--lrob-cc-btn-bg, var(--wp--preset--color--contrast, #1a1a1a)));

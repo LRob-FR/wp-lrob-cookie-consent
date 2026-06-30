@@ -240,19 +240,18 @@ $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_sc
                             <input type="text" class="lrob-cc-color" data-field="revisit_text_color" name="<?php echo $name('revisit_text_color'); ?>" value="<?php echo esc_attr((string) $o['revisit_text_color']); ?>" data-default-label="<?php esc_attr_e('Follow banner', 'lrob-cookie-consent'); ?>" /></label>
                     </p>
 
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Cookie details on the main view', 'lrob-cookie-consent'); ?> <?php $help(__('Show a read-only “what we use” dropdown on the banner’s main page (each category + the services it covers) — handy when you don’t offer per-category customization, e.g. only necessary cookies. One combined list, or two (necessary / optional).', 'lrob-cookie-consent')); ?></p>
-                    <?php $seg('disclosure', [
-                        'off' => __('Off', 'lrob-cookie-consent'),
-                        'one' => __('One list', 'lrob-cookie-consent'),
-                        'two' => __('Two lists', 'lrob-cookie-consent'),
-                    ]); ?>
-                    <div id="lrob-cc-disclosure-opts"<?php echo $o['disclosure'] === 'off' ? ' hidden' : ''; ?>>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Cookie details on the main view', 'lrob-cookie-consent'); ?> <?php $help(__('Let visitors see precisely what they accept or decline, right on the banner — the actual cookies/services, listed one per line. Required cookies are shown first.', 'lrob-cookie-consent')); ?></p>
+                    <p>
+                        <label class="lrob-cc-check"><input type="checkbox" data-field="disclosure_required" name="<?php echo $name('disclosure_required'); ?>" value="1" <?php echo $checked('disclosure_required'); ?> /> <?php esc_html_e('Show required cookie details', 'lrob-cookie-consent'); ?></label>
+                        <label class="lrob-cc-check"><input type="checkbox" data-field="disclosure_optional" name="<?php echo $name('disclosure_optional'); ?>" value="1" <?php echo $checked('disclosure_optional'); ?> /> <?php esc_html_e('Show optional cookie details', 'lrob-cookie-consent'); ?></label>
+                    </p>
+                    <div id="lrob-cc-disclosure-opts"<?php echo (empty($o['disclosure_required']) && empty($o['disclosure_optional'])) ? ' hidden' : ''; ?>>
                         <p><label class="lrob-cc-check"><input type="checkbox" data-field="disclosure_open" name="<?php echo $name('disclosure_open'); ?>" value="1" <?php echo $checked('disclosure_open'); ?> /> <?php esc_html_e('Expanded by default', 'lrob-cookie-consent'); ?></label></p>
                         <p>
-                            <label><?php esc_html_e('Heading', 'lrob-cookie-consent'); ?>
-                                <input type="text" data-field="text_disclosure" name="<?php echo $name('text_disclosure'); ?>" value="<?php echo esc_attr((string) $o['text_disclosure']); ?>" placeholder="<?php echo esc_attr($text_defaults['disclosure']); ?>" /></label>
-                            <label class="lrob-cc-disclosure-mandatory"<?php echo $o['disclosure'] === 'two' ? '' : ' hidden'; ?>><?php esc_html_e('Necessary heading', 'lrob-cookie-consent'); ?>
+                            <label class="lrob-cc-disclosure-required-h"<?php echo empty($o['disclosure_required']) ? ' hidden' : ''; ?>><?php esc_html_e('Required heading', 'lrob-cookie-consent'); ?>
                                 <input type="text" data-field="text_disclosure_mandatory" name="<?php echo $name('text_disclosure_mandatory'); ?>" value="<?php echo esc_attr((string) $o['text_disclosure_mandatory']); ?>" placeholder="<?php echo esc_attr($text_defaults['disclosure_mandatory']); ?>" /></label>
+                            <label class="lrob-cc-disclosure-optional-h"<?php echo empty($o['disclosure_optional']) ? ' hidden' : ''; ?>><?php esc_html_e('Optional heading', 'lrob-cookie-consent'); ?>
+                                <input type="text" data-field="text_disclosure" name="<?php echo $name('text_disclosure'); ?>" value="<?php echo esc_attr((string) $o['text_disclosure']); ?>" placeholder="<?php echo esc_attr($text_defaults['disclosure']); ?>" /></label>
                         </p>
                     </div>
 

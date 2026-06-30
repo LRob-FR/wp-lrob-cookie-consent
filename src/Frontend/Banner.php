@@ -90,7 +90,8 @@ final class Banner
         $continue_align = (string) Options::get('continue_align');
         $continue_arrow = (int) Options::get('continue_arrow') === 1;
         $backdrop = (string) Options::get('backdrop');
-        $disclosure = (string) Options::get('disclosure');
+        $disclosure_required = (int) Options::get('disclosure_required') === 1;
+        $disclosure_optional = (int) Options::get('disclosure_optional') === 1;
         $disclosure_open = (int) Options::get('disclosure_open') === 1;
         $button_order = Options::get('button_order');
         if (!is_array($button_order) || $button_order === []) {

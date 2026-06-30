@@ -47,37 +47,37 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
 
         <div id="lrob-cc-desc" class="lrob-cc-message"><?php echo wp_kses_post(wpautop($texts['message'])); ?></div>
 
-        <?php if (($disclosure ?? 'off') !== 'off') :
+        <?php if (!empty($disclosure_required) || !empty($disclosure_optional)) :
             $open_attr = !empty($disclosure_open) ? ' open' : '';
-            $disc_item = static function (string $slug) use ($labels, $sources): string {
-                if (!isset($labels[$slug])) {
-                    return '';
+            // Precise listings — what visitors actually accept/decline. Required cookies
+            // first; no generic descriptions (the cookie names are the useful part).
+            $svc_list = static function (array $items): string {
+                $h = '<ul class="lrob-cc-disc-svc">';
+                foreach ($items as $s) {
+                    $h .= '<li>' . esc_html($s) . '</li>';
                 }
-                $h = '<li><strong>' . esc_html($labels[$slug]['title']) . '</strong>';
-                if ($labels[$slug]['desc'] !== '') {
-                    $h .= ' — ' . esc_html($labels[$slug]['desc']);
-                }
-                if (!empty($sources[$slug])) {
-                    $h .= '<ul class="lrob-cc-disc-svc">';
-                    foreach ($sources[$slug] as $s) {
-                        $h .= '<li>' . esc_html($s) . '</li>';
-                    }
-                    $h .= '</ul>';
-                }
-                return $h . '</li>';
+                return $h . '</ul>';
             };
         ?>
             <div class="lrob-cc-disclosures">
-                <?php if ($disclosure === 'two') : ?>
+                <?php if (!empty($disclosure_required)) : ?>
                     <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure_mandatory']); ?></summary>
-                        <ul><?php echo $disc_item('functional'); // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
-                    <?php if (!empty($optional)) : ?>
-                        <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure']); ?></summary>
-                            <ul><?php foreach ($optional as $c) { echo $disc_item($c); } // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
-                    <?php endif; ?>
-                <?php else : ?>
+                        <?php if (!empty($sources['functional'])) : ?>
+                            <?php echo $svc_list($sources['functional']); // phpcs:ignore WordPress.Security.EscapeOutput ?>
+                        <?php else : ?>
+                            <p class="lrob-cc-disc-note"><?php echo esc_html($labels['functional']['desc']); ?></p>
+                        <?php endif; ?>
+                    </details>
+                <?php endif; ?>
+                <?php if (!empty($disclosure_optional) && !empty($optional)) : ?>
                     <details class="lrob-cc-disclosure"<?php echo $open_attr; ?>><summary><?php echo esc_html($texts['disclosure']); ?></summary>
-                        <ul><?php echo $disc_item('functional'); foreach ($optional as $c) { echo $disc_item($c); } // phpcs:ignore WordPress.Security.EscapeOutput ?></ul></details>
+                        <ul class="lrob-cc-disc-list"><?php foreach ($optional as $cat) : ?>
+                            <li><strong><?php echo esc_html($labels[$cat]['title']); ?></strong><?php
+                                if (!empty($sources[$cat])) {
+                                    echo $svc_list($sources[$cat]); // phpcs:ignore WordPress.Security.EscapeOutput
+                                } ?></li>
+                        <?php endforeach; ?></ul>
+                    </details>
                 <?php endif; ?>
             </div>
         <?php endif; ?>

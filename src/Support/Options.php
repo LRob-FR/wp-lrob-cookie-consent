@@ -82,7 +82,8 @@ final class Options
             'revisit_text_color' => '',         // empty → follow the banner's accept-button text colour
             'show_sources'       => 1,          // show visitors what each category blocks
             'watermark'          => 1,          // "Cookie Consent by LRob" footer credit
-            'disclosure'         => 'off',      // off | one | two — read-only "what's used" accordion(s) on the main view
+            'disclosure_required' => 0,         // show the precise required (necessary) cookie list on the main view
+            'disclosure_optional' => 0,         // show the precise optional cookie/service list on the main view
             'disclosure_open'    => 0,          // expanded by default
 
             // Animation + timing

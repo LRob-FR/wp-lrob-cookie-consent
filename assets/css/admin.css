@@ -175,7 +175,10 @@
 	   banner inside doesn't collapse it) with a fixed, sane height — not a tall
 	   square — so it shows position + margins without forcing a scroll. */
 	width: 100%;
-	height: 440px;
+	/* Full viewport height (not page height) so the whole banner — including the
+	   expanded cookie details — is visible while the sticky column follows scroll. */
+	height: calc(100vh - 150px);
+	min-height: 360px;
 	overflow: hidden;
 }
 

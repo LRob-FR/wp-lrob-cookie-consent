@@ -76,10 +76,13 @@
 		if (dimOpt) { dimOpt.hidden = bd !== 'dim' && bd !== 'blur'; }
 		var bdBlurOpt = document.getElementById('lrob-cc-backdrop-blur');
 		if (bdBlurOpt) { bdBlurOpt.hidden = bd !== 'blur'; }
+		var dReq = val('disclosure_required'), dOpt = val('disclosure_optional');
 		var discOpts = document.getElementById('lrob-cc-disclosure-opts');
-		if (discOpts) { discOpts.hidden = val('disclosure') === 'off'; }
-		var discMand = document.querySelector('.lrob-cc-disclosure-mandatory');
-		if (discMand) { discMand.hidden = val('disclosure') !== 'two'; }
+		if (discOpts) { discOpts.hidden = !(dReq || dOpt); }
+		var discReqH = document.querySelector('.lrob-cc-disclosure-required-h');
+		if (discReqH) { discReqH.hidden = !dReq; }
+		var discOptH = document.querySelector('.lrob-cc-disclosure-optional-h');
+		if (discOptH) { discOptH.hidden = !dOpt; }
 		$('[data-theme-only="custom"]').toggle(val('theme') === 'custom');
 	}
 
@@ -139,6 +142,100 @@
 		}
 	}
 
+	// Instant, client-side update of the real banner — colours, sizes, text,
+	// position, alignment, animation vars, button visibility/order — so editing
+	// feels snappy. Structural changes (categories/cookies) go through renderPreview.
+	function txt(banner, sel, value, fieldName) {
+		var el = banner.querySelector(sel);
+		if (!el) { return; }
+		el.textContent = value || (field(fieldName) || {}).placeholder || el.textContent;
+	}
+	function vis(banner, sel, on) {
+		var el = banner.querySelector(sel);
+		if (el) { el.style.display = on ? '' : 'none'; }
+	}
+	function applyLive() {
+		var banner = previewStage.querySelector('#lrob-cc-preview');
+		if (!banner) { return; }
+		var s = A.scales || {};
+		var setVar = function (n, v) { if (v || v === 0) { banner.style.setProperty('--lrob-cc-' + n, v); } };
+
+		['bg', 'text', 'title', 'border', 'btn-bg', 'btn-text', 'btn-deny-bg', 'btn-deny-text', 'btn-hover-bg', 'btn-deny-hover-bg', 'revisit-bg', 'revisit-text'].forEach(function (k) { banner.style.removeProperty('--lrob-cc-' + k); });
+		var theme = val('theme');
+		if (A.palettes && A.palettes[theme]) {
+			var pal = A.palettes[theme];
+			Object.keys(pal).forEach(function (k) { setVar(k, pal[k]); });
+		} else if (theme === 'custom') {
+			var cmap = { 'bg': 'color_bg', 'text': 'color_text', 'title': 'color_title', 'border': 'color_border', 'btn-bg': 'color_btn_bg', 'btn-text': 'color_btn_text', 'btn-deny-bg': 'color_btn_deny_bg', 'btn-deny-text': 'color_btn_deny_text', 'btn-hover-bg': 'color_btn_hover_bg', 'btn-deny-hover-bg': 'color_btn_deny_hover_bg' };
+			Object.keys(cmap).forEach(function (k) { setVar(k, val(cmap[k])); });
+		}
+		setVar('revisit-bg', val('revisit_bg'));
+		setVar('revisit-text', val('revisit_text_color'));
+
+		if (s.width) { setVar('width', s.width[val('popup_size')] || s.width.small); }
+		var dens = (s.density || {})[val('density')] || (s.density || {}).cozy;
+		if (dens) { setVar('pad', dens.pad); setVar('gap', dens.gap); }
+		var font = (s.font || {})[val('font_size')] || (s.font || {}).medium;
+		if (font) { setVar('font-size', font.font); setVar('title-size', font.title); }
+		if (s.radius) { setVar('radius', s.radius[val('shape')] || s.radius.rounded); }
+		setVar('logo-height', (parseInt(val('logo_height'), 10) || 36) + 'px');
+		setVar('dim', (parseInt(val('backdrop_dim'), 10) || 0) / 100);
+		setVar('blur', (parseInt(val('backdrop_blur'), 10) || 0) + 'px');
+
+		var presets = { snug: '12px', 'default': '24px', spacious: '44px' };
+		var op = val('offset_preset'), ox, oy;
+		if (presets[op]) { ox = oy = presets[op]; }
+		else { var u = val('offset_unit') || 'px'; ox = (parseInt(val('offset_x'), 10) || 0) + u; oy = (parseInt(val('offset_y'), 10) || 0) + u; }
+		setVar('offset-x', ox); setVar('offset-y', oy);
+
+		setVar('anim-duration', (parseInt(val('anim_speed'), 10) || 0) + 'ms');
+		banner.style.setProperty('--lrob-cc-anim-opacity', val('anim_fade') ? '0' : '1');
+		var mv = val('anim_move'), ax = '0', ay = '0', asc = '1', dd = '110%';
+		if (mv === 'slide') { var dir = val('anim_direction'); if (dir === 'top') { ay = '-' + dd; } else if (dir === 'left') { ax = '-' + dd; } else if (dir === 'right') { ax = dd; } else { ay = dd; } }
+		else if (mv === 'zoom') { asc = '0.6'; }
+		banner.style.setProperty('--lrob-cc-anim-x', ax);
+		banner.style.setProperty('--lrob-cc-anim-y', ay);
+		banner.style.setProperty('--lrob-cc-anim-scale', asc);
+
+		banner.style.setProperty('--lrob-cc-align-title', val('align_title') || 'left');
+		banner.style.setProperty('--lrob-cc-align-text', val('align_text') || 'left');
+		banner.style.setProperty('--lrob-cc-align-footer', val('align_footer') || 'center');
+		var bmap = { left: 'flex-start', center: 'center', right: 'flex-end' };
+		banner.style.setProperty('--lrob-cc-align-buttons', bmap[val('align_buttons')] || 'flex-start');
+
+		['top-left', 'top', 'top-right', 'center', 'bottom-left', 'bottom', 'bottom-right'].forEach(function (p) { banner.classList.remove('lrob-cc-pos-' + p); });
+		banner.classList.add('lrob-cc-pos-' + (val('position') || 'bottom-right'));
+		banner.classList.toggle('lrob-cc-bd-dim', val('backdrop') === 'dim');
+		banner.classList.toggle('lrob-cc-bd-blur', val('backdrop') === 'blur');
+
+		txt(banner, '.lrob-cc-title', val('text_header'), 'text_header');
+		var msg = banner.querySelector('.lrob-cc-message');
+		if (msg) { var mt = val('text_message') || (field('text_message') || {}).placeholder || ''; msg.innerHTML = escapeHtml(mt).replace(/\n/g, '<br>'); }
+		txt(banner, '.lrob-cc-btn-accept', val('text_accept'), 'text_accept');
+		txt(banner, '.lrob-cc-btn-deny', val('text_deny'), 'text_deny');
+		txt(banner, '.lrob-cc-btn-save', val('text_save'), 'text_save');
+		txt(banner, '.lrob-cc-btn-customize', val('text_customize'), 'text_customize');
+
+		var logoEl = banner.querySelector('.lrob-cc-logo');
+		if (logoEl) { var lu = val('logo'); logoEl.src = lu || ''; logoEl.style.display = lu ? '' : 'none'; }
+
+		var collapsed = val('categories_collapsed');
+		vis(banner, '.lrob-cc-btn-accept', val('show_accept'));
+		vis(banner, '.lrob-cc-btn-deny', val('show_deny') && val('deny_style') === 'button');
+		vis(banner, '.lrob-cc-btn-customize', collapsed && val('show_customize'));
+
+		var order = (val('button_order') || 'accept,deny,customize').split(',');
+		var bw = banner.querySelector('.lrob-cc-buttons');
+		if (bw) { order.forEach(function (k) { var el = bw.querySelector('.lrob-cc-btn-' + k.trim()); if (el) { bw.appendChild(el); } }); }
+
+		applyPreviewBackdrop();
+	}
+	function replayInner() {
+		previewStage.classList.add('is-replaying');
+		var inner = previewStage.querySelector('#lrob-cc-preview .lrob-cc-inner');
+		if (inner) { inner.style.animation = 'none'; void inner.offsetWidth; inner.style.animation = ''; }
+	}
+
 	// Interactions on the real banner (preview only: no cookies/logging/blocking).
 	$(previewStage).on('click', '[data-lrob-cc-action]', function (e) {
 		e.preventDefault();
@@ -176,13 +273,18 @@
 
 	function update() {
 		adminFieldToggles();
-		schedulePreview();
+		applyLive();
 	}
-	$(document).on('input change', '[data-field]', update);
-	// Catch everything else (rules, categories, footer links, inline scripts…).
-	$(document).on('input change', 'form[action="options.php"] :input', function () { schedulePreview(); });
-	// Animation settings replay the entrance animation; the refresh button too.
-	$(document).on('input change', '[data-field^="anim_"], [name*="[anim_"]', function () { schedulePreview(true); });
+	// Structural changes (categories / cookies / layout that adds or removes
+	// elements) need a server re-render; everything else updates instantly.
+	var STRUCTURAL = /\[(categories|block_rules|inline_scripts|disclosure_required|disclosure_optional|disclosure_open|show_sources|cat_desc_overrides|rules_mode|footer_links|watermark|deny_style|deny_link_position|continue_align|continue_arrow|categories_collapsed)\]/;
+	$(document).on('input change', 'form[action="options.php"] :input', function () {
+		adminFieldToggles();
+		if (STRUCTURAL.test(this.name || '')) { schedulePreview(); }
+		else { applyLive(); }
+	});
+	// Animation settings replay the entrance animation in place (no re-render).
+	$(document).on('input change', '[data-field^="anim_"], [name*="[anim_"]', replayInner);
 	$('#lrob-cc-preview-refresh').on('click', function () { renderPreview(true); });
 
 	// Button "Show" toggles grey out their text field (readonly, so the value
@@ -324,6 +426,7 @@
 			if (pattern) { lines.push(pattern + ' | ' + category + ' | ' + service); }
 		});
 		rulesTextarea.value = lines.join('\n');
+		schedulePreview(); // rules drive which categories/listings the banner shows
 	}
 
 	function addRuleRow(pattern, category, service) {
@@ -1168,4 +1271,5 @@
 	}
 
 	update();
+	renderPreview(); // initial server render of the real banner
 })(jQuery);

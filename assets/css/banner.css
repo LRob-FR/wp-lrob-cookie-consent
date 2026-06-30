@@ -378,11 +378,21 @@
 	margin: 4px 0;
 }
 
+.lrob-cc-disc-list {
+	margin: 6px 0 0;
+	padding-left: 18px;
+}
+
 .lrob-cc-disc-svc {
 	margin: 2px 0 4px;
 	padding-left: 16px;
 	opacity: 0.75;
 	font-size: 0.9em;
+}
+
+.lrob-cc-disc-note {
+	margin: 6px 0 0;
+	opacity: 0.8;
 }
 
 .lrob-cc-continue-under-box {

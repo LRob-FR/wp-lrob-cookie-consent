@@ -58,7 +58,8 @@ final class Options
             'backdrop_dim'       => 50,         // overlay darkness (% black) when backdrop = dim or blur
             'backdrop_blur'      => 6,          // blur strength (px) when backdrop = blur
             'logo'               => '',
-            'logo_position'      => 'left',     // left|center|right — logo placement in the header
+            'logo_placement'     => 'header',   // header (on the title line) | below (under the title) | footer
+            'logo_position'      => 'left',     // left|center|right — alignment when placed below or in the footer
             'align_title'        => 'left',     // left|center|right
             'align_text'         => 'left',
             'align_buttons'      => 'left',

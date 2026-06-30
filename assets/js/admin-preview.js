@@ -88,6 +88,8 @@
 		if (revisitOpts) { revisitOpts.hidden = !val('revisit_button'); }
 		var revisitRadius = document.getElementById('lrob-cc-revisit-radius');
 		if (revisitRadius) { revisitRadius.hidden = val('revisit_shape') !== 'custom'; }
+		var logoAlign = document.querySelector('.lrob-cc-logo-align');
+		if (logoAlign) { logoAlign.hidden = val('logo_placement') === 'header'; }
 	}
 
 	// The preview IS the real banner: a debounced server re-render from the current
@@ -297,7 +299,7 @@
 	}
 	// Structural changes (categories / cookies / layout that adds or removes
 	// elements) need a server re-render; everything else updates instantly.
-	var STRUCTURAL = /\[(categories|block_rules|inline_scripts|disclosure_required|disclosure_optional|disclosure_open|show_sources|cat_desc_overrides|rules_mode|footer_links|watermark|deny_style|deny_link_position|continue_align|continue_arrow|categories_collapsed)\]/;
+	var STRUCTURAL = /\[(categories|block_rules|inline_scripts|disclosure_required|disclosure_optional|disclosure_open|show_sources|cat_desc_overrides|rules_mode|footer_links|watermark|deny_style|deny_link_position|continue_align|continue_arrow|categories_collapsed|logo_placement)\]/;
 	$(document).on('input change', 'form[action="options.php"] :input', function () {
 		adminFieldToggles();
 		if (STRUCTURAL.test(this.name || '')) { schedulePreview(); }
@@ -420,8 +422,26 @@
 		update();
 	}
 
+	// Highlight exactly one button in a preset row.
+	function markActivePreset(btn) {
+		var row = btn.closest('.lrob-cc-preset-row');
+		if (!row) { return; }
+		row.querySelectorAll('.lrob-cc-preset').forEach(function (b) { b.classList.remove('is-active'); });
+		btn.classList.add('is-active');
+	}
+	// Reflect "custom" for a group: clear all, then highlight its Custom button.
+	function setPresetCustom(group) {
+		var row = document.querySelector('.lrob-cc-preset-row[data-preset-group="' + group + '"]');
+		if (!row) { return; }
+		row.querySelectorAll('.lrob-cc-preset').forEach(function (b) { b.classList.remove('is-active'); });
+		var custom = row.querySelector('.lrob-cc-preset-custom');
+		if (custom) { custom.classList.add('is-active'); }
+	}
+
 	$('.lrob-cc-preset-row[data-preset-group="text"] .lrob-cc-preset').on('click', function () {
 		var id = this.getAttribute('data-preset-id');
+		markActivePreset(this);
+		if (id === 'custom') { setField('text_preset', 'custom'); return; }
 		var preset = (A.texts || []).filter(function (p) { return p.id === id; })[0];
 		if (!preset) { return; }
 		['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) {
@@ -433,8 +453,8 @@
 
 	// Manually editing any banner text marks the preset as "custom".
 	$(document).on('input', '[data-field="text_header"],[data-field="text_message"],[data-field="text_accept"],[data-field="text_deny"],[data-field="text_save"]', function () {
-		var el = document.getElementById('lrob-cc-text-preset');
-		if (el) { el.value = 'custom'; }
+		setField('text_preset', 'custom');
+		setPresetCustom('text');
 	});
 
 	$('.lrob-cc-preset-row[data-preset-group="colors"] .lrob-cc-preset').on('click', function () {
@@ -444,36 +464,33 @@
 		markActivePreset(this);
 	});
 
-	// Highlight the chosen preset button among its row siblings.
-	function markActivePreset(btn) {
-		var row = btn.closest('.lrob-cc-preset-row');
-		if (!row) { return; }
-		row.querySelectorAll('.lrob-cc-preset').forEach(function (b) { b.classList.remove('is-active'); });
-		btn.classList.add('is-active');
-	}
-
 	// Layout presets: one click sets position/size/spacing/corners/backdrop/anim.
 	$('.lrob-cc-preset-row[data-preset-group="layout"] .lrob-cc-preset').on('click', function () {
-		var id = this.getAttribute('data-preset-id');
-		markActivePreset(this);
-		if (id === 'custom') { setField('layout_preset', 'custom'); return; }
+		var id = this.getAttribute('data-preset-id'), btn = this;
+		if (id === 'custom') { setField('layout_preset', 'custom'); markActivePreset(btn); return; }
 		var preset = (A.layoutPresets || []).filter(function (p) { return p.id === id; })[0];
 		if (preset && preset.options) { applyOptions(preset.options); }
 		setField('layout_preset', id);
+		markActivePreset(btn); // after applyOptions so the change-handler below doesn't re-mark custom
 		schedulePreview(true); // backdrop/animation are structural in the preview
-	});
-
-	// The "Custom" buttons in text/colours just stop pretending a preset is active.
-	$('.lrob-cc-preset-row[data-preset-group="text"] .lrob-cc-preset-custom').on('click', function () {
-		setField('text_preset', 'custom');
-		markActivePreset(this);
 	});
 
 	// Touching any layout control drops the layout preset back to "custom".
 	$(document).on('change', '[data-field="position"],[data-field="popup_size"],[data-field="density"],[data-field="font_size"],[data-field="shape"],[data-field="backdrop"],[data-field="offset_preset"],[data-field^="anim_"],[data-field^="align_"]', function () {
 		var el = document.querySelector('[data-field="layout_preset"]');
 		if (el) { el.value = 'custom'; }
+		setPresetCustom('layout');
 	});
+
+	// Initial highlight from the saved preset ids.
+	(function () {
+		[['layout', (document.querySelector('[data-field="layout_preset"]') || {}).value],
+			['text', (document.getElementById('lrob-cc-text-preset') || {}).value]].forEach(function (pair) {
+			if (!pair[1]) { return; }
+			var b = document.querySelector('.lrob-cc-preset-row[data-preset-group="' + pair[0] + '"] .lrob-cc-preset[data-preset-id="' + pair[1] + '"]');
+			if (b) { b.classList.add('is-active'); }
+		});
+	})();
 
 	// --- Block-rule editor: guided rows <-> raw textarea ----------------
 	var rulesTextarea = document.getElementById('lrob-cc-block-rules');
@@ -562,6 +579,12 @@
 		return String(s).replace(/[&<>"']/g, function (m) {
 			return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
 		});
+	}
+
+	// A "?" tooltip matching the server-rendered $help markup (for JS-built UI).
+	function tipHtml(text) {
+		return '<span class="lrob-cc-tip" tabindex="0" role="note" aria-label="' + escapeHtml(A.i18n.help || 'Help') +
+			'"><span class="lrob-cc-tip-i" aria-hidden="true">?</span><span class="lrob-cc-tip-bubble">' + escapeHtml(text) + '</span></span>';
 	}
 
 	// --- Site scan: DB-first, results accumulate; optional parallel HTTP deep scan ---
@@ -779,6 +802,30 @@
 	}
 	function clearScanNotice() { var box = document.getElementById('lrob-cc-scan-notice'); if (box) { box.parentNode.removeChild(box); } }
 
+	// Shown once if a page takes >1s to fetch — slow host, points to LRob.
+	function slowHostNotice() {
+		if (document.getElementById('lrob-cc-scan-slow') || !scanResults) { return; }
+		var box = document.createElement('div');
+		box.id = 'lrob-cc-scan-slow';
+		box.className = 'lrob-cc-hint lrob-cc-hint-warning';
+		box.appendChild(document.createTextNode((A.i18n.slowHost || 'Scanning is slow (over 1s per page). A faster web host would help. ') + ' '));
+		var a = document.createElement('a');
+		a.href = 'https://www.lrob.fr/'; a.target = '_blank'; a.rel = 'noopener';
+		a.textContent = A.i18n.slowHostLink || 'See LRob hosting';
+		box.appendChild(a);
+		scanResults.parentNode.insertBefore(box, scanResults);
+	}
+
+	// Declare the site's own WordPress cookies (shared by the button + tickbox).
+	function declareWpCookies() {
+		toStructuredMode();
+		(A.wpCookies || []).forEach(function (c) {
+			if (!ruleRowByPattern(c.pattern)) { addRuleRow(c.pattern, c.category, c.service); }
+		});
+		serializeRules();
+		update();
+	}
+
 	function pathOf(u) { try { var x = new URL(u, location.href); return x.pathname + x.search; } catch (e) { return u; } }
 
 	function setScanBusy(on) {
@@ -803,9 +850,11 @@
 			if (row.getAttribute('data-type') === 'home') { return; }
 			var on = row.querySelector('.lrob-cc-scan-type-on');
 			if (!on || !on.checked) { return; }
+			var count = parseInt(row.getAttribute('data-count'), 10) || 0;
+			var lim = Math.max(0, parseInt((row.querySelector('.lrob-cc-scan-type-limit') || {}).value, 10) || 0);
 			cfg.push({
 				type: row.getAttribute('data-type'),
-				limit: Math.max(0, parseInt((row.querySelector('.lrob-cc-scan-type-limit') || {}).value, 10) || 0),
+				limit: lim >= count ? 0 : lim, // slider at max = all
 				order: (row.querySelector('.lrob-cc-scan-type-order') || {}).value || 'newest'
 			});
 		});
@@ -832,6 +881,21 @@
 		});
 	}
 	$(document).on('change input', '#lrob-cc-scan-http-card .lrob-cc-scan-type-on, #lrob-cc-scan-http-card .lrob-cc-scan-type-limit, #lrob-cc-scan-http-card .lrob-cc-scan-type-order', updateHttpUi);
+
+	// Limit slider: show "all" at the top, and hide the priority dropdown when
+	// scanning everything (order is irrelevant then).
+	function syncLimitRow(slider) {
+		var row = slider.closest('.lrob-cc-scan-type');
+		if (!row) { return; }
+		var max = parseInt(slider.max, 10) || 0, v = parseInt(slider.value, 10) || 0;
+		var valEl = row.querySelector('.lrob-cc-scan-limit-val');
+		if (valEl) { valEl.textContent = (v >= max) ? (A.i18n.all || 'all') : v; }
+		var orderCell = row.querySelector('.lrob-cc-scan-order-cell');
+		if (orderCell) { orderCell.hidden = (v >= max); }
+	}
+	$(document).on('input', '.lrob-cc-scan-type-limit', function () { syncLimitRow(this); });
+	document.querySelectorAll('.lrob-cc-scan-type-limit').forEach(syncLimitRow);
+
 	if (scanSpeed) {
 		scanSpeed.addEventListener('input', function () {
 			if (scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
@@ -877,7 +941,7 @@
 	function httpPool(urls, insecure) {
 		var queue = urls.map(function (u) { return { url: u, tries: 0 }; });
 		var total = queue.length, done = 0, active = 0, stopped = false, fatal = false;
-		var times = [], sslErrors = 0, consecFail = 0;
+		var times = [], sslErrors = 0, consecFail = 0, slowShown = false;
 
 		function conc() { return Math.max(1, parseInt(scanSpeed ? scanSpeed.value : 2, 10) || 2); }
 		function eta() {
@@ -919,6 +983,7 @@
 				} else {
 					consecFail = 0;
 					times.push(dt); if (times.length > 8) { times.shift(); }
+					if (!slowShown && dt > 1000) { slowShown = true; slowHostNotice(); }
 					if (json.success && json.data) {
 						if (json.data.error === 'ssl') { sslErrors++; }
 						var changed = false;
@@ -988,14 +1053,8 @@
 	});
 
 	// --- Declare the site's own WordPress cookies (functional, never blocked) ---
-	$('#lrob-cc-add-wp-cookies').on('click', function () {
-		toStructuredMode();
-		(A.wpCookies || []).forEach(function (c) {
-			if (!ruleRowByPattern(c.pattern)) { addRuleRow(c.pattern, c.category, c.service); }
-		});
-		serializeRules();
-		update();
-	});
+	$('#lrob-cc-add-wp-cookies').on('click', declareWpCookies);
+	$('#lrob-cc-scan-wp').on('change', function () { if (this.checked) { declareWpCookies(); } });
 
 	// --- Guided setup wizard (multi-section) ----------------------------
 	$(document).on('click', '.lrob-cc-wizard-open', openWizard);
@@ -1047,6 +1106,24 @@
 			return fn;
 		}
 
+		// Duration control (value + unit) for a *_days field, reading its current value.
+		function wizDuration(key, label, tip) {
+			var days = parseInt((document.querySelector('[name="' + A.optionName + '[' + key + ']"]') || {}).value, 10) || 0;
+			var unit = 1, disp = days;
+			if (days > 0 && days % 365 === 0) { unit = 365; disp = days / 365; }
+			else if (days > 0 && days % 30 === 0) { unit = 30; disp = days / 30; }
+			var units = [[1, A.i18n.durDays || 'days'], [30, A.i18n.durMonths || 'months'], [365, A.i18n.durYears || 'years']];
+			var opts = units.map(function (u) { return '<option value="' + u[0] + '"' + (u[0] === unit ? ' selected' : '') + '>' + escapeHtml(u[1]) + '</option>'; }).join('');
+			return '<p><label>' + escapeHtml(label) + ' ' + tipHtml(tip) +
+				' <input type="number" min="0" class="small-text" data-wizdur-value data-wizdur-key="' + key + '" value="' + disp + '" />' +
+				' <select data-wizdur-unit data-wizdur-key="' + key + '">' + opts + '</select></label></p>';
+		}
+		function wizDurApply(b, key) {
+			var v = parseFloat((b.querySelector('[data-wizdur-value][data-wizdur-key="' + key + '"]') || {}).value) || 0;
+			var u = parseInt((b.querySelector('[data-wizdur-unit][data-wizdur-key="' + key + '"]') || {}).value, 10) || 1;
+			setField(key, Math.round(v * u));
+		}
+
 		// 1. Layout — preset + position. A preset re-renders the step so the
 		// position radio stays in sync (no more incoherent selections).
 		screens.push({
@@ -1082,14 +1159,20 @@
 			apply: function () {}
 		});
 
-		// 3. Wording — text preset.
+		// 3. Wording — text preset. Detects existing custom wording and pre-selects
+		// a "keep my wording" option so a re-run doesn't silently overwrite it.
 		if ((A.texts || []).length) {
 			screens.push({
 				title: (WS.tone && WS.tone.question) || 'Choose your wording',
 				render: function (b) {
-					b.innerHTML = radioGroup('tone', (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }), val('text_preset'));
+					var hasCustomText = !!(val('text_header') || val('text_message') || val('text_accept') || val('text_deny') || val('text_save'));
+					var current = val('text_preset') || (hasCustomText ? 'custom' : '');
+					var choices = (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; });
+					if (hasCustomText || current === 'custom') { choices.unshift({ v: 'custom', l: A.i18n.wizKeepWording || 'Keep my current wording' }); }
+					b.innerHTML = radioGroup('tone', choices, current);
 					var refresh = attachPreview(b);
 					bindRadio(b, 'tone', function (v) {
+						if (v === 'custom') { setField('text_preset', 'custom'); refresh(); return; }
 						var p = (A.texts || []).filter(function (x) { return x.id === v; })[0];
 						if (p) { ['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } }); setField('text_preset', v); }
 						refresh();
@@ -1107,7 +1190,7 @@
 			render: function (b) {
 				b.innerHTML =
 					'<p><button type="button" class="button button-primary" data-wiz-scan>' + escapeHtml(A.i18n.wizScanBtn || 'Scan my site') + '</button> <span data-wiz-scan-status class="description"></span></p>' +
-					'<p class="lrob-cc-scan-speed-wrap"><label>' + escapeHtml(A.i18n.scanSpeed || 'Scan speed') + ' <input type="range" data-wiz-speed min="1" max="8" value="2" step="1" /></label></p>' +
+					'<p class="lrob-cc-scan-speed-wrap"><label>' + escapeHtml(A.i18n.scanSpeed || 'Scan speed') + ' <input type="range" data-wiz-speed min="1" max="8" value="2" step="1" /></label> <span data-wiz-speed-val>2</span> ' + escapeHtml(A.i18n.scanSpeedUnit || 'pages at once') + ' ' + tipHtml(A.i18n.scanSpeedTip || 'How many pages to fetch at once. The scan slows itself down if your host cannot keep up.') + '</p>' +
 					'<p><label class="lrob-cc-check"><input type="checkbox" data-wiz-wp' + (wantWpCookies ? ' checked' : '') + ' /> ' + escapeHtml(A.i18n.wizWpCookies || 'My site has logins, comments or a cart — declare its WordPress cookies') + '</label></p>' +
 					'<div data-wiz-scan-results></div>';
 				var wpCb = b.querySelector('[data-wiz-wp]');
@@ -1115,6 +1198,12 @@
 				var status = b.querySelector('[data-wiz-scan-status]');
 				var resEl = b.querySelector('[data-wiz-scan-results]');
 				var speed = b.querySelector('[data-wiz-speed]');
+				var speedVal = b.querySelector('[data-wiz-speed-val]');
+				var progBox = b.querySelector('[data-wiz-progress]');
+				var bar = b.querySelector('[data-wiz-bar]');
+				var etaEl = b.querySelector('[data-wiz-eta]');
+				if (speed && speedVal) { speed.addEventListener('input', function () { speedVal.textContent = speed.value; }); }
+				function nowMs() { return (window.performance && performance.now) ? performance.now() : Date.now(); }
 				function ingest(list) { (list || []).forEach(function (r) { if (!scanFound[r.pattern]) { scanFound[r.pattern] = r; serviceSel[r.pattern] = r; } }); }
 				function renderHits() {
 					var keys = Object.keys(scanFound);
@@ -1147,20 +1236,25 @@
 							scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (tj) {
 								var urls = (tj.success && tj.data && tj.data.urls) || [];
 								if (!urls.length) { status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; return; }
-								var queue = urls.slice(), total = urls.length, done = 0, active = 0;
+								var queue = urls.slice(), total = urls.length, done = 0, active = 0, times = [];
+								if (progBox) { progBox.hidden = false; }
+								function eta() { if (!times.length) { return null; } var avg = times.reduce(function (a, c) { return a + c; }, 0) / times.length; return Math.ceil((queue.length + active) * avg / conc() / 1000); }
+								function tick() { if (bar) { bar.max = total; bar.value = done; } if (etaEl) { var e = eta(); etaEl.textContent = done + ' / ' + total + ((e != null && e > 0) ? '  ' + (A.i18n.secondsLeft || '~%ds left').replace('%d', e) : ''); } }
 								function conc() { return Math.max(1, parseInt(speed ? speed.value : 2, 10) || 2); }
 								function one(url) {
 									active++;
-									scanAjax('lrob_cc_scan_url', { url: url, insecure: 0 }, { timeout: 20000 }).then(function (j) {
+									var t0 = nowMs();
+										scanAjax('lrob_cc_scan_url', { url: url, insecure: 0 }, { timeout: 20000 }).then(function (j) {
+										times.push(nowMs() - t0); if (times.length > 8) { times.shift(); }
 										if (j.success && j.data) { ingest(j.data.resources); }
 										done++; active--;
 										status.textContent = (A.i18n.scanPhasePages || 'Visiting your pages…') + ' ' + done + '/' + total;
-										renderHits(); pump();
+										tick(); renderHits(); pump();
 									});
 								}
 								function pump() {
 									while (active < conc() && queue.length) { one(queue.shift()); }
-									if (active === 0 && queue.length === 0) { status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; }
+									if (active === 0 && queue.length === 0) { status.textContent = A.i18n.scanComplete || 'Scan complete.'; if (progBox) { progBox.hidden = true; } btn.disabled = false; }
 								}
 								pump();
 							});
@@ -1179,8 +1273,16 @@
 					b.innerHTML = radioGroup('log', [
 						{ v: '1', l: A.i18n.wizYesKeep || 'Yes' },
 						{ v: '0', l: A.i18n.wizNoKeep || 'No' }
-					], val('log_consent') ? '1' : '0');
+					], val('log_consent') ? '1' : '0') +
+						'<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizDurations || 'How long should a choice be remembered?') + '</p>' +
+						wizDuration('accept_days', A.i18n.wizDurAccept || 'After accepting', A.i18n.wizDurAcceptTip || 'How long an acceptance is kept before the banner asks again.') +
+						wizDuration('deny_days', A.i18n.wizDurDeny || 'After refusing', A.i18n.wizDurDenyTip || 'How long a refusal is kept. The CNIL advises at least 6 months.');
 					bindRadio(b, 'log', function (v) { setField('log_consent', v === '1'); });
+					b.querySelectorAll('[data-wizdur-value], [data-wizdur-unit]').forEach(function (el) {
+						var handler = function () { wizDurApply(b, el.getAttribute('data-wizdur-key')); };
+						el.addEventListener('input', handler);
+						el.addEventListener('change', handler);
+					});
 				},
 				apply: function () {}
 			});
@@ -1253,6 +1355,7 @@
 
 		function finish() {
 			screens.forEach(function (s) { if (s.apply) { s.apply(); } });
+			setField('enabled', true); // running the wizard turns the plugin on
 
 			// Add every ticked detection as a block rule (skip ones already present).
 			// Existing custom rules are never removed.
@@ -1445,4 +1548,14 @@
 
 	update();
 	renderPreview(); // initial server render of the real banner
+
+	// Auto-dismiss the "Settings saved" notice after a few seconds (this script
+	// only loads on our settings page, so scoping to .notice is safe here).
+	setTimeout(function () {
+		document.querySelectorAll('.notice.is-dismissible, .notice-success, .settings-error').forEach(function (n) {
+			n.style.transition = 'opacity .6s ease';
+			n.style.opacity = '0';
+			setTimeout(function () { if (n.parentNode) { n.parentNode.removeChild(n); } }, 600);
+		});
+	}, 4000);
 })(jQuery);

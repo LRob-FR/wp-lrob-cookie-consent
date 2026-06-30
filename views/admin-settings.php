@@ -124,20 +124,13 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                     esc_html_e('by', 'lrob-cookie-consent');
                 ?> <a href="https://www.lrob.fr" target="_blank" rel="noopener noreferrer">LRob</a></small>
             </h1>
-            <div class="lrob-cc-page-actions">
-                <label class="lrob-cc-master-toggle" title="<?php esc_attr_e('Turn the whole plugin on or off', 'lrob-cookie-consent'); ?>">
-                    <input type="checkbox" data-field="enabled" name="<?php echo $name('enabled'); ?>" value="1" <?php echo $checked('enabled'); ?> />
-                    <span class="lrob-cc-master-toggle-ui" aria-hidden="true"></span>
-                    <span class="lrob-cc-master-toggle-on"><?php esc_html_e('Enabled', 'lrob-cookie-consent'); ?></span>
-                    <span class="lrob-cc-master-toggle-off"><?php esc_html_e('Disabled', 'lrob-cookie-consent'); ?></span>
-                </label>
-                <?php submit_button(__('Save', 'lrob-cookie-consent'), 'primary', 'lrob_cc_save', false); ?>
-            </div>
+            <label class="lrob-cc-master-toggle" title="<?php esc_attr_e('Turn the whole plugin on or off', 'lrob-cookie-consent'); ?>">
+                <input type="checkbox" data-field="enabled" name="<?php echo $name('enabled'); ?>" value="1" <?php echo $checked('enabled'); ?> />
+                <span class="lrob-cc-master-toggle-ui" aria-hidden="true"></span>
+                <span class="lrob-cc-master-toggle-on"><?php esc_html_e('Enabled', 'lrob-cookie-consent'); ?></span>
+                <span class="lrob-cc-master-toggle-off"><?php esc_html_e('Disabled', 'lrob-cookie-consent'); ?></span>
+            </label>
         </header>
-
-        <?php if (isset($_GET['settings-updated'])) : ?>
-            <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Settings saved.', 'lrob-cookie-consent'); ?></p></div>
-        <?php endif; ?>
 
         <nav class="lrob-cc-tabs" role="tablist" aria-label="<?php esc_attr_e('Cookie Consent sections', 'lrob-cookie-consent'); ?>">
             <a href="#cookies" class="lrob-cc-tab<?php echo $active_tab === 'cookies' ? ' is-active' : ''; ?>" data-tab="cookies"><span class="dashicons dashicons-shield"></span> <?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?></a>
@@ -160,6 +153,7 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                 <p class="lrob-cc-welcome-mini"><button type="button" class="button lrob-cc-wizard-open"><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Re-run setup wizard', 'lrob-cookie-consent'); ?></button></p>
             <?php endif; ?>
 
+            <div class="lrob-cc-cookies-grid">
             <details class="lrob-cc-section" open>
                 <summary><span class="dashicons dashicons-search"></span> <?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?>
                     <span class="lrob-cc-section-sub"><?php esc_html_e('Find third-party scripts, embeds and cookies', 'lrob-cookie-consent'); ?></span></summary>
@@ -170,6 +164,7 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                             <button type="button" class="button button-primary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
                             <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
                         </p>
+                        <p><label class="lrob-cc-check"><input type="checkbox" id="lrob-cc-scan-wp" /> <?php esc_html_e('My site has logins, comments or a cart — declare its WordPress cookies', 'lrob-cookie-consent'); ?></label></p>
 
                         <p class="lrob-cc-scan-speed-wrap">
                             <label for="lrob-cc-scan-speed"><?php esc_html_e('Scan speed', 'lrob-cookie-consent'); ?></label>
@@ -184,8 +179,8 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                                 <table class="lrob-cc-scan-types">
                                     <thead><tr>
                                         <th><label><input type="checkbox" id="lrob-cc-scan-all-types" checked /> <?php esc_html_e('Scan everything', 'lrob-cookie-consent'); ?></label></th>
-                                        <th><?php esc_html_e('Limit', 'lrob-cookie-consent'); ?></th>
-                                        <th><?php esc_html_e('Order', 'lrob-cookie-consent'); ?></th>
+                                        <th><?php esc_html_e('How many', 'lrob-cookie-consent'); ?></th>
+                                        <th><?php esc_html_e('Scan priority', 'lrob-cookie-consent'); ?></th>
                                     </tr></thead>
                                     <tbody>
                                         <tr class="lrob-cc-scan-type" data-type="home" data-count="1">
@@ -195,8 +190,11 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                                         <?php foreach ($scan_types as $t) : ?>
                                             <tr class="lrob-cc-scan-type" data-type="<?php echo esc_attr($t['type']); ?>" data-count="<?php echo (int) $t['count']; ?>">
                                                 <td><label><input type="checkbox" class="lrob-cc-scan-type-on" checked /> <?php echo esc_html($t['label']); ?> <span class="description">(<?php echo (int) $t['count']; ?>)</span></label></td>
-                                                <td><input type="number" class="small-text lrob-cc-scan-type-limit" min="0" step="1" placeholder="<?php esc_attr_e('all', 'lrob-cookie-consent'); ?>" /></td>
-                                                <td><select class="lrob-cc-scan-type-order"><option value="newest"><?php esc_html_e('newest', 'lrob-cookie-consent'); ?></option><option value="oldest"><?php esc_html_e('oldest', 'lrob-cookie-consent'); ?></option></select></td>
+                                                <td class="lrob-cc-scan-limit-cell">
+                                                    <input type="range" class="lrob-cc-scan-type-limit" min="1" max="<?php echo (int) $t['count']; ?>" value="<?php echo (int) $t['count']; ?>" step="1" />
+                                                    <span class="lrob-cc-scan-limit-val"><?php esc_html_e('all', 'lrob-cookie-consent'); ?></span>
+                                                </td>
+                                                <td class="lrob-cc-scan-order-cell" hidden><select class="lrob-cc-scan-type-order"><option value="newest"><?php esc_html_e('newest first', 'lrob-cookie-consent'); ?></option><option value="oldest"><?php esc_html_e('oldest first', 'lrob-cookie-consent'); ?></option></select></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -397,6 +395,7 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                     </table>
                 </div>
             </details>
+            </div>
         </section>
 
         <!-- ============================ BANNER ============================ -->
@@ -432,7 +431,9 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                                         <div class="lrob-cc-inline-fields">
                                             <label class="lrob-cc-logo-size"><?php esc_html_e('Max height', 'lrob-cookie-consent'); ?>
                                                 <input type="number" min="12" max="200" data-field="logo_height" name="<?php echo $name('logo_height'); ?>" value="<?php echo esc_attr((string) $o['logo_height']); ?>" class="small-text" /> px</label>
-                                            <span class="lrob-cc-logo-pos"><?php esc_html_e('Position', 'lrob-cookie-consent'); ?>
+                                            <span class="lrob-cc-logo-pos"><?php esc_html_e('Placement', 'lrob-cookie-consent'); ?> <?php $help(__('Where the logo sits: on the title line, under the title, or in the footer.', 'lrob-cookie-consent')); ?>
+                                                <?php $seg('logo_placement', ['header' => __('Title line', 'lrob-cookie-consent'), 'below' => __('Under title', 'lrob-cookie-consent'), 'footer' => __('Footer', 'lrob-cookie-consent')]); ?></span>
+                                            <span class="lrob-cc-logo-pos lrob-cc-logo-align"<?php echo $o['logo_placement'] === 'header' ? ' hidden' : ''; ?>><?php esc_html_e('Align', 'lrob-cookie-consent'); ?>
                                                 <?php $seg('logo_position', ['left' => __('Left', 'lrob-cookie-consent'), 'center' => __('Center', 'lrob-cookie-consent'), 'right' => __('Right', 'lrob-cookie-consent')]); ?></span>
                                         </div>
                                     </td></tr>

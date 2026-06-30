@@ -99,6 +99,7 @@ final class Banner
         }
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
+        $logo_placement = (string) Options::get('logo_placement');
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];
         $watermark = (int) Options::get('watermark') === 1;
 

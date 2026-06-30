@@ -264,6 +264,18 @@ final class SettingsPage
                 'wizFinish'    => __('Finish & save', 'lrob-cookie-consent'),
                 'wizClose'     => __('Close', 'lrob-cookie-consent'),
                 'loading'      => __('Loading…', 'lrob-cookie-consent'),
+                'help'         => __('Help', 'lrob-cookie-consent'),
+                'scanSpeedUnit' => __('pages at once', 'lrob-cookie-consent'),
+                'scanSpeedTip' => __('How many pages to fetch at once. The scan slows itself down if your host can’t keep up.', 'lrob-cookie-consent'),
+                'wizKeepWording' => __('Keep my current wording', 'lrob-cookie-consent'),
+                'wizDurations' => __('How long should a choice be remembered?', 'lrob-cookie-consent'),
+                'wizDurAccept' => __('After accepting', 'lrob-cookie-consent'),
+                'wizDurDeny'   => __('After refusing', 'lrob-cookie-consent'),
+                'wizDurAcceptTip' => __('How long an acceptance is kept before the banner asks again.', 'lrob-cookie-consent'),
+                'wizDurDenyTip' => __('How long a refusal is kept. The CNIL advises at least 6 months.', 'lrob-cookie-consent'),
+                'durDays'      => __('days', 'lrob-cookie-consent'),
+                'durMonths'    => __('months', 'lrob-cookie-consent'),
+                'durYears'     => __('years', 'lrob-cookie-consent'),
                 'manageCookies' => __('Manage cookies', 'lrob-cookie-consent'),
                 'wizLayout'    => __('Layout', 'lrob-cookie-consent'),
                 'wizStepLayout' => __('Choose a layout', 'lrob-cookie-consent'),
@@ -314,6 +326,9 @@ final class SettingsPage
                 'scanSpeed'    => __('Scan speed', 'lrob-cookie-consent'),
                 'scanPhaseDb'  => __('Reading your content…', 'lrob-cookie-consent'),
                 'scanPhasePages' => __('Visiting your pages…', 'lrob-cookie-consent'),
+                'all'          => __('all', 'lrob-cookie-consent'),
+                'slowHost'     => __('Scanning is slow (over 1s per page). A faster web host would help.', 'lrob-cookie-consent'),
+                'slowHostLink' => __('See LRob hosting', 'lrob-cookie-consent'),
             ],
         ]);
     }
@@ -467,6 +482,7 @@ final class SettingsPage
         $out['revisit_shape'] = in_array($in['revisit_shape'] ?? '', ['square', 'rounded', 'pill', 'custom'], true) ? $in['revisit_shape'] : 'pill';
         $out['revisit_radius'] = min(999, max(0, (int) ($in['revisit_radius'] ?? $d['revisit_radius'])));
         $out['logo_position'] = in_array($in['logo_position'] ?? '', ['left', 'center', 'right'], true) ? $in['logo_position'] : 'left';
+        $out['logo_placement'] = in_array($in['logo_placement'] ?? '', ['header', 'below', 'footer'], true) ? $in['logo_placement'] : 'header';
         $out['layout_preset'] = sanitize_text_field((string) ($in['layout_preset'] ?? ''));
         $out['offset_preset'] = in_array($in['offset_preset'] ?? '', ['snug', 'default', 'spacious', 'custom'], true) ? $in['offset_preset'] : 'default';
         $out['offset_x'] = min(200, max(0, (int) ($in['offset_x'] ?? $d['offset_x'])));

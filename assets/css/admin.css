@@ -359,13 +359,6 @@
 .lrob-cc-page-credit a { color: #2271b1; text-decoration: none; }
 .lrob-cc-page-credit a:hover { text-decoration: underline; }
 
-.lrob-cc-page-actions {
-	margin-left: auto;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-}
-
 /* Master on/off switch, mirroring email-toolkit's inline header toggle. */
 .lrob-cc-master-toggle {
 	display: inline-flex;
@@ -443,6 +436,25 @@
 }
 
 .lrob-cc-tab .dashicons { vertical-align: text-bottom; }
+
+/* Two-column Cookies tab: Scan | Declaration, then Categories | Consent.
+   DOM order is Scan, Categories, Declaration, Consent — reorder via `order` so
+   the scan results sit next to where "Add selection as rules" lands. */
+.lrob-cc-cookies-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 16px;
+	align-items: start;
+}
+
+.lrob-cc-cookies-grid > :nth-child(1) { order: 1; } /* Scan */
+.lrob-cc-cookies-grid > :nth-child(2) { order: 3; } /* Categories */
+.lrob-cc-cookies-grid > :nth-child(3) { order: 2; } /* Declaration */
+.lrob-cc-cookies-grid > :nth-child(4) { order: 4; } /* Consent behaviour */
+
+@media (max-width: 1200px) {
+	.lrob-cc-cookies-grid { grid-template-columns: 1fr; }
+}
 
 /* ============================ Collapsible sections ============================ */
 .lrob-cc-section {
@@ -548,12 +560,22 @@
 /* ============================ Wizard ============================ */
 .lrob-cc-wiz-preview { margin-top: 14px; }
 
-/* Wizard preview reuses the checkerboard stage but at a contained height. */
+/* Wizard preview reuses the checkerboard stage; tall enough for long lists. */
 .lrob-cc-wiz-stage {
-	height: 360px;
-	min-height: 0;
+	height: 58vh;
+	min-height: 320px;
+	max-height: 70vh;
 	margin-top: 0;
 }
+
+.lrob-cc-wiz-progress {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 8px 0;
+}
+
+.lrob-cc-wiz-progress progress { flex: 1; height: 16px; }
 
 .lrob-cc-wiz-summary { max-width: 520px; margin: 8px 0; }
 .lrob-cc-wiz-summary th { width: 40%; }
@@ -763,8 +785,18 @@
 	border-bottom: 1px solid #e0e0e0;
 }
 
-.lrob-cc-scan-type-limit {
-	width: 70px;
+.lrob-cc-scan-limit-cell {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.lrob-cc-scan-limit-cell input[type="range"] { width: 130px; }
+
+.lrob-cc-scan-limit-val {
+	min-width: 30px;
+	color: #50575e;
+	font-variant-numeric: tabular-nums;
 }
 
 .lrob-cc-scan-speed-wrap {

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LRob - Cookie Consent 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-30T15:40:00+00:00\n"
-"PO-Revision-Date: 2026-06-30 15:50+0000\n"
+"POT-Creation-Date: 2026-06-30T16:55:10+00:00\n"
+"PO-Revision-Date: 2026-06-30 16:57+0000\n"
 "Last-Translator: LRob <git@lrob.fr>\n"
 "Language-Team: French <git@lrob.fr>\n"
 "Language: fr_FR\n"
@@ -51,7 +51,7 @@ msgstr "ID visiteur"
 msgid "IP"
 msgstr "IP"
 
-#: src/Admin/ConsentLogTable.php:27 views/admin-settings.php:750
+#: src/Admin/ConsentLogTable.php:27 views/admin-settings.php:751
 msgid "WP user"
 msgstr "Utilisateur WP"
 
@@ -87,7 +87,7 @@ msgstr "Supprimer"
 msgid "Stored as a salted hash"
 msgstr "Stocké sous forme de hachage salé"
 
-#: src/Admin/SettingsPage.php:54 views/admin-settings.php:297
+#: src/Admin/SettingsPage.php:54 views/admin-settings.php:295
 msgid "necessary, not blocked"
 msgstr "nécessaire, non bloqué"
 
@@ -127,44 +127,44 @@ msgstr "Choisissez l’apparence de la bannière"
 msgid "Auto (follow theme)"
 msgstr "Auto (suivre le thème)"
 
-#: src/Admin/SettingsPage.php:223 views/admin-settings.php:627
+#: src/Admin/SettingsPage.php:223 views/admin-settings.php:628
 msgid "Light"
 msgstr "Clair"
 
-#: src/Admin/SettingsPage.php:224 views/admin-settings.php:628
+#: src/Admin/SettingsPage.php:224 views/admin-settings.php:629
 msgid "Dark"
 msgstr "Sombre"
 
-#: src/Admin/SettingsPage.php:225 views/admin-settings.php:629
+#: src/Admin/SettingsPage.php:225 views/admin-settings.php:630
 msgid "Midnight"
 msgstr "Minuit"
 
-#: src/Admin/SettingsPage.php:226 views/admin-settings.php:630
+#: src/Admin/SettingsPage.php:226 views/admin-settings.php:631
 msgid "Ocean"
 msgstr "Océan"
 
-#: src/Admin/SettingsPage.php:227 views/admin-settings.php:631
+#: src/Admin/SettingsPage.php:227 views/admin-settings.php:632
 msgid "Sand"
 msgstr "Sable"
 
-#: src/Admin/SettingsPage.php:230 views/admin-settings.php:548
-#: views/admin-settings.php:710
+#: src/Admin/SettingsPage.php:230 views/admin-settings.php:549
+#: views/admin-settings.php:711
 msgid "Bottom"
 msgstr "En bas"
 
-#: src/Admin/SettingsPage.php:231 views/admin-settings.php:549
-#: views/admin-settings.php:673
+#: src/Admin/SettingsPage.php:231 views/admin-settings.php:550
+#: views/admin-settings.php:674
 msgid "Bottom right"
 msgstr "En bas à droite"
 
-#: src/Admin/SettingsPage.php:232 views/admin-settings.php:547
-#: views/admin-settings.php:674
+#: src/Admin/SettingsPage.php:232 views/admin-settings.php:548
+#: views/admin-settings.php:675
 msgid "Bottom left"
 msgstr "En bas à gauche"
 
-#: src/Admin/SettingsPage.php:233 views/admin-settings.php:436
-#: views/admin-settings.php:469 views/admin-settings.php:523
-#: views/admin-settings.php:546 views/admin-settings.php:568
+#: src/Admin/SettingsPage.php:233 views/admin-settings.php:437
+#: views/admin-settings.php:470 views/admin-settings.php:524
+#: views/admin-settings.php:547 views/admin-settings.php:569
 msgid "Center"
 msgstr "Centre"
 
@@ -172,8 +172,8 @@ msgstr "Centre"
 msgid "Colors"
 msgstr "Couleurs"
 
-#: src/Admin/SettingsPage.php:236 views/admin-settings.php:435
-#: views/admin-settings.php:541 views/admin-settings.php:670
+#: src/Admin/SettingsPage.php:236 views/admin-settings.php:542
+#: views/admin-settings.php:671
 msgid "Position"
 msgstr "Position"
 
@@ -200,35 +200,35 @@ msgstr "Confirmer"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/Admin/SettingsPage.php:250 views/admin-settings.php:264
-#: views/admin-settings.php:341 views/admin-settings.php:351
-#: views/admin-settings.php:370 views/admin-settings.php:430
-#: views/admin-settings.php:517
+#: src/Admin/SettingsPage.php:250 views/admin-settings.php:262
+#: views/admin-settings.php:339 views/admin-settings.php:349
+#: views/admin-settings.php:368 views/admin-settings.php:429
+#: views/admin-settings.php:518
 msgid "Remove"
 msgstr "Supprimer"
 
-#: src/Admin/SettingsPage.php:251 views/admin-settings.php:261
+#: src/Admin/SettingsPage.php:251 views/admin-settings.php:259
 msgid "slug"
 msgstr "slug"
 
-#: src/Admin/SettingsPage.php:252 views/admin-settings.php:262
-#: views/admin-settings.php:515 views/admin-settings.php:668
+#: src/Admin/SettingsPage.php:252 views/admin-settings.php:260
+#: views/admin-settings.php:516 views/admin-settings.php:669
 msgid "Label"
 msgstr "Libellé"
 
-#: src/Admin/SettingsPage.php:253 views/admin-settings.php:263
+#: src/Admin/SettingsPage.php:253 views/admin-settings.php:261
 msgid "Description"
 msgstr "Description"
 
-#: src/Admin/SettingsPage.php:254 views/admin-settings.php:429
+#: src/Admin/SettingsPage.php:254 views/admin-settings.php:428
 msgid "Select logo"
 msgstr "Sélectionner un logo"
 
-#: src/Admin/SettingsPage.php:255 views/banner.php:155
+#: src/Admin/SettingsPage.php:255 views/banner.php:163
 msgid "Cookie Consent by LRob"
 msgstr "Cookie Consent by LRob"
 
-#: src/Admin/SettingsPage.php:256 views/admin-settings.php:368
+#: src/Admin/SettingsPage.php:256 views/admin-settings.php:366
 msgid "Service name (shown to visitors)"
 msgstr "Nom du service (affiché aux visiteurs)"
 
@@ -274,28 +274,84 @@ msgstr "Fermer"
 msgid "Loading…"
 msgstr "Chargement…"
 
-#: src/Admin/SettingsPage.php:267 src/Frontend/Assets.php:94
-#: views/admin-settings.php:669
+#: src/Admin/SettingsPage.php:267 views/admin-settings.php:61
+msgid "Help"
+msgstr "Aide"
+
+#: src/Admin/SettingsPage.php:268
+msgid "pages at once"
+msgstr "pages à la fois"
+
+#: src/Admin/SettingsPage.php:269 views/admin-settings.php:173
+msgid ""
+"How many pages to fetch at once. The scan slows itself down if your host "
+"can’t keep up."
+msgstr ""
+"Combien de pages récupérer en même temps. L’analyse ralentit automatiquement "
+"si votre hébergeur ne suit pas."
+
+#: src/Admin/SettingsPage.php:270
+msgid "Keep my current wording"
+msgstr "Conserver ma formulation actuelle"
+
+#: src/Admin/SettingsPage.php:271
+msgid "How long should a choice be remembered?"
+msgstr "Pendant combien de temps un choix doit-il être mémorisé ?"
+
+#: src/Admin/SettingsPage.php:272 views/admin-settings.php:383
+msgid "After accepting"
+msgstr "Après acceptation"
+
+#: src/Admin/SettingsPage.php:273 views/admin-settings.php:384
+msgid "After refusing"
+msgstr "Après refus"
+
+#: src/Admin/SettingsPage.php:274
+msgid "How long an acceptance is kept before the banner asks again."
+msgstr ""
+"Durée pendant laquelle une acceptation est conservée avant que la bannière "
+"redemande."
+
+#: src/Admin/SettingsPage.php:275
+msgid "How long a refusal is kept. The CNIL advises at least 6 months."
+msgstr ""
+"Durée pendant laquelle un refus est conservé. La CNIL recommande au moins 6 "
+"mois."
+
+#: src/Admin/SettingsPage.php:276 views/admin-settings.php:92
+msgid "days"
+msgstr "jours"
+
+#: src/Admin/SettingsPage.php:277 views/admin-settings.php:93
+msgid "months"
+msgstr "mois"
+
+#: src/Admin/SettingsPage.php:278 views/admin-settings.php:94
+msgid "years"
+msgstr "ans"
+
+#: src/Admin/SettingsPage.php:279 src/Frontend/Assets.php:94
+#: views/admin-settings.php:670
 msgid "Manage cookies"
 msgstr "Gérer les cookies"
 
-#: src/Admin/SettingsPage.php:268
+#: src/Admin/SettingsPage.php:280
 msgid "Layout"
 msgstr "Mise en page"
 
-#: src/Admin/SettingsPage.php:269
+#: src/Admin/SettingsPage.php:281
 msgid "Choose a layout"
 msgstr "Choisir une mise en page"
 
-#: src/Admin/SettingsPage.php:270
+#: src/Admin/SettingsPage.php:282
 msgid "Pick your colours"
 msgstr "Choisir vos couleurs"
 
-#: src/Admin/SettingsPage.php:271
+#: src/Admin/SettingsPage.php:283
 msgid "Scan your site for trackers"
 msgstr "Analysez votre site à la recherche de traceurs"
 
-#: src/Admin/SettingsPage.php:272
+#: src/Admin/SettingsPage.php:284
 msgid ""
 "We look through your content for third-party scripts and embeds you may need "
 "to block."
@@ -303,150 +359,150 @@ msgstr ""
 "Nous parcourons votre contenu à la recherche de scripts et d’intégrations "
 "tiers que vous pourriez avoir à bloquer."
 
-#: src/Admin/SettingsPage.php:273 views/admin-settings.php:164
-#: views/admin-settings.php:170
+#: src/Admin/SettingsPage.php:285 views/admin-settings.php:158
+#: views/admin-settings.php:164
 msgid "Scan my site"
 msgstr "Analyser mon site"
 
-#: src/Admin/SettingsPage.php:274
+#: src/Admin/SettingsPage.php:286
 msgid "Found — tick what to block:"
 msgstr "Détectés — cochez ce qu’il faut bloquer :"
 
-#: src/Admin/SettingsPage.php:275
+#: src/Admin/SettingsPage.php:287 views/admin-settings.php:167
 msgid "My site has logins, comments or a cart — declare its WordPress cookies"
 msgstr ""
 "Mon site a des connexions, des commentaires ou un panier — déclarer ses "
 "cookies WordPress"
 
-#: src/Admin/SettingsPage.php:276
+#: src/Admin/SettingsPage.php:288
 msgid "Ready to go"
 msgstr "Prêt"
 
-#: src/Admin/SettingsPage.php:277
+#: src/Admin/SettingsPage.php:289
 msgid "Look"
 msgstr "Apparence"
 
-#: src/Admin/SettingsPage.php:278
+#: src/Admin/SettingsPage.php:290
 msgid "Wording"
 msgstr "Formulation"
 
-#: src/Admin/SettingsPage.php:279
+#: src/Admin/SettingsPage.php:291
 msgid "Trackers to block"
 msgstr "Traceurs à bloquer"
 
-#: src/Admin/SettingsPage.php:280 views/admin-settings.php:737
+#: src/Admin/SettingsPage.php:292 views/admin-settings.php:738
 msgid "Proof of consent"
 msgstr "Preuve de consentement"
 
-#: src/Admin/SettingsPage.php:281
+#: src/Admin/SettingsPage.php:293
 msgid "Yes, keep proof"
 msgstr "Oui, conserver la preuve"
 
-#: src/Admin/SettingsPage.php:282
+#: src/Admin/SettingsPage.php:294
 msgid "No"
 msgstr "Non"
 
-#: src/Admin/SettingsPage.php:283
+#: src/Admin/SettingsPage.php:295
 msgid "Keep current"
 msgstr "Conserver l’existant"
 
 #. translators: %1$d: current step number, %2$d: total steps.
-#: src/Admin/SettingsPage.php:285
+#: src/Admin/SettingsPage.php:297
 msgid "Step %1$d of %2$d"
 msgstr "Étape %1$d sur %2$d"
 
-#: src/Admin/SettingsPage.php:286
+#: src/Admin/SettingsPage.php:298
 msgid "Scanning…"
 msgstr "Analyse en cours…"
 
-#: src/Admin/SettingsPage.php:287
+#: src/Admin/SettingsPage.php:299
 msgid "Scan again"
 msgstr "Analyser à nouveau"
 
-#: src/Admin/SettingsPage.php:288
+#: src/Admin/SettingsPage.php:300
 msgid "Scan failed. Try again."
 msgstr "Échec de l’analyse. Veuillez réessayer."
 
-#: src/Admin/SettingsPage.php:289
+#: src/Admin/SettingsPage.php:301
 msgid "No third-party resources found on the scanned pages."
 msgstr "Aucune ressource tierce trouvée sur les pages analysées."
 
-#: src/Admin/SettingsPage.php:290
+#: src/Admin/SettingsPage.php:302
 msgid "Add selected as rules"
 msgstr "Ajouter la sélection comme règles"
 
-#: src/Admin/SettingsPage.php:291
+#: src/Admin/SettingsPage.php:303
 msgid "known"
 msgstr "connu"
 
-#: src/Admin/SettingsPage.php:292
+#: src/Admin/SettingsPage.php:304
 msgid "review"
 msgstr "à vérifier"
 
-#: src/Admin/SettingsPage.php:293
+#: src/Admin/SettingsPage.php:305
 msgid "Cookies set on scanned pages:"
 msgstr "Cookies déposés sur les pages analysées :"
 
-#: src/Admin/SettingsPage.php:294
+#: src/Admin/SettingsPage.php:306
 msgid "Scanned:"
 msgstr "Analysé :"
 
-#: src/Admin/SettingsPage.php:295
+#: src/Admin/SettingsPage.php:307
 msgid "Select all"
 msgstr "Tout sélectionner"
 
-#: src/Admin/SettingsPage.php:296
+#: src/Admin/SettingsPage.php:308
 msgid "Still scanning — results so far:"
 msgstr "Analyse en cours — résultats jusqu’ici :"
 
-#: src/Admin/SettingsPage.php:297
+#: src/Admin/SettingsPage.php:309
 msgid "added"
 msgstr "ajouté"
 
-#: src/Admin/SettingsPage.php:298
+#: src/Admin/SettingsPage.php:310
 msgid "Found on these pages"
 msgstr "Détecté sur ces pages"
 
 #. translators: %d: number of additional pages not listed.
-#: src/Admin/SettingsPage.php:300
+#: src/Admin/SettingsPage.php:312
 msgid "…and %d more"
 msgstr "…et %d de plus"
 
 #. translators: %d: number of pages scanned.
-#: src/Admin/SettingsPage.php:302
+#: src/Admin/SettingsPage.php:314
 msgid "Scanned %d pages."
 msgstr "%d pages analysées."
 
 #. translators: %1$d: current page, %2$d: total pages.
-#: src/Admin/SettingsPage.php:304
+#: src/Admin/SettingsPage.php:316
 msgid "Scanning page %1$d of %2$d…"
 msgstr "Analyse de la page %1$d sur %2$d…"
 
-#: src/Admin/SettingsPage.php:305
+#: src/Admin/SettingsPage.php:317
 msgid "Some pages could not be reached due to an SSL certificate error."
 msgstr ""
 "Certaines pages n’ont pas pu être atteintes en raison d’une erreur de "
 "certificat SSL."
 
-#: src/Admin/SettingsPage.php:306
+#: src/Admin/SettingsPage.php:318
 msgid "Retry ignoring SSL"
 msgstr "Réessayer en ignorant le SSL"
 
 #. translators: %d: estimated seconds remaining.
-#: src/Admin/SettingsPage.php:308
+#: src/Admin/SettingsPage.php:320
 msgid "~%ds left"
 msgstr "~%d s restantes"
 
 #. translators: %d: number of pages to scan.
-#: src/Admin/SettingsPage.php:310
+#: src/Admin/SettingsPage.php:322
 msgid "%d pages to scan."
 msgstr "%d pages à analyser."
 
-#: src/Admin/SettingsPage.php:311
+#: src/Admin/SettingsPage.php:323
 msgid "Your host is limiting requests — slowing the scan down."
 msgstr "Votre hébergeur limite les requêtes — ralentissement de l’analyse."
 
-#: src/Admin/SettingsPage.php:312
+#: src/Admin/SettingsPage.php:324
 msgid ""
 "Your host could not complete the page-visit scan (it may have very limited "
 "resources). The results found so far are still valid."
@@ -454,27 +510,41 @@ msgstr ""
 "Votre hébergeur n’a pas pu terminer l’analyse des pages (ses ressources sont "
 "peut-être très limitées). Les résultats déjà trouvés restent valides."
 
-#: src/Admin/SettingsPage.php:313
+#: src/Admin/SettingsPage.php:325
 msgid "Scan complete."
 msgstr "Analyse terminée."
 
-#: src/Admin/SettingsPage.php:314 views/admin-settings.php:175
+#: src/Admin/SettingsPage.php:326 views/admin-settings.php:170
 msgid "Scan speed"
 msgstr "Vitesse d’analyse"
 
-#: src/Admin/SettingsPage.php:315
+#: src/Admin/SettingsPage.php:327
 msgid "Reading your content…"
 msgstr "Lecture de votre contenu…"
 
-#: src/Admin/SettingsPage.php:316
+#: src/Admin/SettingsPage.php:328
 msgid "Visiting your pages…"
 msgstr "Visite de vos pages…"
 
-#: src/Admin/SettingsPage.php:324
+#: src/Admin/SettingsPage.php:329 views/admin-settings.php:195
+msgid "all"
+msgstr "toutes"
+
+#: src/Admin/SettingsPage.php:330
+msgid "Scanning is slow (over 1s per page). A faster web host would help."
+msgstr ""
+"L’analyse est lente (plus d’1 s par page). Un hébergeur web plus rapide "
+"aiderait."
+
+#: src/Admin/SettingsPage.php:331
+msgid "See LRob hosting"
+msgstr "Voir l’hébergement LRob"
+
+#: src/Admin/SettingsPage.php:339
 msgid "You are not allowed to access this page."
 msgstr "Vous n’êtes pas autorisé à accéder à cette page."
 
-#: src/Admin/SettingsPage.php:540 src/Admin/SettingsPage.php:549
+#: src/Admin/SettingsPage.php:556 src/Admin/SettingsPage.php:565
 msgid "You are not allowed to do this."
 msgstr "Vous n’êtes pas autorisé à effectuer cette action."
 
@@ -534,7 +604,7 @@ msgstr "Enregistrer les préférences"
 msgid "Always active"
 msgstr "Toujours actif"
 
-#: src/Frontend/Banner.php:44 views/admin-settings.php:482
+#: src/Frontend/Banner.php:44 views/admin-settings.php:483
 msgid "Customize"
 msgstr "Personnaliser"
 
@@ -550,7 +620,7 @@ msgstr "Ce que nous utilisons"
 msgid "Necessary cookies"
 msgstr "Cookies nécessaires"
 
-#: src/Frontend/Banner.php:112
+#: src/Frontend/Banner.php:113
 msgid "Inline script"
 msgstr "Script inline"
 
@@ -630,7 +700,7 @@ msgstr ""
 msgid "Minimal"
 msgstr "Minimal"
 
-#: src/Support/Presets.php:29 views/admin-settings.php:143
+#: src/Support/Presets.php:29 views/admin-settings.php:136
 msgid "Cookies"
 msgstr "Cookies"
 
@@ -638,12 +708,11 @@ msgstr "Cookies"
 msgid "We use cookies. Choose what you allow."
 msgstr "Nous utilisons des cookies. Choisissez ce que vous autorisez."
 
-#: src/Support/Presets.php:31 views/admin-settings.php:482
+#: src/Support/Presets.php:31 views/admin-settings.php:483
 msgid "Accept"
 msgstr "Accepter"
 
 #: src/Support/Presets.php:33 src/Support/Presets.php:69
-#: views/admin-settings.php:134
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -868,64 +937,44 @@ msgstr ""
 "Répertoriées comme nécessaires — mentionnées par souci de transparence mais "
 "jamais bloquées, afin que le paiement continue de fonctionner."
 
-#: views/admin-settings.php:61
-msgid "Help"
-msgstr "Aide"
-
-#: views/admin-settings.php:74 views/admin-settings.php:626
+#: views/admin-settings.php:74 views/admin-settings.php:627
 msgid "Auto"
 msgstr "Auto"
-
-#: views/admin-settings.php:92
-msgid "days"
-msgstr "jours"
-
-#: views/admin-settings.php:93
-msgid "months"
-msgstr "mois"
-
-#: views/admin-settings.php:94
-msgid "years"
-msgstr "ans"
 
 #. translators: precedes the author name "LRob".
 #: views/admin-settings.php:124
 msgid "by"
 msgstr "par"
 
-#: views/admin-settings.php:128
+#: views/admin-settings.php:127
 msgid "Turn the whole plugin on or off"
 msgstr "Activer ou désactiver l’ensemble de l’extension"
 
-#: views/admin-settings.php:131
+#: views/admin-settings.php:130
 msgid "Enabled"
 msgstr "Activé"
 
-#: views/admin-settings.php:132
+#: views/admin-settings.php:131
 msgid "Disabled"
 msgstr "Désactivé"
 
-#: views/admin-settings.php:139
-msgid "Settings saved."
-msgstr "Réglages enregistrés."
-
-#: views/admin-settings.php:142
+#: views/admin-settings.php:135
 msgid "Cookie Consent sections"
 msgstr "Sections du consentement aux cookies"
 
-#: views/admin-settings.php:144
+#: views/admin-settings.php:137
 msgid "Banner"
 msgstr "Bannière"
 
-#: views/admin-settings.php:145
+#: views/admin-settings.php:138
 msgid "Logs"
 msgstr "Journaux"
 
-#: views/admin-settings.php:154
+#: views/admin-settings.php:147
 msgid "Set up cookie consent in a minute"
 msgstr "Configurez le consentement aux cookies en une minute"
 
-#: views/admin-settings.php:155
+#: views/admin-settings.php:148
 msgid ""
 "Pick a look, scan your site for trackers, and you’re done. Fine-tune "
 "anything afterwards."
@@ -933,76 +982,64 @@ msgstr ""
 "Choisissez une apparence, analysez votre site à la recherche de traceurs, et "
 "c’est terminé. Vous pourrez tout peaufiner ensuite."
 
-#: views/admin-settings.php:157
+#: views/admin-settings.php:150
 msgid "Run setup wizard"
 msgstr "Lancer l’assistant de configuration"
 
-#: views/admin-settings.php:160
+#: views/admin-settings.php:153
 msgid "Re-run setup wizard"
 msgstr "Relancer l’assistant de configuration"
 
-#: views/admin-settings.php:165
+#: views/admin-settings.php:159
 msgid "Find third-party scripts, embeds and cookies"
 msgstr "Détecter les scripts, intégrations et cookies tiers"
 
-#: views/admin-settings.php:168
+#: views/admin-settings.php:162
 msgid ""
 "A two-pass scan: first your stored content, then an anonymous visit to your "
 "pages (catching what your theme or plugins inject). Both run each time."
 msgstr ""
 "Une analyse en deux passes : d’abord votre contenu enregistré, puis une "
-"visite anonyme de vos pages (qui détecte ce que votre thème ou vos extensions "
-"injectent). Les deux s’exécutent à chaque fois."
+"visite anonyme de vos pages (qui détecte ce que votre thème ou vos "
+"extensions injectent). Les deux s’exécutent à chaque fois."
 
-#: views/admin-settings.php:171
+#: views/admin-settings.php:165
 msgid "Start over"
 msgstr "Recommencer"
 
-#: views/admin-settings.php:178
-msgid ""
-"How many pages to fetch at once. The scan slows itself down if your host "
-"can’t keep up."
-msgstr ""
-"Combien de pages récupérer en même temps. L’analyse ralentit automatiquement "
-"si votre hébergeur ne suit pas."
-
-#: views/admin-settings.php:182
+#: views/admin-settings.php:177
 msgid "Advanced — choose which pages to visit"
 msgstr "Avancé — choisir les pages à visiter"
 
-#: views/admin-settings.php:186
+#: views/admin-settings.php:181
 msgid "Scan everything"
 msgstr "Tout analyser"
 
+#: views/admin-settings.php:182
+msgid "How many"
+msgstr "Combien"
+
+#: views/admin-settings.php:183
+msgid "Scan priority"
+msgstr "Priorité d’analyse"
+
 #: views/admin-settings.php:187
-msgid "Limit"
-msgstr "Limite"
-
-#: views/admin-settings.php:188
-msgid "Order"
-msgstr "Ordre"
-
-#: views/admin-settings.php:192
 msgid "Home page"
 msgstr "Page d’accueil"
 
-#: views/admin-settings.php:193
+#: views/admin-settings.php:188
 msgid "always"
 msgstr "toujours"
 
-#: views/admin-settings.php:198
-msgid "all"
-msgstr "toutes"
+#: views/admin-settings.php:197
+msgid "newest first"
+msgstr "les plus récentes d’abord"
 
-#: views/admin-settings.php:199
-msgid "newest"
-msgstr "plus récentes"
+#: views/admin-settings.php:197
+msgid "oldest first"
+msgstr "les plus anciennes d’abord"
 
-#: views/admin-settings.php:199
-msgid "oldest"
-msgstr "plus anciennes"
-
-#: views/admin-settings.php:205
+#: views/admin-settings.php:203
 msgid ""
 "That is a lot of pages to fetch one by one — on a slow host this can take a "
 "while."
@@ -1010,15 +1047,15 @@ msgstr ""
 "Cela fait beaucoup de pages à récupérer une à une — sur un hébergeur lent, "
 "cela peut prendre du temps."
 
-#: views/admin-settings.php:221
+#: views/admin-settings.php:219
 msgid "Categories"
 msgstr "Catégories"
 
-#: views/admin-settings.php:222
+#: views/admin-settings.php:220
 msgid "What visitors can allow or refuse"
 msgstr "Ce que les visiteurs peuvent autoriser ou refuser"
 
-#: views/admin-settings.php:224
+#: views/admin-settings.php:222
 msgid ""
 "Functional cookies (login, cart, security) are always allowed. Built-in "
 "names are fixed; edit a description with the pencil, or add your own "
@@ -1028,41 +1065,41 @@ msgstr ""
 "autorisés. Les noms intégrés sont fixes ; modifiez une description avec le "
 "crayon, ou ajoutez vos propres catégories."
 
-#: views/admin-settings.php:241
+#: views/admin-settings.php:239
 msgid "Edit description"
 msgstr "Modifier la description"
 
-#: views/admin-settings.php:251
+#: views/admin-settings.php:249
 msgid "always on"
 msgstr "toujours actif"
 
-#: views/admin-settings.php:253
+#: views/admin-settings.php:251
 msgid "built-in"
 msgstr "intégré"
 
-#: views/admin-settings.php:257
+#: views/admin-settings.php:255
 msgid "Custom categories"
 msgstr "Catégories personnalisées"
 
-#: views/admin-settings.php:268
+#: views/admin-settings.php:266
 msgid "Add category"
 msgstr "Ajouter une catégorie"
 
-#: views/admin-settings.php:273
+#: views/admin-settings.php:271
 msgid "Cookie declaration"
 msgstr "Déclaration des cookies"
 
-#: views/admin-settings.php:274
+#: views/admin-settings.php:272
 msgid "Cookies & services you declare; optional ones are blocked until consent"
 msgstr ""
 "Cookies et services que vous déclarez ; les optionnels sont bloqués jusqu’au "
 "consentement"
 
-#: views/admin-settings.php:277
+#: views/admin-settings.php:275
 msgid "Declare WordPress cookies"
 msgstr "Déclarer les cookies WordPress"
 
-#: views/admin-settings.php:278
+#: views/admin-settings.php:276
 msgid ""
 "Adds your site’s own WordPress cookies (login session, comment form, "
 "preferences, and WooCommerce cart if active) as necessary entries — declared "
@@ -1072,57 +1109,57 @@ msgstr ""
 "formulaire de commentaire, préférences et panier WooCommerce si actif) comme "
 "entrées nécessaires — déclarées par transparence, jamais bloquées."
 
-#: views/admin-settings.php:280
+#: views/admin-settings.php:278
 msgid "Editor"
 msgstr "Éditeur"
 
-#: views/admin-settings.php:281
+#: views/admin-settings.php:279
 msgid "Guided"
 msgstr "Guidé"
 
-#: views/admin-settings.php:281
+#: views/admin-settings.php:279
 msgid "Raw text"
 msgstr "Texte brut"
 
-#: views/admin-settings.php:305
+#: views/admin-settings.php:303
 msgid "Click a common service to add it, or add a custom rule."
 msgstr ""
 "Cliquez sur un service courant pour l’ajouter, ou ajoutez une règle "
 "personnalisée."
 
-#: views/admin-settings.php:330
+#: views/admin-settings.php:328
 msgid "Pattern — matched in script/iframe URLs & inline code"
 msgstr "Motif — recherché dans les URL de scripts/iframes et le code inline"
 
-#: views/admin-settings.php:331
+#: views/admin-settings.php:329
 msgid "Category"
 msgstr "Catégorie"
 
-#: views/admin-settings.php:332
+#: views/admin-settings.php:330
 msgid "Service name — shown to visitors"
 msgstr "Nom du service — affiché aux visiteurs"
 
-#: views/admin-settings.php:338 views/admin-settings.php:348
+#: views/admin-settings.php:336 views/admin-settings.php:346
 msgid "pattern (e.g. google-analytics.com)"
 msgstr "motif (par ex. google-analytics.com)"
 
-#: views/admin-settings.php:340 views/admin-settings.php:350
+#: views/admin-settings.php:338 views/admin-settings.php:348
 msgid "Service name"
 msgstr "Nom du service"
 
-#: views/admin-settings.php:345
+#: views/admin-settings.php:343
 msgid "Add custom rule"
 msgstr "Ajouter une règle personnalisée"
 
-#: views/admin-settings.php:358
+#: views/admin-settings.php:356
 msgid "One rule per line: pattern | category | service name."
 msgstr "Une règle par ligne : motif | catégorie | nom du service."
 
-#: views/admin-settings.php:361
+#: views/admin-settings.php:359
 msgid "Inline scripts"
 msgstr "Scripts inline"
 
-#: views/admin-settings.php:361
+#: views/admin-settings.php:359
 msgid ""
 "Paste a snippet (GA4, Matomo…) and pick a category — it runs only after "
 "consent. CAPTCHAs usually need no blocking."
@@ -1131,23 +1168,23 @@ msgstr ""
 "s’exécute qu’après le consentement. Les CAPTCHA ne nécessitent généralement "
 "aucun blocage."
 
-#: views/admin-settings.php:374
+#: views/admin-settings.php:372
 msgid "Add inline script"
 msgstr "Ajouter un script inline"
 
-#: views/admin-settings.php:379
+#: views/admin-settings.php:377
 msgid "Consent behaviour"
 msgstr "Comportement du consentement"
 
-#: views/admin-settings.php:380
+#: views/admin-settings.php:378
 msgid "How long choices last, signals, iframes"
 msgstr "Durée des choix, signaux, iframes"
 
-#: views/admin-settings.php:383
+#: views/admin-settings.php:381
 msgid "Remember a choice for"
 msgstr "Mémoriser un choix pendant"
 
-#: views/admin-settings.php:383
+#: views/admin-settings.php:381
 msgid ""
 "How long a decision is remembered before the banner asks again. The CNIL "
 "advises keeping a refusal at least 6 months."
@@ -1155,28 +1192,20 @@ msgstr ""
 "Durée pendant laquelle une décision est mémorisée avant que la bannière "
 "redemande. La CNIL recommande de conserver un refus pendant au moins 6 mois."
 
-#: views/admin-settings.php:385
-msgid "After accepting"
-msgstr "Après acceptation"
-
 #: views/admin-settings.php:386
-msgid "After refusing"
-msgstr "Après refus"
-
-#: views/admin-settings.php:388
 msgid "Logged-in users"
 msgstr "Utilisateurs connectés"
 
-#: views/admin-settings.php:389
+#: views/admin-settings.php:387
 msgid "Run consent + blocking for logged-in users too"
 msgstr ""
 "Appliquer le consentement et le blocage aussi aux utilisateurs connectés"
 
-#: views/admin-settings.php:390
+#: views/admin-settings.php:388
 msgid "DNT / GPC signal"
 msgstr "Signal DNT / GPC"
 
-#: views/admin-settings.php:390
+#: views/admin-settings.php:388
 msgid ""
 "Treat a Do-Not-Track / Global-Privacy-Control browser signal as a refusal of "
 "optional cookies."
@@ -1184,34 +1213,34 @@ msgstr ""
 "Traiter un signal de navigateur Do-Not-Track / Global-Privacy-Control comme "
 "un refus des cookies optionnels."
 
-#: views/admin-settings.php:391
+#: views/admin-settings.php:389
 msgid "Respect it as a refusal"
 msgstr "Le respecter comme un refus"
 
-#: views/admin-settings.php:392
+#: views/admin-settings.php:390
 msgid "…and hide the banner for those visitors"
 msgstr "…et masquer la bannière pour ces visiteurs"
 
-#: views/admin-settings.php:393
+#: views/admin-settings.php:391
 msgid "Iframes"
 msgstr "Iframes"
 
-#: views/admin-settings.php:393
+#: views/admin-settings.php:391
 msgid ""
 "Embedded iframes (YouTube, Maps…) can set cookies before consent. Leave on."
 msgstr ""
 "Les iframes intégrées (YouTube, Maps…) peuvent déposer des cookies avant le "
 "consentement. Laissez activé."
 
-#: views/admin-settings.php:394
+#: views/admin-settings.php:392
 msgid "Neutralise matching iframes until consent"
 msgstr "Neutraliser les iframes correspondantes jusqu’au consentement"
 
-#: views/admin-settings.php:395
+#: views/admin-settings.php:393
 msgid "On rule changes"
 msgstr "Lors des modifications de règles"
 
-#: views/admin-settings.php:395
+#: views/admin-settings.php:393
 msgid ""
 "Returning visitors are always re-asked when a new category starts blocking. "
 "Enable this to also re-ask on smaller changes."
@@ -1220,61 +1249,88 @@ msgstr ""
 "nouvelle catégorie commence à bloquer. Activez ceci pour redemander aussi "
 "lors de modifications mineures."
 
-#: views/admin-settings.php:396
+#: views/admin-settings.php:394
 msgid "Re-prompt on any change to the block list"
 msgstr "Redemander à chaque modification de la liste de blocage"
 
-#: views/admin-settings.php:409
+#: views/admin-settings.php:408
 msgid "Content & text"
 msgstr "Contenu et texte"
 
-#: views/admin-settings.php:411
+#: views/admin-settings.php:410
 msgid "Wording preset"
 msgstr "Préréglage de formulation"
 
-#: views/admin-settings.php:416 views/admin-settings.php:537
-#: views/admin-settings.php:586 views/admin-settings.php:632
-#: views/admin-settings.php:683
+#: views/admin-settings.php:415 views/admin-settings.php:538
+#: views/admin-settings.php:587 views/admin-settings.php:633
+#: views/admin-settings.php:684
 msgid "Custom"
 msgstr "Personnalisé"
 
-#: views/admin-settings.php:420 views/admin-settings.php:817
+#: views/admin-settings.php:419 views/admin-settings.php:818
 msgid "Header"
 msgstr "En-tête"
 
-#: views/admin-settings.php:422 views/admin-settings.php:818
+#: views/admin-settings.php:421 views/admin-settings.php:819
 msgid "Message"
 msgstr "Message"
 
-#: views/admin-settings.php:424
+#: views/admin-settings.php:423
 msgid "Logo"
 msgstr "Logo"
 
-#: views/admin-settings.php:433
+#: views/admin-settings.php:432
 msgid "Max height"
 msgstr "Hauteur max."
 
-#: views/admin-settings.php:436 views/admin-settings.php:468
-#: views/admin-settings.php:523 views/admin-settings.php:567
-#: views/admin-settings.php:710
+#: views/admin-settings.php:434
+msgid "Placement"
+msgstr "Emplacement"
+
+#: views/admin-settings.php:434
+msgid ""
+"Where the logo sits: on the title line, under the title, or in the footer."
+msgstr ""
+"Où se place le logo : sur la ligne du titre, sous le titre, ou dans le pied "
+"de page."
+
+#: views/admin-settings.php:435
+msgid "Title line"
+msgstr "Ligne du titre"
+
+#: views/admin-settings.php:435
+msgid "Under title"
+msgstr "Sous le titre"
+
+#: views/admin-settings.php:435
+msgid "Footer"
+msgstr "Pied de page"
+
+#: views/admin-settings.php:436
+msgid "Align"
+msgstr "Alignement"
+
+#: views/admin-settings.php:437 views/admin-settings.php:469
+#: views/admin-settings.php:524 views/admin-settings.php:568
+#: views/admin-settings.php:711
 msgid "Left"
 msgstr "Gauche"
 
-#: views/admin-settings.php:436 views/admin-settings.php:470
-#: views/admin-settings.php:523 views/admin-settings.php:569
-#: views/admin-settings.php:710
+#: views/admin-settings.php:437 views/admin-settings.php:471
+#: views/admin-settings.php:524 views/admin-settings.php:570
+#: views/admin-settings.php:711
 msgid "Right"
 msgstr "Droite"
 
-#: views/admin-settings.php:445
+#: views/admin-settings.php:446
 msgid "Buttons & details"
 msgstr "Boutons et détails"
 
-#: views/admin-settings.php:448
+#: views/admin-settings.php:449
 msgid "Accept button"
 msgstr "Bouton Accepter"
 
-#: views/admin-settings.php:448
+#: views/admin-settings.php:449
 msgid ""
 "The one-click “accept everything” button. If hidden, visitors consent via "
 "Customize → Save."
@@ -1282,16 +1338,16 @@ msgstr ""
 "Le bouton « tout accepter » en un clic. S’il est masqué, les visiteurs "
 "donnent leur consentement via Personnaliser → Enregistrer."
 
-#: views/admin-settings.php:449 views/admin-settings.php:452
-#: views/admin-settings.php:475
+#: views/admin-settings.php:450 views/admin-settings.php:453
+#: views/admin-settings.php:476
 msgid "Show"
 msgstr "Afficher"
 
-#: views/admin-settings.php:451
+#: views/admin-settings.php:452
 msgid "Deny button"
 msgstr "Bouton Refuser"
 
-#: views/admin-settings.php:451
+#: views/admin-settings.php:452
 msgid ""
 "Refuses every optional category. GDPR/CNIL expect refusing to be as easy as "
 "accepting."
@@ -1299,11 +1355,11 @@ msgstr ""
 "Refuse toutes les catégories optionnelles. Le RGPD/la CNIL attendent qu’il "
 "soit aussi simple de refuser que d’accepter."
 
-#: views/admin-settings.php:454
+#: views/admin-settings.php:455
 msgid "Refuse style"
 msgstr "Style du refus"
 
-#: views/admin-settings.php:454
+#: views/admin-settings.php:455
 msgid ""
 "Show refusal as a button, or as a subtle “Continue without accepting” link "
 "(same effect as closing)."
@@ -1311,39 +1367,39 @@ msgstr ""
 "Afficher le refus sous forme de bouton, ou de lien discret « Continuer sans "
 "accepter » (même effet que fermer)."
 
-#: views/admin-settings.php:456
+#: views/admin-settings.php:457
 msgid "Button"
 msgstr "Bouton"
 
-#: views/admin-settings.php:457
+#: views/admin-settings.php:458
 msgid "“Continue without accepting” link"
 msgstr "Lien « Continuer sans accepter »"
 
-#: views/admin-settings.php:461
+#: views/admin-settings.php:462
 msgid "Under the buttons"
 msgstr "Sous les boutons"
 
-#: views/admin-settings.php:462
+#: views/admin-settings.php:463
 msgid "Under the banner"
 msgstr "Sous la bannière"
 
-#: views/admin-settings.php:463
+#: views/admin-settings.php:464
 msgid "Top of the banner"
 msgstr "En haut de la bannière"
 
-#: views/admin-settings.php:464
+#: views/admin-settings.php:465
 msgid "Next to the × button"
 msgstr "À côté du bouton ×"
 
-#: views/admin-settings.php:472
+#: views/admin-settings.php:473
 msgid "Arrow (→)"
 msgstr "Flèche (→)"
 
-#: views/admin-settings.php:474
+#: views/admin-settings.php:475
 msgid "Customize button"
 msgstr "Bouton Personnaliser"
 
-#: views/admin-settings.php:474
+#: views/admin-settings.php:475
 msgid ""
 "Shown when category options are hidden behind a button (see Layout). It "
 "reveals the per-category choices."
@@ -1351,11 +1407,11 @@ msgstr ""
 "Affiché lorsque les options de catégories sont masquées derrière un bouton "
 "(voir Mise en page). Il révèle les choix par catégorie."
 
-#: views/admin-settings.php:477
+#: views/admin-settings.php:478
 msgid "Save button"
 msgstr "Bouton Enregistrer"
 
-#: views/admin-settings.php:477
+#: views/admin-settings.php:478
 msgid ""
 "Shown when category options are visible — it confirms a granular choice, so "
 "it can’t be hidden. You can rename it."
@@ -1363,37 +1419,37 @@ msgstr ""
 "Affiché lorsque les options par catégorie sont visibles — il confirme un "
 "choix granulaire, il ne peut donc pas être masqué. Vous pouvez le renommer."
 
-#: views/admin-settings.php:481
+#: views/admin-settings.php:482
 msgid "Button order"
 msgstr "Ordre des boutons"
 
-#: views/admin-settings.php:481
+#: views/admin-settings.php:482
 msgid "Drag to reorder. Hidden buttons are skipped."
 msgstr "Glissez pour réordonner. Les boutons masqués sont ignorés."
 
-#: views/admin-settings.php:482
+#: views/admin-settings.php:483
 msgid "Refuse"
 msgstr "Refuser"
 
-#: views/admin-settings.php:490
+#: views/admin-settings.php:491
 msgid "Category options"
 msgstr "Options de catégories"
 
-#: views/admin-settings.php:491
+#: views/admin-settings.php:492
 msgid "Hide them behind a “Customize” button (simpler banner)"
 msgstr "Les masquer derrière un bouton « Personnaliser » (bannière simplifiée)"
 
-#: views/admin-settings.php:492
+#: views/admin-settings.php:493
 msgid "Let visitors expand each category to see what it blocks"
 msgstr ""
 "Permettre aux visiteurs de déplier chaque catégorie pour voir ce qu’elle "
 "bloque"
 
-#: views/admin-settings.php:494
+#: views/admin-settings.php:495
 msgid "Cookie details on the main view"
 msgstr "Détails des cookies sur la vue principale"
 
-#: views/admin-settings.php:494
+#: views/admin-settings.php:495
 msgid ""
 "Show the actual cookies/services, one per line, right on the banner. "
 "Required cookies first."
@@ -1401,61 +1457,61 @@ msgstr ""
 "Afficher les cookies/services réels, un par ligne, directement sur la "
 "bannière. Les cookies obligatoires d’abord."
 
-#: views/admin-settings.php:495
+#: views/admin-settings.php:496
 msgid "Show required cookie details"
 msgstr "Afficher le détail des cookies obligatoires"
 
-#: views/admin-settings.php:496
+#: views/admin-settings.php:497
 msgid "Show optional cookie details"
 msgstr "Afficher le détail des cookies optionnels"
 
-#: views/admin-settings.php:498
+#: views/admin-settings.php:499
 msgid "Expanded by default"
 msgstr "Déplié par défaut"
 
-#: views/admin-settings.php:500
+#: views/admin-settings.php:501
 msgid "Required heading"
 msgstr "Titre des cookies obligatoires"
 
-#: views/admin-settings.php:502
+#: views/admin-settings.php:503
 msgid "Optional heading"
 msgstr "Titre des cookies optionnels"
 
-#: views/admin-settings.php:507
+#: views/admin-settings.php:508
 msgid "Footer links"
 msgstr "Liens de pied de page"
 
-#: views/admin-settings.php:507
+#: views/admin-settings.php:508
 msgid "Links at the bottom of the banner — e.g. your Privacy Policy."
 msgstr ""
 "Liens affichés en bas de la bannière — par ex. votre politique de "
 "confidentialité."
 
-#: views/admin-settings.php:509
+#: views/admin-settings.php:510
 msgid "Search a page to add…"
 msgstr "Rechercher une page à ajouter…"
 
-#: views/admin-settings.php:521
+#: views/admin-settings.php:522
 msgid "Add link"
 msgstr "Ajouter un lien"
 
-#: views/admin-settings.php:522
+#: views/admin-settings.php:523
 msgid "Footer alignment"
 msgstr "Alignement du pied de page"
 
-#: views/admin-settings.php:524
+#: views/admin-settings.php:525
 msgid "Show a small “Cookie Consent by LRob” credit"
 msgstr "Afficher un petit crédit « Cookie Consent by LRob »"
 
-#: views/admin-settings.php:530
+#: views/admin-settings.php:531
 msgid "Layout & position"
 msgstr "Mise en page et position"
 
-#: views/admin-settings.php:532
+#: views/admin-settings.php:533
 msgid "Layout preset"
 msgstr "Préréglage de mise en page"
 
-#: views/admin-settings.php:532
+#: views/admin-settings.php:533
 msgid ""
 "Sets position, size, spacing, corners, backdrop and animation in one click. "
 "Tweak anything below afterwards."
@@ -1463,87 +1519,87 @@ msgstr ""
 "Définit la position, la taille, l’espacement, les coins, l’arrière-plan et "
 "l’animation en un clic. Ajustez ce que vous voulez ci-dessous ensuite."
 
-#: views/admin-settings.php:543 views/admin-settings.php:676
+#: views/admin-settings.php:544 views/admin-settings.php:677
 msgid "Top left"
 msgstr "En haut à gauche"
 
-#: views/admin-settings.php:544 views/admin-settings.php:710
+#: views/admin-settings.php:545 views/admin-settings.php:711
 msgid "Top"
 msgstr "En haut"
 
-#: views/admin-settings.php:545 views/admin-settings.php:675
+#: views/admin-settings.php:546 views/admin-settings.php:676
 msgid "Top right"
 msgstr "En haut à droite"
 
-#: views/admin-settings.php:553
+#: views/admin-settings.php:554
 msgid "Width"
 msgstr "Largeur"
 
-#: views/admin-settings.php:554 views/admin-settings.php:558
+#: views/admin-settings.php:555 views/admin-settings.php:559
 msgid "Small"
 msgstr "Petite"
 
-#: views/admin-settings.php:554 views/admin-settings.php:558
+#: views/admin-settings.php:555 views/admin-settings.php:559
 msgid "Medium"
 msgstr "Moyenne"
 
-#: views/admin-settings.php:554 views/admin-settings.php:558
+#: views/admin-settings.php:555 views/admin-settings.php:559
 msgid "Large"
 msgstr "Grande"
 
-#: views/admin-settings.php:555
+#: views/admin-settings.php:556
 msgid "Spacing"
 msgstr "Espacement"
 
-#: views/admin-settings.php:556
+#: views/admin-settings.php:557
 msgid "Compact"
 msgstr "Compact"
 
-#: views/admin-settings.php:556
+#: views/admin-settings.php:557
 msgid "Cozy"
 msgstr "Confortable"
 
-#: views/admin-settings.php:556
+#: views/admin-settings.php:557
 msgid "Comfortable"
 msgstr "Aéré"
 
-#: views/admin-settings.php:557
+#: views/admin-settings.php:558
 msgid "Font size"
 msgstr "Taille de police"
 
-#: views/admin-settings.php:559
+#: views/admin-settings.php:560
 msgid "Corners"
 msgstr "Coins"
 
-#: views/admin-settings.php:560 views/admin-settings.php:680
+#: views/admin-settings.php:561 views/admin-settings.php:681
 msgid "Square"
 msgstr "Carrés"
 
-#: views/admin-settings.php:560 views/admin-settings.php:681
+#: views/admin-settings.php:561 views/admin-settings.php:682
 msgid "Rounded"
 msgstr "Arrondis"
 
-#: views/admin-settings.php:560 views/admin-settings.php:682
+#: views/admin-settings.php:561 views/admin-settings.php:683
 msgid "Pill"
 msgstr "Pilule"
 
-#: views/admin-settings.php:573
+#: views/admin-settings.php:574
 msgid "Title align"
 msgstr "Alignement du titre"
 
-#: views/admin-settings.php:575
+#: views/admin-settings.php:576
 msgid "Text align"
 msgstr "Alignement du texte"
 
-#: views/admin-settings.php:577
+#: views/admin-settings.php:578
 msgid "Buttons align"
 msgstr "Alignement des boutons"
 
-#: views/admin-settings.php:581
+#: views/admin-settings.php:582
 msgid "Distance from screen edges"
 msgstr "Distance par rapport aux bords de l’écran"
 
-#: views/admin-settings.php:581
+#: views/admin-settings.php:582
 msgid ""
 "Gap from the edges in a corner. Custom lets you set value + unit (rem/%/vw "
 "scale better)."
@@ -1551,35 +1607,35 @@ msgstr ""
 "Écart par rapport aux bords dans un coin. Personnalisé vous permet de "
 "définir valeur + unité (rem/%/vw s’adaptent mieux)."
 
-#: views/admin-settings.php:583
+#: views/admin-settings.php:584
 msgid "Snug"
 msgstr "Serré"
 
-#: views/admin-settings.php:584
+#: views/admin-settings.php:585
 msgid "Default"
 msgstr "Par défaut"
 
-#: views/admin-settings.php:585
+#: views/admin-settings.php:586
 msgid "Spacious"
 msgstr "Spacieux"
 
-#: views/admin-settings.php:589
+#: views/admin-settings.php:590
 msgid "Horizontal"
 msgstr "Horizontal"
 
-#: views/admin-settings.php:591
+#: views/admin-settings.php:592
 msgid "Vertical"
 msgstr "Vertical"
 
-#: views/admin-settings.php:593
+#: views/admin-settings.php:594
 msgid "Unit"
 msgstr "Unité"
 
-#: views/admin-settings.php:601
+#: views/admin-settings.php:602
 msgid "Backdrop"
 msgstr "Arrière-plan"
 
-#: views/admin-settings.php:601
+#: views/admin-settings.php:602
 msgid ""
 "Dim and/or blur the page behind the banner, making it modal. Pairs naturally "
 "with the Center position."
@@ -1587,35 +1643,35 @@ msgstr ""
 "Assombrir et/ou flouter la page derrière la bannière, la rendant modale. "
 "S’associe naturellement à la position Centre."
 
-#: views/admin-settings.php:603 views/admin-settings.php:708
+#: views/admin-settings.php:604 views/admin-settings.php:709
 msgid "None"
 msgstr "Aucun"
 
-#: views/admin-settings.php:604
+#: views/admin-settings.php:605
 msgid "Dim"
 msgstr "Assombrir"
 
-#: views/admin-settings.php:605
+#: views/admin-settings.php:606
 msgid "Dim + blur"
 msgstr "Assombrir + flouter"
 
-#: views/admin-settings.php:609
+#: views/admin-settings.php:610
 msgid "Darken (%)"
 msgstr "Assombrir (%)"
 
-#: views/admin-settings.php:613
+#: views/admin-settings.php:614
 msgid "Blur (px)"
 msgstr "Flou (px)"
 
-#: views/admin-settings.php:622
+#: views/admin-settings.php:623
 msgid "Colours & theme"
 msgstr "Couleurs et thème"
 
-#: views/admin-settings.php:624
+#: views/admin-settings.php:625
 msgid "Theme"
 msgstr "Thème"
 
-#: views/admin-settings.php:624
+#: views/admin-settings.php:625
 msgid ""
 "Auto follows your theme. Pick a palette, or Custom to set every colour. "
 "Always verify on the front end."
@@ -1623,114 +1679,114 @@ msgstr ""
 "Auto suit votre thème. Choisissez une palette, ou Personnalisé pour définir "
 "chaque couleur. Vérifiez toujours le rendu côté visiteur."
 
-#: views/admin-settings.php:636
+#: views/admin-settings.php:637
 msgid "Custom palettes"
 msgstr "Palettes personnalisées"
 
-#: views/admin-settings.php:644 views/admin-settings.php:692
+#: views/admin-settings.php:645 views/admin-settings.php:693
 msgid "Background"
 msgstr "Arrière-plan"
 
-#: views/admin-settings.php:645 views/admin-settings.php:693
+#: views/admin-settings.php:646 views/admin-settings.php:694
 msgid "Text"
 msgstr "Texte"
 
-#: views/admin-settings.php:646
+#: views/admin-settings.php:647
 msgid "Title"
 msgstr "Titre"
 
-#: views/admin-settings.php:647
+#: views/admin-settings.php:648
 msgid "Border"
 msgstr "Bordure"
 
-#: views/admin-settings.php:648
+#: views/admin-settings.php:649
 msgid "Close (×)"
 msgstr "Fermer (×)"
 
-#: views/admin-settings.php:649
+#: views/admin-settings.php:650
 msgid "Accept bg"
 msgstr "Fond Accepter"
 
-#: views/admin-settings.php:650
+#: views/admin-settings.php:651
 msgid "Accept text"
 msgstr "Texte Accepter"
 
-#: views/admin-settings.php:651
+#: views/admin-settings.php:652
 msgid "Accept hover"
 msgstr "Survol Accepter"
 
-#: views/admin-settings.php:652
+#: views/admin-settings.php:653
 msgid "Deny/Save bg"
 msgstr "Fond Refuser/Enregistrer"
 
-#: views/admin-settings.php:653
+#: views/admin-settings.php:654
 msgid "Deny/Save text"
 msgstr "Texte Refuser/Enregistrer"
 
-#: views/admin-settings.php:654
+#: views/admin-settings.php:655
 msgid "Deny/Save hover"
 msgstr "Survol Refuser/Enregistrer"
 
-#: views/admin-settings.php:663
+#: views/admin-settings.php:664
 msgid "“Manage cookies” bubble"
 msgstr "Bulle « Gérer les cookies »"
 
-#: views/admin-settings.php:665
+#: views/admin-settings.php:666
 msgid ""
 "Show a floating button after a decision so visitors can reopen the banner"
 msgstr ""
 "Afficher un bouton flottant après une décision pour que les visiteurs "
 "puissent rouvrir la bannière"
 
-#: views/admin-settings.php:672
+#: views/admin-settings.php:673
 msgid "Follow the banner"
 msgstr "Suivre la bannière"
 
-#: views/admin-settings.php:678
+#: views/admin-settings.php:679
 msgid "Shape"
 msgstr "Forme"
 
-#: views/admin-settings.php:686
+#: views/admin-settings.php:687
 msgid "Roundness (px)"
 msgstr "Arrondi (px)"
 
-#: views/admin-settings.php:689
+#: views/admin-settings.php:690
 msgid "Colours"
 msgstr "Couleurs"
 
-#: views/admin-settings.php:703
+#: views/admin-settings.php:704
 msgid "Animation & timing"
 msgstr "Animation et timing"
 
-#: views/admin-settings.php:705
+#: views/admin-settings.php:706
 msgid "Fade in"
 msgstr "Apparition en fondu"
 
-#: views/admin-settings.php:707
+#: views/admin-settings.php:708
 msgid "Movement"
 msgstr "Mouvement"
 
-#: views/admin-settings.php:708
+#: views/admin-settings.php:709
 msgid "Slide"
 msgstr "Glissement"
 
-#: views/admin-settings.php:708
+#: views/admin-settings.php:709
 msgid "Zoom"
 msgstr "Zoom"
 
-#: views/admin-settings.php:709
+#: views/admin-settings.php:710
 msgid "Slide from"
 msgstr "Glisser depuis"
 
-#: views/admin-settings.php:713
+#: views/admin-settings.php:714
 msgid "Speed (ms)"
 msgstr "Vitesse (ms)"
 
-#: views/admin-settings.php:715
+#: views/admin-settings.php:716
 msgid "Delay before showing (ms)"
 msgstr "Délai avant affichage (ms)"
 
-#: views/admin-settings.php:715
+#: views/admin-settings.php:716
 msgid ""
 "Wait this long after page load before the banner first appears. Reopening is "
 "always instant."
@@ -1738,41 +1794,41 @@ msgstr ""
 "Délai à attendre après le chargement de la page avant la première apparition "
 "de la bannière. La réouverture est toujours instantanée."
 
-#: views/admin-settings.php:717 views/admin-settings.php:725
+#: views/admin-settings.php:718 views/admin-settings.php:726
 msgid "Replay"
 msgstr "Rejouer"
 
-#: views/admin-settings.php:724
+#: views/admin-settings.php:725
 msgid "Live preview"
 msgstr "Aperçu en direct"
 
-#: views/admin-settings.php:725
+#: views/admin-settings.php:726
 msgid "Replay as a fresh visitor"
 msgstr "Rejouer comme un nouveau visiteur"
 
-#: views/admin-settings.php:726
+#: views/admin-settings.php:727
 msgid "The real banner — click it like a visitor would."
 msgstr "La vraie bannière — cliquez dessus comme le ferait un visiteur."
 
-#: views/admin-settings.php:738
+#: views/admin-settings.php:739
 msgid "What gets recorded for GDPR accountability"
 msgstr "Ce qui est enregistré pour la responsabilité RGPD"
 
-#: views/admin-settings.php:741
+#: views/admin-settings.php:742
 msgid "Store proof"
 msgstr "Stocker la preuve"
 
-#: views/admin-settings.php:742
+#: views/admin-settings.php:743
 msgid "Record each consent decision in the database (advised)"
 msgstr ""
 "Enregistrer chaque décision de consentement dans la base de données "
 "(conseillé)"
 
-#: views/admin-settings.php:743
+#: views/admin-settings.php:744
 msgid "IP address"
 msgstr "Adresse IP"
 
-#: views/admin-settings.php:743
+#: views/admin-settings.php:744
 msgid ""
 "A salted hash is irreversible but still counts unique consents. Your server "
 "already logs IPs."
@@ -1780,36 +1836,36 @@ msgstr ""
 "Un hachage salé est irréversible tout en permettant de comptabiliser les "
 "consentements uniques. Votre serveur enregistre déjà les IP."
 
-#: views/admin-settings.php:745
+#: views/admin-settings.php:746
 msgid "Salted hash (recommended)"
 msgstr "Hachage salé (recommandé)"
 
-#: views/admin-settings.php:745
+#: views/admin-settings.php:746
 msgid "Full IP"
 msgstr "IP complète"
 
-#: views/admin-settings.php:748
+#: views/admin-settings.php:749
 msgid "User-agent"
 msgstr "User-agent"
 
-#: views/admin-settings.php:749
+#: views/admin-settings.php:750
 msgid "Record the browser user-agent string"
 msgstr "Enregistrer la chaîne user-agent du navigateur"
 
-#: views/admin-settings.php:751
+#: views/admin-settings.php:752
 msgid "Record the logged-in user (guests are never identified)"
 msgstr ""
 "Enregistrer l’utilisateur connecté (les invités ne sont jamais identifiés)"
 
-#: views/admin-settings.php:752
+#: views/admin-settings.php:753
 msgid "Retention"
 msgstr "Conservation"
 
-#: views/admin-settings.php:753
+#: views/admin-settings.php:754
 msgid "0 = keep forever"
 msgstr "0 = conserver indéfiniment"
 
-#: views/admin-settings.php:754
+#: views/admin-settings.php:755
 msgid ""
 "Proof should be kept at least as long as the consent lasts, or you may "
 "delete evidence for valid consents."
@@ -1818,11 +1874,11 @@ msgstr ""
 "consentement, sinon vous risquez de supprimer des preuves pour des "
 "consentements valides."
 
-#: views/admin-settings.php:755
+#: views/admin-settings.php:756
 msgid "On uninstall"
 msgstr "À la désinstallation"
 
-#: views/admin-settings.php:755
+#: views/admin-settings.php:756
 msgid ""
 "Keep the proof after uninstalling for legal accountability — re-installing "
 "later reuses it."
@@ -1830,75 +1886,75 @@ msgstr ""
 "Conserver la preuve après la désinstallation pour la responsabilité légale — "
 "une réinstallation ultérieure la réutilise."
 
-#: views/admin-settings.php:756
+#: views/admin-settings.php:757
 msgid "Keep the consent log when uninstalling"
 msgstr "Conserver le journal de consentement à la désinstallation"
 
-#: views/admin-settings.php:763
+#: views/admin-settings.php:764
 msgid "Save all settings"
 msgstr "Enregistrer tous les réglages"
 
-#: views/admin-settings.php:764
+#: views/admin-settings.php:765
 msgid "One save applies to every tab."
 msgstr "Un seul enregistrement s’applique à tous les onglets."
 
-#: views/admin-settings.php:772
+#: views/admin-settings.php:773
 msgid "Consent log cleared."
 msgstr "Journal de consentement effacé."
 
-#: views/admin-settings.php:777
+#: views/admin-settings.php:778
 msgid "Records"
 msgstr "Enregistrements"
 
-#: views/admin-settings.php:778
+#: views/admin-settings.php:779
 msgid "Accepted all"
 msgstr "Tout accepté"
 
-#: views/admin-settings.php:779
+#: views/admin-settings.php:780
 msgid "Denied all"
 msgstr "Tout refusé"
 
-#: views/admin-settings.php:780
+#: views/admin-settings.php:781
 msgid "Customised"
 msgstr "Personnalisé"
 
-#: views/admin-settings.php:787
+#: views/admin-settings.php:788
 msgid "Export CSV"
 msgstr "Exporter en CSV"
 
-#: views/admin-settings.php:792
+#: views/admin-settings.php:793
 msgid "Delete all"
 msgstr "Tout supprimer"
 
-#: views/admin-settings.php:802
+#: views/admin-settings.php:803
 msgid "Cookie consent versions"
 msgstr "Versions du consentement"
 
-#: views/admin-settings.php:803
+#: views/admin-settings.php:804
 msgid "The exact banner each record was shown"
 msgstr "La bannière exacte affichée pour chaque enregistrement"
 
-#: views/admin-settings.php:806
+#: views/admin-settings.php:807
 msgid "No versions recorded yet."
 msgstr "Aucune version enregistrée pour le moment."
 
-#: views/admin-settings.php:815
+#: views/admin-settings.php:816
 msgid "UTC"
 msgstr "UTC"
 
-#: views/admin-settings.php:819
+#: views/admin-settings.php:820
 msgid "Buttons"
 msgstr "Boutons"
 
-#: views/admin-settings.php:820
+#: views/admin-settings.php:821
 msgid "Categories & what was blocked"
 msgstr "Catégories et ce qui était bloqué"
 
-#: views/banner.php:93 views/banner.php:114
+#: views/banner.php:98 views/banner.php:119
 msgid "What this includes"
 msgstr "Ce que cela comprend"
 
 #. translators: %s: cookie category name.
-#: views/banner.php:107
+#: views/banner.php:112
 msgid "Allow %s cookies"
 msgstr "Autoriser les cookies %s"

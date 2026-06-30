@@ -29,10 +29,11 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
      role="dialog" aria-modal="true" aria-labelledby="lrob-cc-title" aria-describedby="lrob-cc-desc" hidden>
     <div class="lrob-cc-backdrop" data-lrob-cc-action="close" tabindex="-1" aria-hidden="true"></div>
     <div class="lrob-cc-inner" role="document">
-        <?php if ($logo !== '') : ?>
-            <div class="lrob-cc-logo-row"><img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" /></div>
-        <?php endif; ?>
+        <?php $has_logo = $logo !== ''; $placement = $has_logo ? ($logo_placement ?? 'header') : ''; ?>
         <div class="lrob-cc-header">
+            <?php if ($placement === 'header') : ?>
+                <img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" />
+            <?php endif; ?>
             <h2 id="lrob-cc-title" class="lrob-cc-title"><?php echo esc_html($texts['header']); ?></h2>
             <?php if ($continue_pos === 'near-close') : ?>
                 <span class="lrob-cc-continue-wrap lrob-cc-continue-near"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></span>
@@ -40,6 +41,10 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
             <button type="button" class="lrob-cc-close" data-lrob-cc-action="close"
                     aria-label="<?php echo esc_attr($texts['close']); ?>">&times;</button>
         </div>
+
+        <?php if ($placement === 'below') : ?>
+            <div class="lrob-cc-logo-row lrob-cc-logo-below"><img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" /></div>
+        <?php endif; ?>
 
         <?php if ($continue_pos === 'top') : ?>
             <div class="lrob-cc-continue-wrap lrob-cc-continue-top<?php echo $continue_align_cls; ?>"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
@@ -146,8 +151,11 @@ $continue_align_cls = ' lrob-cc-continue-align-' . esc_attr($continue_align ?? '
             <div class="lrob-cc-continue-wrap lrob-cc-continue-under-buttons<?php echo $continue_align_cls; ?>"><?php echo $continue_html; // phpcs:ignore WordPress.Security.EscapeOutput ?></div>
         <?php endif; ?>
 
-        <?php if (!empty($footer_links) || !empty($watermark)) : ?>
+        <?php if (!empty($footer_links) || !empty($watermark) || $placement === 'footer') : ?>
             <div class="lrob-cc-footer">
+                <?php if ($placement === 'footer') : ?>
+                    <span class="lrob-cc-logo-footer"><img class="lrob-cc-logo" src="<?php echo esc_url($logo); ?>" alt="" /></span>
+                <?php endif; ?>
                 <?php foreach ($footer_links as $link) : ?>
                     <a href="<?php echo esc_url((string) $link['url']); ?>"><?php echo esc_html((string) $link['label']); ?></a>
                 <?php endforeach; ?>

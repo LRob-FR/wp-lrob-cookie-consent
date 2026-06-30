@@ -209,6 +209,7 @@ final class SettingsPage
             'layoutPresets' => Presets::layouts(),
             'texts'      => Presets::text(),
             'services'   => Services::common(),
+            'wpCookies'  => Services::wordpressCookies(),
             'wizard'     => Services::wizard(),
             'wizardSettings' => [
                 'tone' => [
@@ -265,10 +266,13 @@ final class SettingsPage
                 'loading'      => __('Loading…', 'lrob-cookie-consent'),
                 'manageCookies' => __('Manage cookies', 'lrob-cookie-consent'),
                 'wizLayout'    => __('Layout', 'lrob-cookie-consent'),
+                'wizStepLayout' => __('Choose a layout', 'lrob-cookie-consent'),
+                'wizStepColours' => __('Pick your colours', 'lrob-cookie-consent'),
                 'wizScanTitle' => __('Scan your site for trackers', 'lrob-cookie-consent'),
                 'wizScanHint'  => __('We look through your content for third-party scripts and embeds you may need to block.', 'lrob-cookie-consent'),
                 'wizScanBtn'   => __('Scan my site', 'lrob-cookie-consent'),
                 'wizScanFound' => __('Found — tick what to block:', 'lrob-cookie-consent'),
+                'wizWpCookies' => __('My site has logins, comments or a cart — declare its WordPress cookies', 'lrob-cookie-consent'),
                 'wizSummary'   => __('Ready to go', 'lrob-cookie-consent'),
                 'wizSumLook'   => __('Look', 'lrob-cookie-consent'),
                 'wizSumTone'   => __('Wording', 'lrob-cookie-consent'),
@@ -307,6 +311,9 @@ final class SettingsPage
                 'hostSlowdown' => __('Your host is limiting requests — slowing the scan down.', 'lrob-cookie-consent'),
                 'hostFailed'   => __('Your host could not complete the page-visit scan (it may have very limited resources). The results found so far are still valid.', 'lrob-cookie-consent'),
                 'scanComplete' => __('Scan complete.', 'lrob-cookie-consent'),
+                'scanSpeed'    => __('Scan speed', 'lrob-cookie-consent'),
+                'scanPhaseDb'  => __('Reading your content…', 'lrob-cookie-consent'),
+                'scanPhasePages' => __('Visiting your pages…', 'lrob-cookie-consent'),
             ],
         ]);
     }

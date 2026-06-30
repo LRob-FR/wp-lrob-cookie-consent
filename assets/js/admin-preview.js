@@ -341,6 +341,16 @@
 		if (this.value.trim() === '') { this.value = this.getAttribute('data-default') || ''; }
 	});
 
+	// Duration widget: value × unit (days/months/years) → canonical days field.
+	$(document).on('input change', '.lrob-cc-duration [data-dur-value], .lrob-cc-duration [data-dur-unit]', function () {
+		var span = this.closest('.lrob-cc-duration');
+		if (!span) { return; }
+		var v = parseFloat((span.querySelector('[data-dur-value]') || {}).value) || 0;
+		var unit = parseInt((span.querySelector('[data-dur-unit]') || {}).value, 10) || 1;
+		var hidden = span.querySelector('[data-dur-days]');
+		if (hidden) { hidden.value = Math.round(v * unit); $(hidden).trigger('change'); }
+	});
+
 	// Reveal the custom edge-distance controls only for the "Custom" preset.
 	function updateOffsetCustom() {
 		var el = document.getElementById('lrob-cc-offset-custom');
@@ -364,15 +374,17 @@
 	// Replay button re-renders the banner fresh (which replays the entrance animation).
 	$('#lrob-cc-anim-replay').on('click', function () { renderPreview(true); });
 
-	// Warn when proof retention is shorter than the consent lifetime.
+	// Warn when proof retention is shorter than the longest consent lifetime.
 	function checkRetention() {
 		var warn = document.getElementById('lrob-cc-retention-warn');
 		if (!warn) { return; }
-		var consent = parseInt((document.querySelector('[name="' + A.optionName + '[cookie_days]"]') || {}).value, 10);
+		var a = parseInt((document.querySelector('[name="' + A.optionName + '[accept_days]"]') || {}).value, 10) || 0;
+		var d = parseInt((document.querySelector('[name="' + A.optionName + '[deny_days]"]') || {}).value, 10) || 0;
+		var consent = Math.max(a, d);
 		var retain = parseInt((document.querySelector('[name="' + A.optionName + '[log_retention_days]"]') || {}).value, 10);
 		warn.hidden = !(retain > 0 && consent > 0 && retain < consent);
 	}
-	$(document).on('input change', '[name="' + A.optionName + '[cookie_days]"],[name="' + A.optionName + '[log_retention_days]"]', checkRetention);
+	$(document).on('input change', '[name="' + A.optionName + '[accept_days]"],[name="' + A.optionName + '[deny_days]"],[name="' + A.optionName + '[log_retention_days]"]', checkRetention);
 	checkRetention();
 
 	// Clicking a consent-version link opens that version's full detail.
@@ -712,9 +724,7 @@
 	var scanBar = document.getElementById('lrob-cc-scan-bar');
 	var scanProgressText = document.getElementById('lrob-cc-scan-progress-text');
 	var scanCurrent = document.getElementById('lrob-cc-scan-current');
-	var scanDbBtn = document.getElementById('lrob-cc-scan-db-btn');
-	var scanHttpBtn = document.getElementById('lrob-cc-scan-http-btn');
-	var scanHttpCard = document.getElementById('lrob-cc-scan-http-card');
+	var scanBtn = document.getElementById('lrob-cc-scan-btn');
 	var scanStartOver = document.getElementById('lrob-cc-scan-startover');
 	var scanAllTypes = document.getElementById('lrob-cc-scan-all-types');
 	var scanSpeed = document.getElementById('lrob-cc-scan-speed');
@@ -772,8 +782,7 @@
 	function pathOf(u) { try { var x = new URL(u, location.href); return x.pathname + x.search; } catch (e) { return u; } }
 
 	function setScanBusy(on) {
-		if (scanDbBtn) { scanDbBtn.disabled = on; }
-		if (scanHttpBtn) { scanHttpBtn.disabled = on; }
+		if (scanBtn) { scanBtn.disabled = on; }
 		if (scanProgress) { scanProgress.hidden = !on; }
 		if (scanCurrent) { scanCurrent.textContent = ''; }
 	}
@@ -830,10 +839,8 @@
 		});
 	}
 
-	// --- Database scan (fast, batched) ----------------------------------
-	function runDbScan() {
-		clearScanNotice();
-		setScanBusy(true);
+	// --- Database scan (fast, batched). onDone chains the page-visit pass. ----
+	function runDbScan(onDone) {
 		(function batch(offset) {
 			scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
 				if (!json.success || !json.data) {
@@ -843,31 +850,30 @@
 				}
 				var d = json.data, changed = false;
 				(d.resources || []).forEach(function (r) { if (mergeRes(r)) { changed = true; } });
-				setProgress(Math.min(d.processed || 0, d.total || 0), d.total || 0);
+				setProgress(Math.min(d.processed || 0, d.total || 0), d.total || 0, null, A.i18n.scanPhaseDb || 'Reading your content…');
 				if (changed) { scheduleRender(); }
 				if (!d.done) { batch(d.processed); return; }
-				setScanBusy(false);
-				renderResults();
-				if (scanHttpCard) { scanHttpCard.hidden = false; updateHttpUi(); }
+				if (onDone) { onDone(); } else { setScanBusy(false); renderResults(); }
 			});
 		})(0);
 	}
 
-	// --- HTTP "visit pages" scan: worker pool with live concurrency, a
-	// front-side ETA, and auto-backoff when the host 5xx's / times out. ------
-	function runHttpScan() {
+	// Full scan: content (DB) first, then an anonymous page visit — both passes,
+	// every time, so nothing relies on the user remembering to run a second step.
+	function runFullScan() {
 		clearScanNotice();
 		setScanBusy(true);
-		scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (json) {
-			if (!json.success || !json.data || !json.data.urls || !json.data.urls.length) {
-				setScanBusy(false);
-				scanNotice((json && json.data && json.data.message) || (A.i18n.scanError || 'Scan failed.'), true);
-				return;
-			}
-			httpPool(json.data.urls, false);
+		runDbScan(function () {
+			scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (json) {
+				var urls = (json.success && json.data && json.data.urls) || [];
+				if (!urls.length) { setScanBusy(false); renderResults(); return; }
+				httpPool(urls, false); // its finish() clears busy + renders
+			});
 		});
 	}
 
+	// --- HTTP "visit pages" scan: worker pool with live concurrency, a
+	// front-side ETA, and auto-backoff when the host 5xx's / times out. ------
 	function httpPool(urls, insecure) {
 		var queue = urls.map(function (u) { return { url: u, tries: 0 }; });
 		var total = queue.length, done = 0, active = 0, stopped = false, fatal = false;
@@ -936,17 +942,16 @@
 		pump();
 	}
 
-	if (scanDbBtn) { scanDbBtn.addEventListener('click', runDbScan); }
-	if (scanHttpBtn) { scanHttpBtn.addEventListener('click', runHttpScan); }
+	if (scanBtn) { scanBtn.addEventListener('click', runFullScan); }
 	if (scanStartOver) {
 		scanStartOver.addEventListener('click', function () {
 			scanAgg = {}; scanCookies = [];
 			clearScanNotice();
-			if (scanHttpCard) { scanHttpCard.hidden = true; }
 			renderResults();
 		});
 	}
 	if (scanSpeed && scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
+	if (scanTotalEl) { updateHttpUi(); }
 
 	// --- Logo: WordPress media library ----------------------------------
 	var logoFrame;
@@ -982,6 +987,16 @@
 		update();
 	});
 
+	// --- Declare the site's own WordPress cookies (functional, never blocked) ---
+	$('#lrob-cc-add-wp-cookies').on('click', function () {
+		toStructuredMode();
+		(A.wpCookies || []).forEach(function (c) {
+			if (!ruleRowByPattern(c.pattern)) { addRuleRow(c.pattern, c.category, c.service); }
+		});
+		serializeRules();
+		update();
+	});
+
 	// --- Guided setup wizard (multi-section) ----------------------------
 	$(document).on('click', '.lrob-cc-wizard-open', openWizard);
 
@@ -997,6 +1012,7 @@
 	function openWizard() {
 		var WS = A.wizardSettings || {};
 		var serviceSel = {};
+		var wantWpCookies = true; // declare first-party WordPress cookies by default
 		var screens = [];
 
 		// Patterns already in the rules — pre-check known services. Custom rules
@@ -1021,45 +1037,67 @@
 				}).catch(function () {});
 		}
 
-		// 1. Look & feel — layout preset + theme + position + wording, applied live
-		// with a real preview. Pre-selected from the current settings.
+		// Append a live preview pane to a step and return its refresh function.
+		function attachPreview(b) {
+			var box = document.createElement('div');
+			box.className = 'lrob-cc-wiz-preview';
+			b.appendChild(box);
+			var fn = function () { wizPreview(box); };
+			fn();
+			return fn;
+		}
+
+		// 1. Layout — preset + position. A preset re-renders the step so the
+		// position radio stays in sync (no more incoherent selections).
 		screens.push({
-			title: (WS.look && WS.look.question) || 'Choose how the banner looks',
+			title: A.i18n.wizStepLayout || 'Choose a layout',
 			render: function (b) {
 				var html = '<p class="lrob-cc-field-label">' + escapeHtml(A.i18n.wizLayout || 'Layout') + '</p><div class="lrob-cc-preset-row">';
 				(A.layoutPresets || []).forEach(function (p) {
 					html += '<button type="button" class="button lrob-cc-wiz-layout' + (val('layout_preset') === p.id ? ' is-active' : '') + '" data-id="' + escapeHtml(p.id) + '">' + escapeHtml(p.label) + '</button>';
 				});
-				html += '</div>';
-				html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.colorsLabel) || 'Colors') + '</p>' + radioGroup('theme', (WS.look && WS.look.colors) || [], val('theme'));
-				html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.positionLabel) || 'Position') + '</p>' + radioGroup('position', (WS.look && WS.look.positions) || [], val('position'));
-				if ((A.texts || []).length) {
-					html += '<p class="lrob-cc-field-label">' + escapeHtml((WS.tone && WS.tone.question) || 'Wording') + '</p>' + radioGroup('tone', (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }), val('text_preset'));
-				}
-				html += '<div class="lrob-cc-wiz-preview" data-wiz-preview></div>';
+				html += '</div><p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.positionLabel) || 'Position') + '</p>' + radioGroup('position', (WS.look && WS.look.positions) || [], val('position'));
 				b.innerHTML = html;
-				var prev = b.querySelector('[data-wiz-preview]');
-				function refresh() { wizPreview(prev); }
+				var refresh = attachPreview(b);
 				b.querySelectorAll('.lrob-cc-wiz-layout').forEach(function (btn) {
 					btn.addEventListener('click', function () {
-						b.querySelectorAll('.lrob-cc-wiz-layout').forEach(function (x) { x.classList.remove('is-active'); });
-						btn.classList.add('is-active');
 						var p = (A.layoutPresets || []).filter(function (x) { return x.id === btn.getAttribute('data-id'); })[0];
 						if (p) { applyOptions(p.options); setField('layout_preset', p.id); }
-						refresh();
+						render(); // re-render: keeps the position radio coherent with the preset
 					});
 				});
-				bindRadio(b, 'theme', function (v) { setField('theme', v); refresh(); });
-				bindRadio(b, 'position', function (v) { setField('position', v); refresh(); });
-				bindRadio(b, 'tone', function (v) {
-					var p = (A.texts || []).filter(function (x) { return x.id === v; })[0];
-					if (p) { ['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } }); setField('text_preset', v); }
-					refresh();
-				});
-				refresh();
+				bindRadio(b, 'position', function (v) { setField('position', v); setField('layout_preset', 'custom'); refresh(); });
 			},
 			apply: function () {}
 		});
+
+		// 2. Colours — theme palette.
+		screens.push({
+			title: A.i18n.wizStepColours || 'Pick your colours',
+			render: function (b) {
+				b.innerHTML = '<p class="lrob-cc-field-label">' + escapeHtml((WS.look && WS.look.colorsLabel) || 'Colors') + '</p>' + radioGroup('theme', (WS.look && WS.look.colors) || [], val('theme'));
+				var refresh = attachPreview(b);
+				bindRadio(b, 'theme', function (v) { setField('theme', v); refresh(); });
+			},
+			apply: function () {}
+		});
+
+		// 3. Wording — text preset.
+		if ((A.texts || []).length) {
+			screens.push({
+				title: (WS.tone && WS.tone.question) || 'Choose your wording',
+				render: function (b) {
+					b.innerHTML = radioGroup('tone', (A.texts || []).map(function (p) { return { v: p.id, l: p.label }; }), val('text_preset'));
+					var refresh = attachPreview(b);
+					bindRadio(b, 'tone', function (v) {
+						var p = (A.texts || []).filter(function (x) { return x.id === v; })[0];
+						if (p) { ['header', 'message', 'accept', 'deny', 'save'].forEach(function (k) { if (p[k] !== undefined) { setField('text_' + k, p[k]); } }); setField('text_preset', v); }
+						refresh();
+					});
+				},
+				apply: function () {}
+			});
+		}
 
 		// 2. Scan — run the real database scan and tick what to block.
 		var scanFound = {};
@@ -1067,9 +1105,17 @@
 			title: A.i18n.wizScanTitle || 'Scan your site for trackers',
 			hint: A.i18n.wizScanHint || 'We look through your content for third-party scripts and embeds you may need to block.',
 			render: function (b) {
-				b.innerHTML = '<p><button type="button" class="button button-primary" data-wiz-scan>' + escapeHtml(A.i18n.wizScanBtn || 'Scan my site') + '</button> <span data-wiz-scan-status class="description"></span></p><div data-wiz-scan-results></div>';
+				b.innerHTML =
+					'<p><button type="button" class="button button-primary" data-wiz-scan>' + escapeHtml(A.i18n.wizScanBtn || 'Scan my site') + '</button> <span data-wiz-scan-status class="description"></span></p>' +
+					'<p class="lrob-cc-scan-speed-wrap"><label>' + escapeHtml(A.i18n.scanSpeed || 'Scan speed') + ' <input type="range" data-wiz-speed min="1" max="8" value="2" step="1" /></label></p>' +
+					'<p><label class="lrob-cc-check"><input type="checkbox" data-wiz-wp' + (wantWpCookies ? ' checked' : '') + ' /> ' + escapeHtml(A.i18n.wizWpCookies || 'My site has logins, comments or a cart — declare its WordPress cookies') + '</label></p>' +
+					'<div data-wiz-scan-results></div>';
+				var wpCb = b.querySelector('[data-wiz-wp]');
+				if (wpCb) { wpCb.addEventListener('change', function () { wantWpCookies = wpCb.checked; }); }
 				var status = b.querySelector('[data-wiz-scan-status]');
 				var resEl = b.querySelector('[data-wiz-scan-results]');
+				var speed = b.querySelector('[data-wiz-speed]');
+				function ingest(list) { (list || []).forEach(function (r) { if (!scanFound[r.pattern]) { scanFound[r.pattern] = r; serviceSel[r.pattern] = r; } }); }
 				function renderHits() {
 					var keys = Object.keys(scanFound);
 					if (!keys.length) { resEl.innerHTML = '<p class="description">' + escapeHtml(A.i18n.noneFound || 'No third-party resources found.') + '</p>'; return; }
@@ -1089,16 +1135,35 @@
 				}
 				if (Object.keys(scanFound).length) { renderHits(); }
 				b.querySelector('[data-wiz-scan]').addEventListener('click', function () {
-					var btn = this; btn.disabled = true; status.textContent = A.i18n.scanning || 'Scanning…';
+					var btn = this; btn.disabled = true; status.textContent = A.i18n.scanPhaseDb || 'Reading your content…';
+					// Phase 1: content (DB).
 					(function batch(offset) {
 						scanAjax('lrob_cc_scan_db', { offset: offset }).then(function (json) {
 							if (!json.success || !json.data) { status.textContent = A.i18n.scanError || 'Scan failed.'; btn.disabled = false; return; }
-							var d = json.data;
-							(d.resources || []).forEach(function (r) {
-								if (!scanFound[r.pattern]) { scanFound[r.pattern] = r; serviceSel[r.pattern] = r; }
+							ingest(json.data.resources); renderHits();
+							if (!json.data.done) { batch(json.data.processed); return; }
+							// Phase 2: anonymous page visits (solid default: scan everything).
+							status.textContent = A.i18n.scanPhasePages || 'Visiting your pages…';
+							scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (tj) {
+								var urls = (tj.success && tj.data && tj.data.urls) || [];
+								if (!urls.length) { status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; return; }
+								var queue = urls.slice(), total = urls.length, done = 0, active = 0;
+								function conc() { return Math.max(1, parseInt(speed ? speed.value : 2, 10) || 2); }
+								function one(url) {
+									active++;
+									scanAjax('lrob_cc_scan_url', { url: url, insecure: 0 }, { timeout: 20000 }).then(function (j) {
+										if (j.success && j.data) { ingest(j.data.resources); }
+										done++; active--;
+										status.textContent = (A.i18n.scanPhasePages || 'Visiting your pages…') + ' ' + done + '/' + total;
+										renderHits(); pump();
+									});
+								}
+								function pump() {
+									while (active < conc() && queue.length) { one(queue.shift()); }
+									if (active === 0 && queue.length === 0) { status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; }
+								}
+								pump();
 							});
-							if (!d.done) { batch(d.processed); return; }
-							status.textContent = A.i18n.scanComplete || 'Scan complete.'; btn.disabled = false; renderHits();
 						});
 					})(0);
 				});
@@ -1195,6 +1260,12 @@
 				var svc = serviceSel[p] || {};
 				if (!ruleRowByPattern(p)) { addRuleRow(p, svc.category || '', svc.service || svc.host || ''); }
 			});
+			// Declare first-party WordPress cookies if requested.
+			if (wantWpCookies) {
+				(A.wpCookies || []).forEach(function (c) {
+					if (!ruleRowByPattern(c.pattern)) { addRuleRow(c.pattern, c.category, c.service); }
+				});
+			}
 			serializeRules();
 			var form = document.querySelector('form[action="options.php"]');
 			close();

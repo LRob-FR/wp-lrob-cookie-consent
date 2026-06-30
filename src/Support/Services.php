@@ -55,6 +55,33 @@ final class Services
     }
 
     /**
+     * The site's own WordPress cookies, declared as necessary (functional)
+     * entries. The scanner only finds third-party *resources*, never first-party
+     * cookies, so these are offered as a one-click declaration for transparency.
+     * The patterns are cookie-name prefixes that never match a script URL, so
+     * they are listed but never block anything.
+     *
+     * @return list<array{label:string,pattern:string,category:string,service:string}>
+     */
+    public static function wordpressCookies(): array
+    {
+        $list = [
+            ['pattern' => 'wordpress_logged_in_', 'service' => __('WordPress login session', 'lrob-cookie-consent')],
+            ['pattern' => 'wp-settings-',          'service' => __('WordPress preferences', 'lrob-cookie-consent')],
+            ['pattern' => 'comment_author_',       'service' => __('Comment form', 'lrob-cookie-consent')],
+            ['pattern' => 'wp-postpass_',          'service' => __('Password-protected posts', 'lrob-cookie-consent')],
+        ];
+        if (class_exists('WooCommerce')) {
+            $list[] = ['pattern' => 'woocommerce_', 'service' => __('WooCommerce cart & checkout', 'lrob-cookie-consent')];
+        }
+        $out = [];
+        foreach ($list as $c) {
+            $out[] = ['label' => $c['service'], 'pattern' => $c['pattern'], 'category' => 'functional', 'service' => $c['service']];
+        }
+        return apply_filters('lrob_cc_wordpress_cookies', $out);
+    }
+
+    /**
      * Question-driven quick-setup steps. Each step asks one yes/no-style question
      * and offers the services relevant to it.
      *

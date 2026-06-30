@@ -75,6 +75,37 @@ $color_field = static function (string $key, string $label, bool $optional_field
     );
 };
 
+// Duration field: a number + unit (days/months/years) that writes the canonical
+// day count into a hidden field. The stored value is always days; the unit is
+// picked server-side as the cleanest fit so "1095 days" shows as "3 years".
+$duration = static function (string $key, int $days) use ($name): void {
+    $unit = 1;
+    $disp = $days;
+    if ($days > 0 && $days % 365 === 0) {
+        $unit = 365;
+        $disp = intdiv($days, 365);
+    } elseif ($days > 0 && $days % 30 === 0) {
+        $unit = 30;
+        $disp = intdiv($days, 30);
+    }
+    $units = [
+        1   => __('days', 'lrob-cookie-consent'),
+        30  => __('months', 'lrob-cookie-consent'),
+        365 => __('years', 'lrob-cookie-consent'),
+    ];
+    $opts = '';
+    foreach ($units as $u => $label) {
+        $opts .= sprintf('<option value="%d" %s>%s</option>', $u, selected($unit, $u, false), esc_html($label));
+    }
+    printf(
+        '<span class="lrob-cc-duration"><input type="number" min="0" class="small-text" data-dur-value value="%d" /><select data-dur-unit>%s</select><input type="hidden" name="%s" data-dur-days value="%d" /></span>',
+        $disp,
+        $opts, // phpcs:ignore WordPress.Security.EscapeOutput — built from esc_html above
+        $name($key),
+        $days
+    );
+};
+
 $configured = trim((string) $o['block_rules']) !== '' || (is_array($o['inline_scripts']) && $o['inline_scripts'] !== []);
 
 // Active tab from the URL (?tab=) so cross-links and post-save land correctly.
@@ -134,47 +165,46 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                     <span class="lrob-cc-section-sub"><?php esc_html_e('Find third-party scripts, embeds and cookies', 'lrob-cookie-consent'); ?></span></summary>
                 <div class="lrob-cc-section-body">
                     <div class="lrob-cc-scan">
+                        <p class="description"><?php esc_html_e('A two-pass scan: first your stored content, then an anonymous visit to your pages (catching what your theme or plugins inject). Both run each time.', 'lrob-cookie-consent'); ?></p>
                         <p>
-                            <button type="button" class="button button-primary" id="lrob-cc-scan-db-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
+                            <button type="button" class="button button-primary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
                             <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
-                            <?php $help(__('Reads your published content for third-party scripts and embeds. Runs as an anonymous visitor — your private cookies are never touched.', 'lrob-cookie-consent')); ?>
                         </p>
 
-                        <div id="lrob-cc-scan-http-card" class="lrob-cc-scan-deeper" hidden>
-                            <h4><?php esc_html_e('Deeper scan — visit pages', 'lrob-cookie-consent'); ?> <?php $help(__('Loads pages as a visitor would, catching resources added by your theme or plugins.', 'lrob-cookie-consent')); ?></h4>
-                            <table class="lrob-cc-scan-types">
-                                <thead><tr>
-                                    <th><label><input type="checkbox" id="lrob-cc-scan-all-types" checked /> <?php esc_html_e('Scan everything', 'lrob-cookie-consent'); ?></label></th>
-                                    <th><?php esc_html_e('Limit', 'lrob-cookie-consent'); ?></th>
-                                    <th><?php esc_html_e('Order', 'lrob-cookie-consent'); ?></th>
-                                </tr></thead>
-                                <tbody>
-                                    <tr class="lrob-cc-scan-type" data-type="home" data-count="1">
-                                        <td><label><input type="checkbox" checked disabled /> <?php esc_html_e('Home page', 'lrob-cookie-consent'); ?></label></td>
-                                        <td colspan="2" class="description"><?php esc_html_e('always', 'lrob-cookie-consent'); ?></td>
-                                    </tr>
-                                    <?php foreach ($scan_types as $t) : ?>
-                                        <tr class="lrob-cc-scan-type" data-type="<?php echo esc_attr($t['type']); ?>" data-count="<?php echo (int) $t['count']; ?>">
-                                            <td><label><input type="checkbox" class="lrob-cc-scan-type-on" checked /> <?php echo esc_html($t['label']); ?> <span class="description">(<?php echo (int) $t['count']; ?>)</span></label></td>
-                                            <td><input type="number" class="small-text lrob-cc-scan-type-limit" min="0" step="1" placeholder="<?php esc_attr_e('all', 'lrob-cookie-consent'); ?>" /></td>
-                                            <td><select class="lrob-cc-scan-type-order"><option value="newest"><?php esc_html_e('newest', 'lrob-cookie-consent'); ?></option><option value="oldest"><?php esc_html_e('oldest', 'lrob-cookie-consent'); ?></option></select></td>
+                        <p class="lrob-cc-scan-speed-wrap">
+                            <label for="lrob-cc-scan-speed"><?php esc_html_e('Scan speed', 'lrob-cookie-consent'); ?></label>
+                            <input type="range" id="lrob-cc-scan-speed" min="1" max="8" value="2" step="1" />
+                            <span id="lrob-cc-scan-speed-val" class="lrob-cc-scan-speed-val">2</span>
+                            <?php $help(__('How many pages to fetch at once. The scan slows itself down if your host can’t keep up.', 'lrob-cookie-consent')); ?>
+                        </p>
+
+                        <details class="lrob-cc-scan-advanced">
+                            <summary><?php esc_html_e('Advanced — choose which pages to visit', 'lrob-cookie-consent'); ?></summary>
+                            <div id="lrob-cc-scan-http-card">
+                                <table class="lrob-cc-scan-types">
+                                    <thead><tr>
+                                        <th><label><input type="checkbox" id="lrob-cc-scan-all-types" checked /> <?php esc_html_e('Scan everything', 'lrob-cookie-consent'); ?></label></th>
+                                        <th><?php esc_html_e('Limit', 'lrob-cookie-consent'); ?></th>
+                                        <th><?php esc_html_e('Order', 'lrob-cookie-consent'); ?></th>
+                                    </tr></thead>
+                                    <tbody>
+                                        <tr class="lrob-cc-scan-type" data-type="home" data-count="1">
+                                            <td><label><input type="checkbox" checked disabled /> <?php esc_html_e('Home page', 'lrob-cookie-consent'); ?></label></td>
+                                            <td colspan="2" class="description"><?php esc_html_e('always', 'lrob-cookie-consent'); ?></td>
                                         </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-
-                            <p class="lrob-cc-scan-speed-wrap">
-                                <label for="lrob-cc-scan-speed"><?php esc_html_e('Scan speed', 'lrob-cookie-consent'); ?></label>
-                                <input type="range" id="lrob-cc-scan-speed" min="1" max="8" value="2" step="1" />
-                                <span id="lrob-cc-scan-speed-val" class="lrob-cc-scan-speed-val">2</span>
-                                <?php $help(__('How many pages to fetch at once. The scan slows itself down if your host can’t keep up.', 'lrob-cookie-consent')); ?>
-                            </p>
-
-                            <p class="description" id="lrob-cc-scan-total"></p>
-                            <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-many-warn" hidden><?php esc_html_e('That is a lot of pages to fetch one by one — on a slow host this can take a while.', 'lrob-cookie-consent'); ?></p>
-
-                            <p><button type="button" class="button button-primary" id="lrob-cc-scan-http-btn"><?php esc_html_e('Run deeper scan', 'lrob-cookie-consent'); ?></button></p>
-                        </div>
+                                        <?php foreach ($scan_types as $t) : ?>
+                                            <tr class="lrob-cc-scan-type" data-type="<?php echo esc_attr($t['type']); ?>" data-count="<?php echo (int) $t['count']; ?>">
+                                                <td><label><input type="checkbox" class="lrob-cc-scan-type-on" checked /> <?php echo esc_html($t['label']); ?> <span class="description">(<?php echo (int) $t['count']; ?>)</span></label></td>
+                                                <td><input type="number" class="small-text lrob-cc-scan-type-limit" min="0" step="1" placeholder="<?php esc_attr_e('all', 'lrob-cookie-consent'); ?>" /></td>
+                                                <td><select class="lrob-cc-scan-type-order"><option value="newest"><?php esc_html_e('newest', 'lrob-cookie-consent'); ?></option><option value="oldest"><?php esc_html_e('oldest', 'lrob-cookie-consent'); ?></option></select></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                                <p class="description" id="lrob-cc-scan-total"></p>
+                                <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-scan-many-warn" hidden><?php esc_html_e('That is a lot of pages to fetch one by one — on a slow host this can take a while.', 'lrob-cookie-consent'); ?></p>
+                            </div>
+                        </details>
 
                         <div id="lrob-cc-scan-progress" class="lrob-cc-scan-progress" hidden>
                             <progress id="lrob-cc-scan-bar" max="100" value="0"></progress>
@@ -240,9 +270,13 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
             </details>
 
             <details class="lrob-cc-section">
-                <summary><span class="dashicons dashicons-shield-alt"></span> <?php esc_html_e('Block rules', 'lrob-cookie-consent'); ?>
-                    <span class="lrob-cc-section-sub"><?php esc_html_e('What gets blocked until consent', 'lrob-cookie-consent'); ?></span></summary>
+                <summary><span class="dashicons dashicons-shield-alt"></span> <?php esc_html_e('Cookie declaration', 'lrob-cookie-consent'); ?>
+                    <span class="lrob-cc-section-sub"><?php esc_html_e('Cookies & services you declare; optional ones are blocked until consent', 'lrob-cookie-consent'); ?></span></summary>
                 <div class="lrob-cc-section-body">
+                    <p>
+                        <button type="button" class="button" id="lrob-cc-add-wp-cookies"><span class="dashicons dashicons-wordpress" aria-hidden="true"></span> <?php esc_html_e('Declare WordPress cookies', 'lrob-cookie-consent'); ?></button>
+                        <?php $help(__('Adds your site’s own WordPress cookies (login session, comment form, preferences, and WooCommerce cart if active) as necessary entries — declared for transparency, never blocked.', 'lrob-cookie-consent')); ?>
+                    </p>
                     <p class="lrob-cc-field-label"><?php esc_html_e('Editor', 'lrob-cookie-consent'); ?></p>
                     <?php $seg('rules_mode', ['structured' => __('Guided', 'lrob-cookie-consent'), 'raw' => __('Raw text', 'lrob-cookie-consent')]); ?>
 
@@ -346,12 +380,10 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                     <span class="lrob-cc-section-sub"><?php esc_html_e('How long choices last, signals, iframes', 'lrob-cookie-consent'); ?></span></summary>
                 <div class="lrob-cc-section-body">
                     <table class="form-table" role="presentation">
-                        <tr><th><?php esc_html_e('Remember a choice for (days)', 'lrob-cookie-consent'); ?> <?php $help(__('How long a decision is remembered before the banner asks again. The CNIL advises keeping a refusal at least 6 months (180 days).', 'lrob-cookie-consent')); ?></th>
+                        <tr><th><?php esc_html_e('Remember a choice for', 'lrob-cookie-consent'); ?> <?php $help(__('How long a decision is remembered before the banner asks again. The CNIL advises keeping a refusal at least 6 months.', 'lrob-cookie-consent')); ?></th>
                             <td>
-                                <label class="lrob-cc-dur"><?php esc_html_e('After accepting', 'lrob-cookie-consent'); ?>
-                                    <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['accept_days']); ?>" name="<?php echo $name('accept_days'); ?>" value="<?php echo esc_attr((string) $o['accept_days']); ?>" /></label>
-                                <label class="lrob-cc-dur"><?php esc_html_e('After refusing', 'lrob-cookie-consent'); ?>
-                                    <input type="number" min="1" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['deny_days']); ?>" name="<?php echo $name('deny_days'); ?>" value="<?php echo esc_attr((string) $o['deny_days']); ?>" /></label>
+                                <label class="lrob-cc-dur"><?php esc_html_e('After accepting', 'lrob-cookie-consent'); ?> <?php $duration('accept_days', (int) $o['accept_days']); ?></label>
+                                <label class="lrob-cc-dur"><?php esc_html_e('After refusing', 'lrob-cookie-consent'); ?> <?php $duration('deny_days', (int) $o['deny_days']); ?></label>
                             </td></tr>
                         <tr><th><?php esc_html_e('Logged-in users', 'lrob-cookie-consent'); ?></th>
                             <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('show_to_logged_in'); ?>" value="1" <?php echo $checked('show_to_logged_in'); ?> /> <?php esc_html_e('Run consent + blocking for logged-in users too', 'lrob-cookie-consent'); ?></label></td></tr>
@@ -717,8 +749,8 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                             <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('store_user_agent'); ?>" value="1" <?php echo $checked('store_user_agent'); ?> /> <?php esc_html_e('Record the browser user-agent string', 'lrob-cookie-consent'); ?></label></td></tr>
                         <tr><th><?php esc_html_e('WP user', 'lrob-cookie-consent'); ?></th>
                             <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('store_wp_user'); ?>" value="1" <?php echo $checked('store_wp_user'); ?> /> <?php esc_html_e('Record the logged-in user (guests are never identified)', 'lrob-cookie-consent'); ?></label></td></tr>
-                        <tr><th><?php esc_html_e('Retention (days)', 'lrob-cookie-consent'); ?></th>
-                            <td><input type="number" min="0" class="lrob-cc-num-default" data-default="<?php echo esc_attr((string) $defaults['log_retention_days']); ?>" name="<?php echo $name('log_retention_days'); ?>" value="<?php echo esc_attr((string) $o['log_retention_days']); ?>" /> <span class="description"><?php esc_html_e('0 = keep forever', 'lrob-cookie-consent'); ?></span>
+                        <tr><th><?php esc_html_e('Retention', 'lrob-cookie-consent'); ?></th>
+                            <td><?php $duration('log_retention_days', (int) $o['log_retention_days']); ?> <span class="description"><?php esc_html_e('0 = keep forever', 'lrob-cookie-consent'); ?></span>
                                 <p class="lrob-cc-hint lrob-cc-hint-warning" id="lrob-cc-retention-warn" hidden><?php esc_html_e('Proof should be kept at least as long as the consent lasts, or you may delete evidence for valid consents.', 'lrob-cookie-consent'); ?></p></td></tr>
                         <tr><th><?php esc_html_e('On uninstall', 'lrob-cookie-consent'); ?> <?php $help(__('Keep the proof after uninstalling for legal accountability — re-installing later reuses it.', 'lrob-cookie-consent')); ?></th>
                             <td><label class="lrob-cc-check"><input type="checkbox" name="<?php echo $name('keep_data_on_uninstall'); ?>" value="1" <?php echo $checked('keep_data_on_uninstall'); ?> /> <?php esc_html_e('Keep the consent log when uninstalling', 'lrob-cookie-consent'); ?></label></td></tr>

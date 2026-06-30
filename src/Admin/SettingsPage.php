@@ -481,7 +481,7 @@ final class SettingsPage
                     'name'     => $cname,
                     'service'  => sanitize_text_field((string) ($c['service'] ?? '')),
                     'party'    => (($c['party'] ?? '') === 'third') ? 'third' : 'first',
-                    'category' => Categories::is_valid($cat) ? $cat : 'functional',
+                    'category' => ($cat === 'ignore' || Categories::is_valid($cat)) ? $cat : 'functional',
                     'desc'     => sanitize_text_field((string) ($c['desc'] ?? '')),
                     'source'   => (($c['source'] ?? '') === 'scan') ? 'scan' : 'user',
                 ];

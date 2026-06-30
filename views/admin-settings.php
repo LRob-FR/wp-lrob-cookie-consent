@@ -154,16 +154,60 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                 <p class="lrob-cc-welcome-mini"><button type="button" class="button lrob-cc-wizard-open"><span class="dashicons dashicons-admin-generic"></span> <?php esc_html_e('Re-run setup wizard', 'lrob-cookie-consent'); ?></button></p>
             <?php endif; ?>
 
+            <?php
+            // Category <option>s for a declared cookie: Ignore + necessary + optionals.
+            // "ignore" is a cookie-only sentinel — kept in the list (so a re-scan
+            // never re-adds it) but hidden from visitors.
+            $cookie_cat_opts = static function (string $sel) use ($optional, $labels): string {
+                $h = '';
+                foreach (array_merge(['functional'], $optional) as $cat) {
+                    $h .= sprintf('<option value="%s" %s>%s</option>', esc_attr($cat), selected($sel, $cat, false), esc_html($labels[$cat]['title'] ?? $cat));
+                }
+                // Ignore last, so an unknown scanned cookie defaults to shown (review), not hidden.
+                $h .= sprintf('<option value="ignore" %s>%s</option>', selected($sel, 'ignore', false), esc_html__('🚫 Ignore (don’t show)', 'lrob-cookie-consent'));
+                return $h;
+            };
+            $cookie_rows = is_array($o['cookies'] ?? null) ? $o['cookies'] : [];
+            // Render one cookie row. Party is implied by its group, so it's hidden.
+            $cookie_row = static function (array $ck, int $i) use ($option, $cookie_cat_opts): void {
+                $src = (($ck['source'] ?? 'user') === 'scan') ? 'scan' : 'user';
+                $badge = $src === 'scan' ? __('found by scan', 'lrob-cookie-consent') : __('added by you', 'lrob-cookie-consent');
+                $party = (($ck['party'] ?? 'first') === 'third') ? 'third' : 'first';
+                printf(
+                    '<div class="lrob-cc-cookie-row">'
+                        . '<span class="lrob-cc-ck-badge lrob-cc-ck-%1$s">%2$s</span>'
+                        . '<input type="text" class="lrob-cc-ck-name" name="%3$s[cookies][%4$d][name]" value="%5$s" placeholder="cookie_name" />'
+                        . '<input type="text" class="lrob-cc-ck-service" name="%3$s[cookies][%4$d][service]" value="%6$s" placeholder="%7$s" />'
+                        . '<select class="lrob-cc-ck-category" name="%3$s[cookies][%4$d][category]">%8$s</select>'
+                        . '<input type="text" class="lrob-cc-ck-desc" name="%3$s[cookies][%4$d][desc]" value="%9$s" placeholder="%10$s" />'
+                        . '<input type="hidden" class="lrob-cc-ck-party" name="%3$s[cookies][%4$d][party]" value="%11$s" />'
+                        . '<input type="hidden" class="lrob-cc-ck-source" name="%3$s[cookies][%4$d][source]" value="%1$s" />'
+                        . '<button type="button" class="button lrob-cc-cookie-remove" aria-label="%12$s">&times;</button>'
+                    . '</div>',
+                    esc_attr($src),
+                    esc_html($badge),
+                    esc_attr($option),
+                    $i,
+                    esc_attr((string) ($ck['name'] ?? '')),
+                    esc_attr((string) ($ck['service'] ?? '')),
+                    esc_attr__('e.g. Google Analytics', 'lrob-cookie-consent'),
+                    $cookie_cat_opts((string) ($ck['category'] ?? 'functional')), // phpcs:ignore WordPress.Security.EscapeOutput
+                    esc_attr((string) ($ck['desc'] ?? '')),
+                    esc_attr__('What it is for', 'lrob-cookie-consent'),
+                    esc_attr($party),
+                    esc_attr__('Remove', 'lrob-cookie-consent')
+                );
+            };
+            ?>
             <div class="lrob-cc-cookies-grid">
             <details class="lrob-cc-section" open>
-                <summary><span class="dashicons dashicons-search"></span> <?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?>
-                    <span class="lrob-cc-section-sub"><?php esc_html_e('Find third-party scripts, embeds and cookies', 'lrob-cookie-consent'); ?></span></summary>
+                <summary><span class="dashicons dashicons-search"></span> <?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?>
+                    <span class="lrob-cc-section-sub"><?php esc_html_e('Scan your site and review the real cookies it sets', 'lrob-cookie-consent'); ?></span></summary>
                 <div class="lrob-cc-section-body">
                     <div class="lrob-cc-scan">
                         <p class="description"><?php esc_html_e('A two-pass scan: first your stored content, then an anonymous visit to your pages (catching what your theme or plugins inject). Both run each time.', 'lrob-cookie-consent'); ?></p>
                         <p>
                             <button type="button" class="button button-primary" id="lrob-cc-scan-btn"><?php esc_html_e('Scan my site', 'lrob-cookie-consent'); ?></button>
-                            <button type="button" class="button" id="lrob-cc-scan-startover" hidden><?php esc_html_e('Start over', 'lrob-cookie-consent'); ?></button>
                         </p>
 
                         <p class="lrob-cc-scan-speed-wrap">
@@ -214,6 +258,31 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                         <div id="lrob-cc-cookie-results"></div>
                         <div id="lrob-cc-scan-results"></div>
                     </div>
+
+                    <p class="lrob-cc-cookie-group-title"><span class="dashicons dashicons-admin-home" aria-hidden="true"></span> <?php esc_html_e('Internal cookies — set by this site', 'lrob-cookie-consent'); ?> <?php $help(__('The real cookies shown to visitors. Run “Scan my site” to read the actual ones; known cookies describe themselves. Set a cookie to “Ignore” to hide it and stop it being re-added on the next scan.', 'lrob-cookie-consent')); ?></p>
+                    <div id="lrob-cc-cookies-first" class="lrob-cc-cookie-list" data-name="<?php echo esc_attr($option); ?>" data-party="first">
+                        <?php foreach ($cookie_rows as $i => $ck) : if (is_array($ck) && (($ck['party'] ?? 'first') !== 'third')) { $cookie_row($ck, (int) $i); } endforeach; ?>
+                    </div>
+                    <button type="button" class="button button-small lrob-cc-cookie-add" data-party="first"><?php esc_html_e('Add internal cookie', 'lrob-cookie-consent'); ?></button>
+
+                    <p class="lrob-cc-cookie-group-title"><span class="dashicons dashicons-external" aria-hidden="true"></span> <?php esc_html_e('External resources — may set their own cookies', 'lrob-cookie-consent'); ?></p>
+                    <div id="lrob-cc-cookies-third" class="lrob-cc-cookie-list" data-name="<?php echo esc_attr($option); ?>" data-party="third">
+                        <?php foreach ($cookie_rows as $i => $ck) : if (is_array($ck) && (($ck['party'] ?? 'first') === 'third')) { $cookie_row($ck, (int) $i); } endforeach; ?>
+                    </div>
+                    <button type="button" class="button button-small lrob-cc-cookie-add" data-party="third"><?php esc_html_e('Add external cookie', 'lrob-cookie-consent'); ?></button>
+
+                    <template id="lrob-cc-cookie-template">
+                        <div class="lrob-cc-cookie-row">
+                            <span class="lrob-cc-ck-badge"></span>
+                            <input type="text" class="lrob-cc-ck-name" placeholder="cookie_name" />
+                            <input type="text" class="lrob-cc-ck-service" placeholder="<?php esc_attr_e('e.g. Google Analytics', 'lrob-cookie-consent'); ?>" />
+                            <select class="lrob-cc-ck-category"><?php echo $cookie_cat_opts(''); // phpcs:ignore WordPress.Security.EscapeOutput ?></select>
+                            <input type="text" class="lrob-cc-ck-desc" placeholder="<?php esc_attr_e('What it is for', 'lrob-cookie-consent'); ?>" />
+                            <input type="hidden" class="lrob-cc-ck-party" />
+                            <input type="hidden" class="lrob-cc-ck-source" />
+                            <button type="button" class="button lrob-cc-cookie-remove" aria-label="<?php esc_attr_e('Remove', 'lrob-cookie-consent'); ?>">&times;</button>
+                        </div>
+                    </template>
                 </div>
             </details>
 
@@ -270,86 +339,15 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
             </details>
 
             <details class="lrob-cc-section">
-                <summary><span class="dashicons dashicons-shield-alt"></span> <?php esc_html_e('Cookie declaration', 'lrob-cookie-consent'); ?>
-                    <span class="lrob-cc-section-sub"><?php esc_html_e('Cookies & services you declare; optional ones are blocked until consent', 'lrob-cookie-consent'); ?></span></summary>
+                <summary><span class="dashicons dashicons-shield-alt"></span> <?php esc_html_e('Blocking', 'lrob-cookie-consent'); ?>
+                    <span class="lrob-cc-section-sub"><?php esc_html_e('Scripts &amp; embeds neutralised until the visitor consents', 'lrob-cookie-consent'); ?></span></summary>
                 <div class="lrob-cc-section-body">
                     <p>
                         <button type="button" class="button" id="lrob-cc-add-wp-cookies"><span class="dashicons dashicons-wordpress" aria-hidden="true"></span> <?php esc_html_e('Declare WordPress cookies', 'lrob-cookie-consent'); ?></button>
                         <?php $help(__('Adds your site’s own WordPress cookies (login session, comment form, preferences, and WooCommerce cart if active) as necessary entries — declared for transparency, never blocked.', 'lrob-cookie-consent')); ?>
                     </p>
 
-                    <?php
-                    // Category <option>s for a declared cookie (necessary + optional categories).
-                    $cookie_cat_opts = static function (string $sel) use ($optional, $labels): string {
-                        $h = '';
-                        foreach (array_merge(['functional'], $optional) as $cat) {
-                            $h .= sprintf('<option value="%s" %s>%s</option>', esc_attr($cat), selected($sel, $cat, false), esc_html($labels[$cat]['title'] ?? $cat));
-                        }
-                        return $h;
-                    };
-                    $cookie_rows = is_array($o['cookies'] ?? null) ? $o['cookies'] : [];
-                    ?>
-                    <?php
-                    // Render one cookie row (server-side). Party is implied by the
-                    // group it sits in, so it's a hidden field.
-                    $cookie_row = static function (array $ck, int $i) use ($option, $cookie_cat_opts): void {
-                        $src = (($ck['source'] ?? 'user') === 'scan') ? 'scan' : 'user';
-                        $badge = $src === 'scan' ? __('found by scan', 'lrob-cookie-consent') : __('added by you', 'lrob-cookie-consent');
-                        $party = (($ck['party'] ?? 'first') === 'third') ? 'third' : 'first';
-                        printf(
-                            '<div class="lrob-cc-cookie-row">'
-                                . '<span class="lrob-cc-ck-badge lrob-cc-ck-%1$s">%2$s</span>'
-                                . '<input type="text" class="lrob-cc-ck-name" name="%3$s[cookies][%4$d][name]" value="%5$s" placeholder="cookie_name" />'
-                                . '<input type="text" class="lrob-cc-ck-service" name="%3$s[cookies][%4$d][service]" value="%6$s" placeholder="%7$s" />'
-                                . '<select class="lrob-cc-ck-category" name="%3$s[cookies][%4$d][category]">%8$s</select>'
-                                . '<input type="text" class="lrob-cc-ck-desc" name="%3$s[cookies][%4$d][desc]" value="%9$s" placeholder="%10$s" />'
-                                . '<input type="hidden" class="lrob-cc-ck-party" name="%3$s[cookies][%4$d][party]" value="%11$s" />'
-                                . '<input type="hidden" class="lrob-cc-ck-source" name="%3$s[cookies][%4$d][source]" value="%1$s" />'
-                                . '<button type="button" class="button lrob-cc-cookie-remove" aria-label="%12$s">&times;</button>'
-                            . '</div>',
-                            esc_attr($src),
-                            esc_html($badge),
-                            esc_attr($option),
-                            $i,
-                            esc_attr((string) ($ck['name'] ?? '')),
-                            esc_attr((string) ($ck['service'] ?? '')),
-                            esc_attr__('e.g. Google Analytics', 'lrob-cookie-consent'),
-                            $cookie_cat_opts((string) ($ck['category'] ?? 'functional')), // phpcs:ignore WordPress.Security.EscapeOutput
-                            esc_attr((string) ($ck['desc'] ?? '')),
-                            esc_attr__('What it is for', 'lrob-cookie-consent'),
-                            esc_attr($party),
-                            esc_attr__('Remove', 'lrob-cookie-consent')
-                        );
-                    };
-                    ?>
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Cookies', 'lrob-cookie-consent'); ?> <?php $help(__('The real cookies shown to visitors. Run “Scan my site” to read the actual ones in your browser — they appear here, grouped, with known ones described for you.', 'lrob-cookie-consent')); ?></p>
-
-                    <p class="lrob-cc-cookie-group-title"><span class="dashicons dashicons-admin-home" aria-hidden="true"></span> <?php esc_html_e('Internal cookies — set by this site', 'lrob-cookie-consent'); ?></p>
-                    <div id="lrob-cc-cookies-first" class="lrob-cc-cookie-list" data-name="<?php echo esc_attr($option); ?>" data-party="first">
-                        <?php foreach ($cookie_rows as $i => $ck) : if (is_array($ck) && (($ck['party'] ?? 'first') !== 'third')) { $cookie_row($ck, (int) $i); } endforeach; ?>
-                    </div>
-                    <button type="button" class="button button-small lrob-cc-cookie-add" data-party="first"><?php esc_html_e('Add internal cookie', 'lrob-cookie-consent'); ?></button>
-
-                    <p class="lrob-cc-cookie-group-title"><span class="dashicons dashicons-external" aria-hidden="true"></span> <?php esc_html_e('External resources — may set their own cookies', 'lrob-cookie-consent'); ?></p>
-                    <div id="lrob-cc-cookies-third" class="lrob-cc-cookie-list" data-name="<?php echo esc_attr($option); ?>" data-party="third">
-                        <?php foreach ($cookie_rows as $i => $ck) : if (is_array($ck) && (($ck['party'] ?? 'first') === 'third')) { $cookie_row($ck, (int) $i); } endforeach; ?>
-                    </div>
-                    <button type="button" class="button button-small lrob-cc-cookie-add" data-party="third"><?php esc_html_e('Add external cookie', 'lrob-cookie-consent'); ?></button>
-
-                    <template id="lrob-cc-cookie-template">
-                        <div class="lrob-cc-cookie-row">
-                            <span class="lrob-cc-ck-badge"></span>
-                            <input type="text" class="lrob-cc-ck-name" placeholder="cookie_name" />
-                            <input type="text" class="lrob-cc-ck-service" placeholder="<?php esc_attr_e('e.g. Google Analytics', 'lrob-cookie-consent'); ?>" />
-                            <select class="lrob-cc-ck-category"><?php echo $cookie_cat_opts(''); // phpcs:ignore WordPress.Security.EscapeOutput ?></select>
-                            <input type="text" class="lrob-cc-ck-desc" placeholder="<?php esc_attr_e('What it is for', 'lrob-cookie-consent'); ?>" />
-                            <input type="hidden" class="lrob-cc-ck-party" />
-                            <input type="hidden" class="lrob-cc-ck-source" />
-                            <button type="button" class="button lrob-cc-cookie-remove" aria-label="<?php esc_attr_e('Remove', 'lrob-cookie-consent'); ?>">&times;</button>
-                        </div>
-                    </template>
-
-                    <p class="lrob-cc-field-label"><?php esc_html_e('Editor', 'lrob-cookie-consent'); ?></p>
+                    <p class="lrob-cc-field-label"><?php esc_html_e('Block rules', 'lrob-cookie-consent'); ?> <?php $help(__('What gets neutralised until consent. Use “Scan my site” (Cookies) to find services, or add patterns by hand.', 'lrob-cookie-consent')); ?></p>
                     <?php $seg('rules_mode', ['structured' => __('Guided', 'lrob-cookie-consent'), 'raw' => __('Raw text', 'lrob-cookie-consent')]); ?>
 
                     <?php
@@ -376,30 +374,33 @@ $active_tab = isset($_GET['tab']) && in_array($_GET['tab'], ['cookies', 'banner'
                     ?>
 
                     <div class="lrob-cc-rules-structured" data-rules-panel="structured"<?php echo $o['rules_mode'] === 'raw' ? ' hidden' : ''; ?>>
-                        <p class="description"><?php esc_html_e('Click a common service to add it, or add a custom rule.', 'lrob-cookie-consent'); ?></p>
                         <?php
                         $svc_groups = [];
                         foreach ($services as $svc) {
                             $svc_groups[$svc['category']][] = $svc;
                         }
-                        foreach (array_merge($optional, ['functional']) as $gcat) :
-                            if (empty($svc_groups[$gcat])) {
-                                continue;
-                            } ?>
-                            <div class="lrob-cc-service-group">
-                                <span><?php echo esc_html($labels[$gcat]['title'] ?? $gcat); ?></span>
-                                <div class="lrob-cc-services">
-                                    <?php foreach ($svc_groups[$gcat] as $svc) : ?>
-                                        <button type="button" class="button lrob-cc-service"
-                                                data-pattern="<?php echo esc_attr($svc['pattern']); ?>"
-                                                data-category="<?php echo esc_attr($svc['category']); ?>"
-                                                data-service="<?php echo esc_attr($svc['service']); ?>">
-                                            + <?php echo esc_html($svc['label']); ?>
-                                        </button>
-                                    <?php endforeach; ?>
+                        ?>
+                        <details class="lrob-cc-quickadd">
+                            <summary><?php esc_html_e('Quick-add a known service', 'lrob-cookie-consent'); ?></summary>
+                            <?php foreach (array_merge($optional, ['functional']) as $gcat) :
+                                if (empty($svc_groups[$gcat])) {
+                                    continue;
+                                } ?>
+                                <div class="lrob-cc-service-group">
+                                    <span><?php echo esc_html($labels[$gcat]['title'] ?? $gcat); ?></span>
+                                    <div class="lrob-cc-services">
+                                        <?php foreach ($svc_groups[$gcat] as $svc) : ?>
+                                            <button type="button" class="button button-small lrob-cc-service"
+                                                    data-pattern="<?php echo esc_attr($svc['pattern']); ?>"
+                                                    data-category="<?php echo esc_attr($svc['category']); ?>"
+                                                    data-service="<?php echo esc_attr($svc['service']); ?>">
+                                                + <?php echo esc_html($svc['label']); ?>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
                                 </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </details>
                         <div class="lrob-cc-rule-row lrob-cc-rule-head">
                             <span class="lrob-cc-rule-pattern"><?php esc_html_e('Pattern — matched in script/iframe URLs & inline code', 'lrob-cookie-consent'); ?></span>
                             <span class="lrob-cc-rule-category"><?php esc_html_e('Category', 'lrob-cookie-consent'); ?></span>

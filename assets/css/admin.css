@@ -561,11 +561,33 @@
 }
 
 /* ============================ Presets ============================ */
+/* Compact preset chips — they used to eat far too much vertical space. */
+.lrob-cc-preset-row { gap: 4px; margin-bottom: 10px; }
+
+.lrob-cc-preset-row .button.lrob-cc-preset {
+	min-height: 0;
+	height: auto;
+	line-height: 1.7;
+	padding: 0 9px;
+	font-size: 12px;
+}
+
 .lrob-cc-preset.is-active {
 	border-color: #2271b1;
 	box-shadow: 0 0 0 1px #2271b1;
 	font-weight: 600;
 }
+
+/* Quick-add services collapsed by default. */
+.lrob-cc-quickadd { margin: 6px 0 12px; }
+
+.lrob-cc-quickadd > summary {
+	cursor: pointer;
+	color: #2271b1;
+	font-weight: 600;
+}
+
+.lrob-cc-quickadd[open] > summary { margin-bottom: 10px; }
 
 .lrob-cc-preset-custom { font-style: italic; }
 

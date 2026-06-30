@@ -955,6 +955,7 @@
 		if (scanSummaryEl) { scanSummaryEl.hidden = true; }
 		if (cookieResultsEl) { cookieResultsEl.innerHTML = ''; }
 		cookieFound = {};
+		scanAgg = {}; scanCookies = []; renderResults(); // fresh run each click (no "start over")
 		scanStartedAt = nowTs();
 		runDbScan(function () {
 			scanAjax('lrob_cc_scan_targets', { types: JSON.stringify(scanTypeConfig()) }).then(function (json) {
@@ -1043,14 +1044,6 @@
 	}
 
 	if (scanBtn) { scanBtn.addEventListener('click', runFullScan); }
-	if (scanStartOver) {
-		scanStartOver.addEventListener('click', function () {
-			scanAgg = {}; scanCookies = []; cookieFound = {};
-			clearScanNotice();
-			if (cookieResultsEl) { cookieResultsEl.innerHTML = ''; }
-			renderResults();
-		});
-	}
 	if (scanSpeed && scanSpeedVal) { scanSpeedVal.textContent = scanSpeed.value; }
 	if (scanTotalEl) { updateHttpUi(); }
 

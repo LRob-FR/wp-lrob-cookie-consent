@@ -120,6 +120,9 @@ final class Banner
                 continue;
             }
             $cat = (string) ($ck['category'] ?? 'functional');
+            if ($cat === 'ignore') {
+                continue; // admin chose to hide this cookie from visitors
+            }
             $party = ($ck['party'] ?? 'first') === 'third'
                 ? __('external', 'lrob-cookie-consent')
                 : __('this site', 'lrob-cookie-consent');

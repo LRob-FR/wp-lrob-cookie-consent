@@ -76,8 +76,10 @@ final class Banner
         $texts = self::texts();
         $labels = self::category_labels();
         $position = (string) Options::get('position');
+        $show_accept = (int) Options::get('show_accept') === 1;
         $show_deny = (int) Options::get('show_deny') === 1;
         $show_save = (int) Options::get('show_save') === 1;
+        $show_customize = (int) Options::get('show_customize') === 1;
         $collapsed = (int) Options::get('categories_collapsed') === 1;
         $logo = (string) Options::get('logo');
         $footer_links = is_array(Options::get('footer_links')) ? Options::get('footer_links') : [];

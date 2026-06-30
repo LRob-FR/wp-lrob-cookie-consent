@@ -69,15 +69,17 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div class="lrob-cc-buttons">
-            <button type="button" class="lrob-cc-btn lrob-cc-btn-accept" data-lrob-cc-action="accept-all">
-                <?php echo esc_html($texts['accept']); ?>
-            </button>
+            <?php if ($show_accept) : ?>
+                <button type="button" class="lrob-cc-btn lrob-cc-btn-accept" data-lrob-cc-action="accept-all">
+                    <?php echo esc_html($texts['accept']); ?>
+                </button>
+            <?php endif; ?>
             <?php if ($show_deny) : ?>
                 <button type="button" class="lrob-cc-btn lrob-cc-btn-deny" data-lrob-cc-action="deny-all">
                     <?php echo esc_html($texts['deny']); ?>
                 </button>
             <?php endif; ?>
-            <?php if ($collapsed) : ?>
+            <?php if ($collapsed && $show_customize) : ?>
                 <button type="button" class="lrob-cc-btn lrob-cc-btn-customize" data-lrob-cc-action="customize"
                         aria-expanded="false" aria-controls="lrob-cc-categories">
                     <?php echo esc_html($texts['customize']); ?>

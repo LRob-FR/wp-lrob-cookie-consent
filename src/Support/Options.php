@@ -63,8 +63,10 @@ final class Options
             'footer_links'       => [],         // [ ['label'=>'', 'url'=>''], ... ]
 
             // Buttons + disclosure
+            'show_accept'        => 1,          // one-click "Accept all" visible by default
             'show_deny'          => 1,          // symmetric Deny visible by default
             'show_save'          => 1,          // Save-preferences button
+            'show_customize'     => 1,          // "Customize" button (collapsed view only)
             'categories_collapsed' => 1,        // hide category toggles behind a "Customize" link
             'revisit_button'     => 1,          // floating "manage cookies" button after a decision
             'revisit_text'       => '',         // label (empty → translated "Manage cookies")

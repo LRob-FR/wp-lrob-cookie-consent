@@ -116,8 +116,9 @@
 		}
 
 		var collapsed = val('categories_collapsed');
+		show('accept', val('show_accept'));
 		show('deny', val('show_deny'));
-		show('customize', collapsed);
+		show('customize', collapsed && val('show_customize'));
 		show('save', !collapsed && val('show_save'));
 		var cats = preview.querySelector('[data-preview="cats"]');
 		if (cats) { cats.style.display = collapsed ? 'none' : ''; }
